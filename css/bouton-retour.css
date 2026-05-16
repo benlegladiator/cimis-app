@@ -1,0 +1,130 @@
+/* ============================================= */
+/* BOUTON RETOUR UNIVERSEL */
+/* Style transparent avec effet néon/verre */
+/* ============================================= */
+
+/* Variables CSS pour les couleurs néon */
+:root {
+    --neon-green: #00ff41;
+    --neon-green-glow: rgba(0, 255, 65, 0.5);
+    --neon-blue: #00d4ff;
+    --neon-blue-glow: rgba(0, 212, 255, 0.5);
+    --neon-purple: #9d00ff;
+    --neon-purple-glow: rgba(157, 0, 255, 0.5);
+}
+
+/* Conteneur du bouton retour */
+.back-button-container {
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    z-index: 1000;
+}
+
+/* Bouton retour universel */
+.btn-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: rgba(0, 255, 0, 0.1);
+    border: 2px solid var(--neon-green);
+    color: var(--neon-green);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    cursor: pointer;
+    font-family: 'Garamond', serif;
+    letter-spacing: 0.5px;
+}
+
+/* Effet au survol */
+.btn-back:hover {
+    background: rgba(0, 255, 0, 0.2);
+    border-color: #00ff00;
+    color: #00ff00;
+    transform: translateX(-5px);
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+}
+
+/* Effet au focus */
+.btn-back:focus {
+    outline: none;
+    border-color: #00ff00;
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+}
+
+/* Icône du bouton */
+.btn-back i {
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.btn-back:hover i {
+    transform: scale(1.1);
+}
+
+/* Variante pour dashboard (couleur différente) */
+.btn-back.btn-back-dashboard {
+    border-color: var(--neon-blue);
+    color: var(--neon-blue);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.btn-back.btn-back-dashboard:hover {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: #00d4ff;
+    color: #00d4ff;
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+}
+
+/* Variante pour liste (couleur différente) */
+.btn-back.btn-back-list {
+    border-color: var(--neon-purple);
+    color: var(--neon-purple);
+    box-shadow: 0 0 20px rgba(157, 0, 255, 0.3);
+}
+
+.btn-back.btn-back-list:hover {
+    background: rgba(157, 0, 255, 0.2);
+    border-color: #9d00ff;
+    color: #9d00ff;
+    box-shadow: 0 0 30px rgba(157, 0, 255, 0.5);
+    text-shadow: 0 0 10px rgba(157, 0, 255, 0.8);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .back-button-container {
+        top: 60px;
+        left: 10px;
+    }
+    
+    .btn-back {
+        padding: 10px 16px;
+        font-size: 0.8rem;
+        gap: 6px;
+    }
+    
+    .btn-back i {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .back-button-container {
+        top: 50px;
+        left: 5px;
+    }
+    
+    .btn-back {
+        padding: 8px 14px;
+        font-size: 0.75rem;
+    }
+}

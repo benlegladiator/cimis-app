@@ -1,0 +1,174 @@
+/* Styles spécifiques pour le mode Preview Uniforme */
+
+/* Section sélecteur de fonds */
+.selector-section {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 1rem;
+}
+
+.selector-section h3 {
+    color: var(--neon-green);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.3rem;
+}
+
+/* Grille des fonds */
+.fonds-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+/* Option de fond individuelle */
+.fond-option {
+    cursor: pointer;
+    border: 3px solid transparent;
+    border-radius: 10px;
+    padding: 10px;
+    transition: all 0.3s ease;
+    background: rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.fond-option:hover {
+    border-color: rgba(74, 222, 128, 0.5);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(74, 222, 128, 0.3);
+}
+
+.fond-option.active {
+    border-color: #4ade80;
+    background: rgba(74, 222, 128, 0.1);
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+}
+
+/* Conteneur d'image de fond */
+.fond-option .fond-preview {
+    width: 150px;
+    height: 100px;
+    background: linear-gradient(135deg, #1e3a5f 0%, #0f2027 100%);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.fond-option .fond-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.fond-option .fond-preview span {
+    color: #4ade80;
+    font-size: 12px;
+}
+
+/* Label du fond */
+.fond-option .fond-label {
+    text-align: center;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.fond-option.active .fond-label {
+    color: #4ade80;
+    font-weight: bold;
+}
+
+/* Indicateur de sélection */
+.fond-option .selection-indicator {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #4ade80;
+    color: #000;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.fond-option.active .selection-indicator {
+    opacity: 1;
+}
+
+/* Info texte */
+.selector-section .info-text {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+.selector-section .info-text i {
+    color: var(--neon-green);
+    margin-right: 5px;
+}
+
+/* Message de preview */
+.preview-message {
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: var(--neon-green);
+}
+
+.preview-message i {
+    margin-right: 8px;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: var(--neon-green);
+    opacity: 0.5;
+    margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .fonds-grid {
+        gap: 1rem;
+    }
+    
+    .fond-option .fond-preview {
+        width: 120px;
+        height: 80px;
+    }
+    
+    .selector-section {
+        padding: 1rem;
+    }
+}
+
+/* Animation de transition lors du changement de fond */
+.carte-militaire-container {
+    transition: all 0.5s ease;
+}
+
+.carte-militaire-container.changing-fond {
+    opacity: 0.5;
+    transform: scale(0.98);
+}
