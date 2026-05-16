@@ -1,10 +1,9 @@
 <?php
-// Configuration de la base de données
-// === CONFIGURATION LOCAL ===
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'cimis');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Configuration de la base de données (Supporte Render via Variables d'Environnement)
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_NAME', getenv('DB_NAME') ?: 'cimis');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
 
 // === CONFIGURATION INFINITYFREE (commentée) ===
 /*
