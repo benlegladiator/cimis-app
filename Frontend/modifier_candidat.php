@@ -32,10 +32,14 @@ if (!$candidat) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
     try {
         // Validation des données
-        $required_fields = ['nom', 'prenom', 'date_naissance', 'sexe', 'numero_cni'];
+        $required_fields = ['nom', 'prenom', 'date_naissance', 'sexe', 'numero_cni', 'annee_dernier_galon'];
         foreach ($required_fields as $field) {
             if (empty($_POST[$field])) {
-                throw new Exception("Le champ $field est obligatoire");
+                if ($field === 'annee_dernier_galon') {
+                    throw new Exception("Veuillez renseigner la date de la dernière promotion au grade (format jj/mm/aaaa)");
+                } else {
+                    throw new Exception("Le champ $field est obligatoire");
+                }
             }
         }
 
@@ -138,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
             'unite' => $unite,
             'grade' => $_POST['grade'] ?? '',
             'categorie_civil' => $_POST['categorie_civil'] ?? '',
-            'annee_dernier_galon' => $_POST['annee_dernier_galon'] ?? null,
+            'annee_dernier_galon' => $_POST['annee_dernier_galon'],
             'suspendus' => $_POST['suspendus'] ?? 0,
             'statut_militaire' => $_POST['statut_militaire'] ?? 'ACTIF',
             'date_changement_statut' => $_POST['statut_militaire'] !== ($candidat['statut_militaire'] ?? 'ACTIF') ? date('Y-m-d') : null,
@@ -188,6 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
             'message' => $e->getMessage()
         ]);
         exit;
+
     }
 }
 
