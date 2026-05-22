@@ -27,17 +27,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['form_data'] = $_POST;
         $errors = [];
 
-        // 1. Vérification de l'âge (minimum 18 ans)
-        $date_naissance = DateTime::createFromFormat('d/m/Y', $_POST['date_naissance']);
+        // 1. Vérification de l'âge (minimum 18 ans) avec deux formats acceptés
+        $date_naissance_input = $_POST['date_naissance'] ?? '';
+        $date_naissance = DateTime::createFromFormat('d/m/Y', $date_naissance_input);
+        
         if (!$date_naissance) {
-            throw new Exception("Format de date de naissance invalide. Utilisez JJ/MM/AAAA.");
+            $date_naissance = DateTime::createFromFormat('Y-m-d', $date_naissance_input);
         }
+        
+        if (!$date_naissance) {
+            throw new Exception("Format de date de naissance invalide. Utilisez JJ/MM/AAAA ou YYYY-MM-DD.");
+        }
+        
         $aujourd_hui = new DateTime();
         $age = $date_naissance->diff($aujourd_hui)->y;
         if ($age < 18) {
             throw new Exception("Le candidat doit avoir au moins 18 ans. Âge calculé: $age ans");
         }
+        
         $date_naissance_sql = $date_naissance->format('Y-m-d'); // format PostgreSQL
+
 
         // 2. Validation du numéro CNI
         $numero_cni = preg_replace('/[^A-Z0-9]/', '', strtoupper($_POST['numero_cni']));
