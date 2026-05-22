@@ -195,7 +195,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Création du répertoire si nécessaire
         $upload_dir = __DIR__ . '/../img/candidats/'; // chemin absolu depuis le backend
         if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0755, true);
+            if (!mkdir($upload_dir, 0775, true)) {
+                error_log("ERREUR: Impossible de créer le répertoire: " . $upload_dir);
+                throw new Exception("Erreur serveur: impossible de créer le dossier de stockage des photos.");
+            }
+            error_log("Répertoire créé: " . $upload_dir);
+        }
+        
+        // Vérifier que le répertoire est accessible en écriture
+        if (!is_writable($upload_dir)) {
+            error_log("ERREUR: Répertoire non accessible en écriture: " . $upload_dir);
+            error_log("Permissions: " . substr(sprintf('%o', fileperms($upload_dir)), -4));
+            error_log("Propriétaire: " . posix_getpwuid(fileowner($upload_dir))['name'] ?? 'inconnu');
+            throw new Exception("Erreur serveur: le dossier de stockage des photos n'est pas accessible en écriture.");
         }
         
         // Génération du nom de fichier
@@ -210,10 +222,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new Exception("Erreur lors du décodage de la photo.");
             }
             
-            if (!file_put_contents($photo_path, $decodedPhoto)) {
-                throw new Exception("Erreur lors de la sauvegarde de la photo.");
+            $bytes_written = file_put_contents($photo_path, $decodedPhoto);
+            if ($bytes_written === false) {
+                error_log("ERREUR file_put_contents: chemin=" . $photo_path);
+                error_log("Répertoire existe: " . (is_dir($upload_dir) ? 'OUI' : 'NON'));
+                error_log("Répertoire writable: " . (is_writable($upload_dir) ? 'OUI' : 'NON'));
+                error_log("Espace disque: " . disk_free_space($upload_dir));
+                throw new Exception("Erreur lors de la sauvegarde de la photo. Vérifiez les permissions du serveur.");
             }
-            error_log("Chemin complet: " . realpath($photo_path));
+            error_log("Photo sauvegardée: " . realpath($photo_path) . " ($bytes_written octets)");
         } else {
             error_log("ERREUR move_uploaded_file: " . $photo['tmp_name'] . " -> " . $photo_path);
             error_log("Erreur PHP: " . (error_get_last()['message'] ?? 'Inconnue'));
