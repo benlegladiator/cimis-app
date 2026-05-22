@@ -47,7 +47,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'empty_trash') {
         $_SESSION['error'] = "Erreur lors du vidage de la corbeille: " . $e->getMessage();
     }
     
-    header('Location: corbeille_admin_new.php');
+    header('Location: corbeille_admin.php');
     exit;
 }
 
