@@ -36,96 +36,47 @@ function afficherSexe($sexe) {
 }
 
 // Fonction pour déterminer si un grade est un officier
+// Fonction pour déterminer si un grade est un officier
 function estOfficier($grade) {
     $grade_normalise = strtolower(trim($grade));
     // Normaliser les accents
-    $grade_normalise = str_replace(['é', 'è', 'ê', 'ë'], ['e', 'e', 'e', 'e'], $grade_normalise);
-    $grade_normalise = str_replace(['à', 'â', 'ä'], ['a', 'a', 'a'], $grade_normalise);
-    $grade_normalise = str_replace(['î', 'ï'], ['i', 'i'], $grade_normalise);
-    $grade_normalise = str_replace(['ô', 'ö'], ['o', 'o'], $grade_normalise);
-    $grade_normalise = str_replace(['ù', 'û'], ['u', 'u'], $grade_normalise);
-    
-    // Liste des grades d'officiers (généraux + officiers supérieurs + officiers subalternes + aspirants)
+    $grade_normalise = str_replace(
+        ['é','è','ê','ë','à','â','ä','î','ï','ô','ö','ù','û'],
+        ['e','e','e','e','a','a','a','i','i','o','o','u','u'],
+        $grade_normalise
+    );
+
+    // Liste des grades d'officiers (seulement officiers généraux, supérieurs, subalternes, aspirants)
     $grades_officiers = [
         // OFFICIERS GENERAUX
-        'general d armee',
-        'general d armee aerienne',
-        'general de corps d armee',
-        'general de corps d armee aerienne',
-        // Variantes avec apostrophes (depuis enrolement.js)
-        'general d\'armee',
-        'general d\'armee aerienne',
-        'general de corps d\'armee',
-        'general de corps d\'armee aerienne',
-        'general de division',
-        'general de division aerienne',
-        'general de brigade',
-        'general de brigade aerienne',
+        'general d armee','general d armee aerienne',
+        'general de corps d armee','general de corps d armee aerienne',
+        'general de division','general de division aerienne',
+        'general de brigade','general de brigade aerienne',
         'general de gendarmerie',
-        'amiral d escadre',
-        'vice amiral d escadre',
-        'vice amiral',
-        'contre amiral',
-        
-        // GÉNÉRAUX avec apostrophes
-        'general d\'armee aérienne',
-        'general de corps aérien',
-        'general de division aérienne',
-        'general de brigade aérienne',
-        'amiral d\'escadre',
-        'vice amiral d\'escadre',
-        'vice amiral',
-        'contre amiral',
-        
-        // OFFICIERS SUPERIEURS avec apostrophes
-        'chef d\'escadron',
-        'chef de bataillon',
-        'capitaine de vaisseau',
-        'capitaine de frégate',
-        'capitaine de corvette',
-        'lieutenant de vaisseau',
-        'lieutenant colonel',
-        'commandant',
-        
-        // OFFICIERS SUBALTERNES avec apostrophes
-        'sous lieutenant',
-        'enseigne de vaisseau de 1ere classe',
-        'enseigne de vaisseau de 2eme classe',
-        
+        'amiral d escadre','vice amiral d escadre','vice amiral','contre amiral',
+
+        // OFFICIERS SUPERIEURS
+        'colonel','lieutenant colonel','chef d escadron','chef de bataillon','commandant',
+        'capitaine de vaisseau','capitaine de fregate','capitaine de corvette',
+
+        // OFFICIERS SUBALTERNES
+        'capitaine','lieutenant','sous lieutenant',
+        'lieutenant de vaisseau','enseigne de vaisseau de 1ere classe','enseigne de vaisseau de 2eme classe',
+
         // ASPIRANTS
-        'aspirant',
-        
-        // SOUS-OFFICIERS avec apostrophes (matricule VISIBLE)
-        'adjudant chef major',
-        'adjudant chef',
-        'marechal des logis chef',
-        'marechal des logis',
-        'gendarme major',
-        'sergent chef',
-        'caporal chef',
-        'maitre principal major',
-        'maitre principal',
-        'premier maitre',
-        'second maitre',
-        'quartier maitre de 1ere classe',
-        'quartier maitre de 2eme classe',
-        
-        // MILITAIRES DU RANG avec apostrophes (matricule VISIBLE)
-        'soldat de 1ere classe',
-        'soldat de 2eme classe',
-        'matelot de 1ere classe',
-        'matelot de 2eme classe',
-        'eleve gendarme'
+        'aspirant'
     ];
-    
-    // Vérifier si le grade normalisé est dans la liste des officiers
+
     return in_array($grade_normalise, $grades_officiers);
 }
 
 // Fonction pour obtenir la signature selon le grade
 function getSignature($grade) {
-    return estOfficier($grade) ? 'JOSEPH BETI ASSOMO' : 'GOUFAN A RIM';
+    return estOfficier($grade) ? 'JOSEPH BETI ASSOMO - Ministre de la Défense'
+                               : 'GOUFAN A RIM - Directeur des Ressources Humaines';
 }
+
 
 // Fonction pour obtenir l'image du grade
 function getGradeImage($grade) {
