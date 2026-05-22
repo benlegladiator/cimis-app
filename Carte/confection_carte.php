@@ -634,168 +634,101 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
             <!-- Arrière-plan -->
             <img src="<?php echo $fond_image; ?>" class="card-bg" alt="Fond militaire verso">
             
-            <!-- Motifs de guilloches -->
             <div class="guilloche-pattern"></div>
             
-            <!-- Contenu verso -->
             <div class="card-verso-content">
-                <!-- Header verso (18%) -->
                 <div class="card-verso-header">
                     <div class="verso-title-english">
                         <?php if ($candidat['unite'] === 'CIVIL'): ?>
-                            CIVIL  CARD        N°   <strong><?php echo htmlspecialchars($candidat['matricule'] ?? ''); ?></strong>
+                            CIVIL CARD N° <strong><?php echo htmlspecialchars($candidat['matricule'] ?? ''); ?></strong>
                         <?php else: ?>
-                            MILITARY  CARD        N°   <strong><?php echo htmlspecialchars($candidat['matricule'] ?? ''); ?></strong>
+                            MILITARY CARD N° <strong><?php echo htmlspecialchars($candidat['matricule'] ?? ''); ?></strong>
                         <?php endif; ?>
                     </div>
                 </div>
                 
-                <!-- Bande verte de séparation -->
                 <div class="verso-green-separator"></div>
                 
-                <!-- Body (77%) - 3 blocs -->
                 <div class="card-verso-body">
-                    <!-- Conteneur pour les 3 blocs -->
                     <div class="verso-content-horizontal">
-                        
-                        <!-- 1er bloc - Labels -->
+                        <!-- Labels -->
                         <div class="verso-labels-block">
-                            <div class="verso-label-row">
-                                <span class="verso-label" style="font-size: 20%;">Valide depuis le/Valid since...</span>
-                            </div>
-                            <div class="verso-label-row">
-                                <span class="verso-label" style="font-size: 20%;">Numero CNI/National ID number</span>
-                            </div>
-                            <div class="verso-label-row">
-                                <span class="verso-label" style="font-size: 20%;">Taille (cm)/Height (cm)</span>
-                            </div>
-                            <div class="verso-label-row">
-                                <span class="verso-label" style="font-size: 20%;">Sexe/Sex</span>
-                            </div>
-                            <div class="verso-label-row">
-                                <span class="verso-label" style="font-size: 20%;">Groupe sanguin/Blood group</span>
-                            </div>
+                            <div class="verso-label-row"><span class="verso-label">Valide depuis le/Valid since...</span></div>
+                            <div class="verso-label-row"><span class="verso-label">Numero CNI/National ID number</span></div>
+                            <div class="verso-label-row"><span class="verso-label">Taille (cm)/Height (cm)</span></div>
+                            <div class="verso-label-row"><span class="verso-label">Sexe/Sex</span></div>
+                            <div class="verso-label-row"><span class="verso-label">Groupe sanguin/Blood group</span></div>
                         </div>
                         
-                        <!-- 2ème bloc - Valeurs -->
+                        <!-- Valeurs -->
                         <div class="verso-values-block">
-                            <div class="verso-value-row">
-                                <span class="verso-value" style="font-size: 20%;"><?php echo !empty($candidat['date_enrolement']) ? date('d/m/Y', strtotime($candidat['date_enrolement'])) : 'N/A'; ?></span>
-                            </div>
-                            <div class="verso-value-row">
-                                <span class="verso-value" style="font-size: 20%;"><?php echo !empty($candidat['numero_cni']) ? htmlspecialchars($candidat['numero_cni']) : 'N/A'; ?></span>
-                            </div>
-                            <div class="verso-value-row">
-                                <span class="verso-value" style="font-size: 20%;"><?php echo !empty($candidat['taille']) ? htmlspecialchars($candidat['taille']) : 'N/A'; ?></span>
-                            </div>
-                            <div class="verso-value-row">
-                                <span class="verso-value" style="font-size: 20%;"><?php echo afficherSexe($candidat['sexe'] ?? ''); ?></span>
-                            </div>
-                            <div class="verso-value-row">
-                                <span class="verso-value" style="font-size: 20%;"><?php echo !empty($candidat['groupe_sanguin']) ? htmlspecialchars($candidat['groupe_sanguin']) : 'N/A'; ?></span>
-                            </div>
+                            <div class="verso-value-row"><span class="verso-value"><?php echo !empty($candidat['date_enrolement']) ? date('d/m/Y', strtotime($candidat['date_enrolement'])) : 'N/A'; ?></span></div>
+                            <div class="verso-value-row"><span class="verso-value"><?php echo !empty($candidat['numero_cni']) ? htmlspecialchars($candidat['numero_cni']) : 'N/A'; ?></span></div>
+                            <div class="verso-value-row"><span class="verso-value"><?php echo !empty($candidat['taille']) ? htmlspecialchars($candidat['taille']) : 'N/A'; ?></span></div>
+                            <div class="verso-value-row"><span class="verso-value"><?php echo afficherSexe($candidat['sexe'] ?? ''); ?></span></div>
+                            <div class="verso-value-row"><span class="verso-value"><?php echo !empty($candidat['groupe_sanguin']) ? htmlspecialchars($candidat['groupe_sanguin']) : 'N/A'; ?></span></div>
                         </div>
                         
-                        <!-- 3ème bloc - Logo du corps -->
+                        <!-- Logo -->
                         <div class="verso-logo-block">
                             <img src="<?php echo $logo_unit; ?>" class="verso-corps-logo" alt="Logo du corps">
                         </div>
-                        
                     </div>
                     
-                    <!-- Ligne du bas avec empreinte, QR code et signature -->
+                    <!-- Ligne du bas -->
                     <div class="verso-bottom-row">
                         <div class="verso-fingerprint">
-                            <div class="fingerprint-placeholder">
-                                <i class="fa-solid fa-fingerprint"></i>
-                            </div>
+                            <i class="fa-solid fa-fingerprint"></i>
                             <span class="fingerprint-text">empreinte digitale</span>
                         </div>
                         
                         <?php if (!empty($candidat['code_qr']) && file_exists($candidat['code_qr'])): ?>
-                        <div class="verso-qr" style="margin-top: -15px;">
-                            <div class="qr-secure" style="padding: 0.5mm; position: relative;">
+                        <div class="verso-qr">
+                            <div class="qr-secure">
                                 <img src="<?php echo $candidat['code_qr']; ?>" class="qr-code-image" alt="QR Code">
-                                <!-- Badge sécurité -->
-                                <div style="
-                                    position: absolute;
-                                    top: -3mm;
-                                    right: -3mm;
-                                    background: #d4af37;
-                                    color: #000;
-                                    border-radius: 50%;
-                                    width: 6mm;
-                                    height: 6mm;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    font-size: 3mm;
-                                    font-weight: bold;
-                                ">
-                                    🔒
-                                </div>
+                                <div class="qr-badge">🔒</div>
                             </div>
                             <span class="qr-text">QR Code</span>
                         </div>
                         <?php endif; ?>
                         
-                        <div class="verso-signature" style="left: 55%; top: 15px; transform: translateX(-50%);">
-                            <div class="signature-text signature-yellow" style="
-                                font-family: 'Brush Script MT', cursive;
-                                font-size: 10px;
-                                font-style: italic;
-                                color: #FFD700;
-                                text-transform: none;
-                                margin-bottom: 12px;
-                                line-height: 1.2;
-                            "><?php 
-                                if (estOfficier($candidat['grade'])) {
-                                    echo 'J. Beti Assomo';
-                                } else {
-                                    echo 'G. a Rim';
-                                }
-                            ?></div>
-                            <div class="signature-text signature-white" style="
-                                margin-top: 6px;
-                                line-height: 1.1;
-                                font-size: 7px;
-                                font-weight: bold;
-                            "><?php 
-                                if (estOfficier($candidat['grade'])) {
-                                    echo htmlspecialchars(getSignature($candidat['grade']));
-                                } else {
-                                    echo 'Directeur des Resources Humaines';
-                                }
-                            ?></div>
-                            <!-- Nombre d'impressions discret dans un coin -->
-                            <div style="
-                                position: absolute;
-                                bottom: 2px;
-                                right: 2px;
-                                font-size: 4px;
-                                color: rgba(0, 0, 0, 0.3);
-                                font-family: monospace;
-                            ">
+                        <!-- Signature -->
+                        <div class="verso-signature">
+                            <!-- Ligne manuscrite dorée -->
+                            <div class="signature-text signature-yellow" style="font-family:'Brush Script MT',cursive;font-size:10px;font-style:italic;color:#FFD700;">
+                                <?php 
+                                    if (estOfficier($candidat['grade'])) {
+                                        echo 'J. B. ASSOMO';
+                                    } else {
+                                        echo 'G. A. RIM';
+                                    }
+                                ?>
+                            </div>
+                            
+                            <!-- Ligne blanche officielle -->
+                            <div class="signature-text signature-white" style="font-size:7px;font-weight:bold;">
+                                <?php 
+                                    if (estOfficier($candidat['grade'])) {
+                                        echo 'Joseph BETI ASSOMO';
+                                    } else {
+                                        echo 'Directeur des Ressources Humaines';
+                                    }
+                                ?>
+                            </div>
+                            
+                            <!-- Compteur discret -->
+                            <div style="position:absolute;bottom:2px;right:2px;font-size:4px;color:rgba(0,0,0,0.3);font-family:monospace;">
                                 <?php echo ($candidat['nb_reimpressions'] ?? 0) + 1; ?>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Bande rouge de séparation entre body et footer -->
                 <div class="verso-red-separator"></div>
                 
-                <!-- Footer (5%) -->
                 <div class="card-verso-footer">
-                    <!-- Hologramme CAMEROUN en arrière-plan -->
-                    <div class="verso-footer-hologram">
-                        CAMEROUN CAMEROON
-                    </div>
-                    
-                    <!-- Texte Ministre au premier plan -->
-                    <div class="verso-footer-ministre">
-                        Ministere de la Défense / Ministry of Defence
-                    </div>
+                    <div class="verso-footer-hologram">CAMEROUN CAMEROON</div>
+                    <div class="verso-footer-ministre">Ministere de la Défense / Ministry of Defence</div>
                 </div>
             </div>
         </div>
