@@ -16,7 +16,7 @@ require_once 'qrcode_generator.php';
 // Vérification de la connexion
 if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
     header('Content-Type: application/json');
-    ob_end_clean(); // Nettoyer tout buffer avant JSON
+    ob_end_clean();
     echo json_encode(['success' => false, 'message' => 'Non autorisé']);
     exit;
 }
@@ -24,260 +24,168 @@ if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true)
 // Traitement du formulaire d'enrôlement
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        // CONSERVATION DES DONNÉES EN SESSION EN CAS D'ERREUR
         $_SESSION['form_data'] = $_POST;
-        
-        // CONTRÔLES AVANCÉS
         $errors = [];
-        
+
         // 1. Vérification de l'âge (minimum 18 ans)
-        $date_naissance = new DateTime($_POST['date_naissance']);
+        $date_naissance = DateTime::createFromFormat('d/m/Y', $_POST['date_naissance']);
+        if (!$date_naissance) {
+            throw new Exception("Format de date de naissance invalide. Utilisez JJ/MM/AAAA.");
+        }
         $aujourd_hui = new DateTime();
         $age = $date_naissance->diff($aujourd_hui)->y;
-        
         if ($age < 18) {
             throw new Exception("Le candidat doit avoir au moins 18 ans. Âge calculé: $age ans");
         }
-        
-        // 2. Validation du format du numéro CNI (9 à 20 caractères: lettres majuscules et chiffres)
+        $date_naissance_sql = $date_naissance->format('Y-m-d'); // format PostgreSQL
+
+        // 2. Validation du numéro CNI
         $numero_cni = preg_replace('/[^A-Z0-9]/', '', strtoupper($_POST['numero_cni']));
         if (strlen($numero_cni) < 9 || strlen($numero_cni) > 20) {
-            throw new Exception("Le numéro CNI doit contenir entre 9 et 20 caractères (lettres majuscules et chiffres)");
+            throw new Exception("Le numéro CNI doit contenir entre 9 et 20 caractères.");
         }
-        
-        // 2.1. Vérification de l'unicité du numéro CNI
         $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM candidat WHERE numero_cni = :numero_cni");
         $stmt->execute(['numero_cni' => $numero_cni]);
-        $count = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-        
-        if ($count > 0) {
-            throw new Exception("Ce numéro CNI est déjà utilisé par un autre candidat");
+        if ($stmt->fetch(PDO::FETCH_ASSOC)['count'] > 0) {
+            throw new Exception("Ce numéro CNI est déjà utilisé.");
         }
-        
-        // 2.2. Vérification de l'unicité du matricule militaire
+
+        // 2.2. Vérification du matricule militaire
         $matricule_militaire = trim($_POST['matricule_militaire'] ?? '');
         if (!empty($matricule_militaire)) {
             $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM candidat WHERE matricule_militaire = :matricule_militaire");
             $stmt->execute(['matricule_militaire' => $matricule_militaire]);
-            $count = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-            
-            if ($count > 0) {
-                throw new Exception("Ce matricule militaire est déjà utilisé par un autre candidat");
+            if ($stmt->fetch(PDO::FETCH_ASSOC)['count'] > 0) {
+                throw new Exception("Ce matricule militaire est déjà utilisé.");
             }
         }
-        
-        // 3. Validation de la taille et du poids
+
+        // 3. Validation taille/poids
         $taille = (int)$_POST['taille'];
         $poids = (int)$_POST['poids'];
-        
-        if ($taille < 140 || $taille > 220) {
-            throw new Exception("La taille doit être comprise entre 140cm et 220cm");
-        }
-        
-        if ($poids < 45 || $poids > 150) {
-            throw new Exception("Le poids doit être compris entre 45kg et 150kg");
-        }
-        
-        // 4. Calcul et validation de l'IMC
-        $taille_m = $taille / 100;
-        $imc = $poids / ($taille_m * $taille_m);
-        
-        if ($imc < 16 || $imc > 35) {
-            throw new Exception("L'IMC ($imc) est hors des normes acceptables (16-35)");
-        }
-        
-        // 5. Validation de la date de la dernière promotion au grade (optionnelle pour les civils)
-        $unite = $_POST['unite'] ?? ''; // Définir $unite avant de l'utiliser
-        $date_promotion = $_POST['annee_dernier_galon'] ?? '';
+        if ($taille < 140 || $taille > 220) throw new Exception("Taille invalide.");
+        if ($poids < 45 || $poids > 150) throw new Exception("Poids invalide.");
+        $imc = $poids / pow($taille/100, 2);
+        if ($imc < 16 || $imc > 35) throw new Exception("IMC hors normes.");
+
+        // 4. Date de dernière promotion
+        $unite = $_POST['unite'] ?? '';
+        $annee_galon = $_POST['annee_dernier_galon'] ?? '';
         $date_actuelle = date('Y-m-d');
-        
-        // La date de la dernière promotion n'est requise que pour les militaires
         if ($unite !== 'CIVIL') {
-            if (empty($date_promotion) || $date_promotion > $date_actuelle) {
-                throw new Exception("La date de la dernière promotion au grade doit être valide et antérieure à la date actuelle");
+            if (empty($annee_galon)) {
+                throw new Exception("L'année du dernier galon est requise.");
+            }
+            $dateObj = DateTime::createFromFormat('Y', $annee_galon);
+            if (!$dateObj) throw new Exception("Format d'année invalide.");
+            $date_dernier_grade = $dateObj->format('Y') . "-01-01";
+            if ($date_dernier_grade > $date_actuelle) {
+                throw new Exception("La date du dernier grade doit être antérieure à aujourd'hui.");
             }
         } else {
-            // Pour les civils, la date n'est pas requise
-            $date_promotion = null;
+            $date_dernier_grade = null;
         }
-        
-        // 6. Validation du matricule militaire selon le corps d'armée
-        $matricule_militaire = trim($_POST['matricule_militaire'] ?? '');
-        
-        // Le matricule militaire n'est requis que pour les unités militaires (pas pour CIVIL)
+
+        // 5. Validation matricule militaire
         if ($unite !== 'CIVIL' && empty($matricule_militaire)) {
-            throw new Exception("Le matricule militaire est requis pour les unités militaires");
+            throw new Exception("Le matricule militaire est requis pour les unités militaires.");
         }
-        
-        // Validation du format uniquement si un matricule est fourni (pour les militaires)
         if (!empty($matricule_militaire)) {
-            
-            if (strlen($matricule_militaire) < 4) {
-                throw new Exception("Le matricule militaire doit contenir au moins 4 caractères");
-            }
-            
             $formats_autorises = [
                 'ARMÉE DE TERRE' => '/^T\d{2,4}\/\d{4,6}$/',
                 'ARMÉE DE L\'AIR' => '/^A\d{2,4}\/\d{4,6}$/',
                 'MARINE NATIONALE' => '/^M\d{2,4}\/\d{4,6}$/',
                 'GENDARMERIE' => '/^\d{4,6}$/'
             ];
-            
-            $messages_format = [
-                'ARMÉE DE TERRE' => 'Format: T17/23456 ou T2017/23456 (T + année sur 2-4 chiffres / 4-6 chiffres)',
-                'ARMÉE DE L\'AIR' => 'Format: A17/23456 ou A2017/23456 (A + année sur 2-4 chiffres / 4-6 chiffres)',
-                'MARINE NATIONALE' => 'Format: M17/23456 ou M2017/23456 (M + année sur 2-4 chiffres / 4-6 chiffres)',
-                'GENDARMERIE' => 'Format: 23456 ou 123456 (4 à 6 chiffres uniquement)'
-            ];
-            
-            if (isset($formats_autorises[$unite])) {
-                $format_requis = $formats_autorises[$unite];
-                if (!preg_match($format_requis, $matricule_militaire)) {
-                    throw new Exception("Format invalide pour $unite. " . $messages_format[$unite]);
-                }
+            if (isset($formats_autorises[$unite]) && !preg_match($formats_autorises[$unite], $matricule_militaire)) {
+                throw new Exception("Format invalide pour $unite.");
             }
         }
-        
-        // 7. Génération du matricule
+
+        // 6. Génération matricule CIMIS
         $matricule = 'CIM-' . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
-        
-        // 8. Vérification du matricule unique
         $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM candidat WHERE matricule = :matricule");
         $stmt->execute(['matricule' => $matricule]);
-        $count = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-        
-        if ($count > 0) {
-            // Régénérer si déjà utilisé
-            do {
-                $matricule = 'CIM-' . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
-                $stmt->execute(['matricule' => $matricule]);
-                $count = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-            } while ($count > 0);
+        while ($stmt->fetch(PDO::FETCH_ASSOC)['count'] > 0) {
+            $matricule = 'CIM-' . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+            $stmt->execute(['matricule' => $matricule]);
         }
-        
-        // 10. Validation et traitement de la photo (obligatoire pour tous)
+
+        // 7. Photo (base64 ou upload)
         $photoData = null;
         $photoExtension = 'jpg';
-        
-        // Priorité 1: Photo rognée via photo-data (base64)
-        if (!empty($_POST['photo_data']) && $_POST['photo_data'] !== '') {
-            $photoData = $_POST['photo_data'];
-            // Extraire l'extension du base64 si disponible
-            if (preg_match('/^data:image\/(\w+);base64,/', $photoData, $matches)) {
+        if (!empty($_POST['photo_data'])) {
+            if (preg_match('/^data:image\/(\w+);base64,/', $_POST['photo_data'], $matches)) {
                 $photoExtension = $matches[1];
-                // Supprimer le préfixe base64
-                $photoData = preg_replace('/^data:image\/(\w+);base64,/', '', $photoData);
+                $photoData = preg_replace('/^data:image\/(\w+);base64,/', '', $_POST['photo_data']);
             }
+        } elseif (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+            $allowedTypes = ['image/jpeg','image/jpg','image/png'];
+            if (!in_array($_FILES['photo']['type'], $allowedTypes)) throw new Exception("Format photo non autorisé.");
+            if ($_FILES['photo']['size'] > 2*1024*1024) throw new Exception("Photo trop volumineuse.");
+            $photoData = base64_encode(file_get_contents($_FILES['photo']['tmp_name']));
+            $photoExtension = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
+        } else {
+            throw new Exception("Photo obligatoire.");
         }
-        // Priorité 2: Fichier uploadé normal
-        elseif (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-            $photo = $_FILES['photo'];
-            
-            // Validation simple
-            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-            if (!in_array($photo['type'], $allowedTypes)) {
-                throw new Exception("Format de photo non autorisé. Utilisez JPEG ou PNG.");
-            }
-            
-            if ($photo['size'] > 2 * 1024 * 1024) { // 2MB max
-                throw new Exception("La photo est trop volumineuse. Maximum 2MB.");
-            }
-            
-            // Lire le fichier et le convertir en base64
-            $photoData = base64_encode(file_get_contents($photo['tmp_name']));
-            // Extraire l'extension
-            $photoExtension = pathinfo($photo['name'], PATHINFO_EXTENSION);
-        }
-        else {
-            throw new Exception("La photo d'identité est obligatoire pour tous les candidats");
-        }
-        
-        // Création du répertoire si nécessaire
-        $upload_dir = __DIR__ . '/../img/candidats/'; // chemin absolu depuis le backend
+
+        $upload_dir = __DIR__ . '/../img/candidats/';
         if (!is_dir($upload_dir)) {
             if (!mkdir($upload_dir, 0775, true)) {
-                error_log("ERREUR: Impossible de créer le répertoire: " . $upload_dir);
-                throw new Exception("Erreur serveur: impossible de créer le dossier de stockage des photos.");
+                throw new Exception("Impossible de créer le dossier de stockage des photos.");
             }
-            error_log("Répertoire créé: " . $upload_dir);
         }
-        
         // Vérifier que le répertoire est accessible en écriture
         if (!is_writable($upload_dir)) {
             error_log("ERREUR: Répertoire non accessible en écriture: " . $upload_dir);
-            error_log("Permissions: " . substr(sprintf('%o', fileperms($upload_dir)), -4));
-            error_log("Propriétaire: " . posix_getpwuid(fileowner($upload_dir))['name'] ?? 'inconnu');
             throw new Exception("Erreur serveur: le dossier de stockage des photos n'est pas accessible en écriture.");
         }
-        
+
         // Génération du nom de fichier
-        $filename = $matricule . '_' . time() . '.' . $photoExtension;
+        $filename = $matricule . '_' . uniqid() . '.' . $photoExtension;
         $photo_path = $upload_dir . $filename;
-        
-        // Sauvegarde de la photo (base64 ou fichier)
+
+        // Sauvegarde de la photo
         if ($photoData !== null) {
-            // Décoder et sauvegarder les données base64
             $decodedPhoto = base64_decode($photoData);
             if ($decodedPhoto === false) {
                 throw new Exception("Erreur lors du décodage de la photo.");
             }
-            
-            $bytes_written = file_put_contents($photo_path, $decodedPhoto);
-            if ($bytes_written === false) {
-                error_log("ERREUR file_put_contents: chemin=" . $photo_path);
-                error_log("Répertoire existe: " . (is_dir($upload_dir) ? 'OUI' : 'NON'));
-                error_log("Répertoire writable: " . (is_writable($upload_dir) ? 'OUI' : 'NON'));
-                error_log("Espace disque: " . disk_free_space($upload_dir));
-                throw new Exception("Erreur lors de la sauvegarde de la photo. Vérifiez les permissions du serveur.");
+            if (file_put_contents($photo_path, $decodedPhoto) === false) {
+                throw new Exception("Erreur lors de la sauvegarde de la photo.");
             }
-            error_log("Photo sauvegardée: " . realpath($photo_path) . " ($bytes_written octets)");
         } else {
-            error_log("ERREUR move_uploaded_file: " . $photo['tmp_name'] . " -> " . $photo_path);
-            error_log("Erreur PHP: " . (error_get_last()['message'] ?? 'Inconnue'));
             throw new Exception("Erreur lors du téléchargement de la photo.");
         }
-        
-        // Stocker le chemin web pour la réponse (accessible depuis Frontend/)
-        $photo_path = '../img/candidats/' . $filename;
-        
-        // 11. Préparation des données pour l'insertion
+
+        // Chemin relatif pour la base
+        $photo_path_rel = 'img/candidats/' . $filename;
+
+        // 11. Dates
         $date_enrolement = date('Y-m-d H:i:s');
-        $date_dernier_grade = $annee_galon . '-01-01'; // 1er janvier de l'année
-        
-        // Génération du QR code TOUJOURS basé sur le matricule CIMIS
-        $type_personnel = $_POST['type_personnel'] ?? 'MILITAIRE';
-        $matricule_militaire = $_POST['matricule_militaire'] ?? '';
-        
-        // TOUJOURS générer le QR avec le matricule CIMIS (civil ou militaire)
-        if (!empty($matricule)) {
-            error_log("Tentative génération QR pour matricule CIMIS: " . $matricule . " (Type: " . $type_personnel . ")");
-            $code_qr = generateQRCodeForMatricule($matricule);
-            error_log("QR CIMIS généré, chemin retourné: " . $code_qr);
-            error_log("Fichier QR existe: " . (file_exists(__DIR__ . '/../' . $code_qr) ? 'OUI' : 'NON'));
-        } else {
-            $code_qr = ''; // Pas de matricule CIMIS = pas de QR
-            error_log("Pas de matricule CIMIS disponible, pas de QR généré");
-        }
-        
-        // 12. Insertion dans la base de données
+        $date_dernier_grade = $date_dernier_grade ?? null; // déjà validée dans la première partie
+
+        // 12. QR code
+        $code_qr = !empty($matricule) ? generateQRCodeForMatricule($matricule) : '';
+
+        // 13. Insertion PostgreSQL
         $sql = "INSERT INTO candidat (
-            matricule, matricule_militaire, nom, prenom, date_naissance, lieu_naissance, sexe, numero_cni, 
-            taille, poids, groupe_sanguin, annee_dernier_galon, 
+            matricule, matricule_militaire, nom, prenom, date_naissance, lieu_naissance, sexe, numero_cni,
+            taille, poids, groupe_sanguin, annee_dernier_galon,
             unite, grade, categorie_civil, photo, date_enrolement, date_dernier_grade, code_qr
         ) VALUES (
             :matricule, :matricule_militaire, :nom, :prenom, :date_naissance, :lieu_naissance, :sexe, :numero_cni,
             :taille, :poids, :groupe_sanguin, :annee_dernier_galon,
             :unite, :grade, :categorie_civil, :photo, :date_enrolement, :date_dernier_grade, :code_qr
         )";
-        
+
         $stmt = $pdo->prepare($sql);
-        
         $stmt->execute([
             'matricule' => $matricule,
             'matricule_militaire' => $_POST['matricule_militaire'] ?? '',
             'nom' => strtoupper(trim($_POST['nom'])),
             'prenom' => strtoupper(trim($_POST['prenom'])),
-            'date_naissance' => $_POST['date_naissance'],
+            'date_naissance' => $date_naissance_sql, // format YYYY-MM-DD
             'lieu_naissance' => strtoupper(trim($_POST['lieu_naissance'] ?? '')),
             'sexe' => $_POST['sexe'],
             'numero_cni' => $numero_cni,
@@ -288,63 +196,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'unite' => $_POST['unite'],
             'grade' => $_POST['grade'],
             'categorie_civil' => $_POST['categorie_civil'] ?? '',
-            'photo' => $photo_path,
+            'photo' => $photo_path_rel,
             'date_enrolement' => $date_enrolement,
             'date_dernier_grade' => $date_dernier_grade,
             'code_qr' => $code_qr
         ]);
-        
-        // Debug: Vérification après insertion
-        error_log("Insertion réussie pour matricule: " . $matricule);
-        
-        // 13. Nettoyage de la session
+
+        // Nettoyage session
         unset($_SESSION['form_data']);
-        
-        // 15. Préparation des données pour la réponse
-        $candidat_data = [
+
+        // Réponse JSON
+        $_SESSION['candidat_enrolled'] = [
             'matricule' => $matricule,
             'matricule_militaire' => $_POST['matricule_militaire'] ?? '',
             'nom' => strtoupper(trim($_POST['nom'])),
             'prenom' => strtoupper(trim($_POST['prenom'])),
-            'date_naissance' => $_POST['date_naissance'],
+            'date_naissance' => $date_naissance_sql,
             'sexe' => $_POST['sexe'],
             'unite' => $_POST['unite'],
             'grade' => $_POST['grade'],
-            'photo' => $photo_path,
+            'photo' => $photo_path_rel,
             'numero_cni' => $numero_cni,
             'date_enrolement' => $date_enrolement,
             'code_qr' => $code_qr
         ];
-        
-        // Debug: Vérifier la photo dans les données
-        error_log("Photo dans candidat_data: " . ($photo_path ?? 'VIDE'));
-        error_log("Photo existe: " . ($photo_path && file_exists(__DIR__ . '/../' . $photo_path) ? 'OUI' : 'NON'));
-        
-        // 16. Stockage pour la modal
-        $_SESSION['candidat_enrolled'] = $candidat_data;
-        
-        // 17. Réponse JSON pour le JavaScript
+
         header('Content-Type: application/json');
-        
-        // Logging de la réponse
-        $response = [
+        ob_end_clean();
+        echo json_encode([
             'success' => true,
             'message' => 'Candidat enrôlé avec succès !',
             'matricule' => $matricule,
             'code_qr' => $code_qr,
-            'candidat' => $candidat_data
-        ];
-        error_log("Réponse JSON: " . json_encode($response));
-        
-        ob_end_clean(); // Nettoyer tout buffer avant JSON
-        echo json_encode($response);
-        
+            'candidat' => $_SESSION['candidat_enrolled']
+        ]);
+
     } catch (Exception $e) {
-        // Gestion des erreurs
         $_SESSION['error'] = $e->getMessage();
-        
         header('Content-Type: application/json');
-        ob_end_clean(); // Nettoyer tout buffer avant JSON
+        ob_end_clean();
         echo json_encode([
             'success' => false,
             'message' => $e->getMessage(),
@@ -352,9 +242,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
     }
 } else {
-    // Méthode non autorisée
     header('Content-Type: application/json');
-    ob_end_clean(); // Nettoyer tout buffer avant JSON
+    ob_end_clean();
     echo json_encode([
         'success' => false,
         'message' => 'Méthode non autorisée'
