@@ -38,15 +38,17 @@ function afficherSexe($sexe) {
 // Fonction pour déterminer si un grade est un officier
 // Fonction pour déterminer si un grade est un officier
 function estOfficier($grade) {
+    // Normalisation complète
     $grade_normalise = strtolower(trim($grade));
-    // Normaliser les accents
+    $grade_normalise = str_replace(['_', '-', '\''], ' ', $grade_normalise); // uniformiser
     $grade_normalise = str_replace(
-        ['é','è','ê','ë','à','â','ä','î','ï','ô','ö','ù','û'],
-        ['e','e','e','e','a','a','a','i','i','o','o','u','u'],
+        ['é','è','ê','ë','à','â','ä','î','ï','ô','ö','ù','û','ü','ç'],
+        ['e','e','e','e','a','a','a','i','i','o','o','u','u','u','c'],
         $grade_normalise
     );
+    $grade_normalise = preg_replace('/\s+/', ' ', $grade_normalise);
 
-    // Liste des grades d'officiers (seulement officiers généraux, supérieurs, subalternes, aspirants)
+    // Liste exhaustive des grades d'officiers
     $grades_officiers = [
         // OFFICIERS GENERAUX
         'general d armee','general d armee aerienne',
@@ -62,7 +64,7 @@ function estOfficier($grade) {
 
         // OFFICIERS SUBALTERNES
         'capitaine','lieutenant','sous lieutenant',
-        'lieutenant de vaisseau','enseigne de vaisseau de 1ere classe','enseigne de vaisseau de 2eme classe',
+        'lieutenant de vaisseau','enseigne de vaisseau de 1e classe','enseigne de vaisseau de 2e classe',
 
         // ASPIRANTS
         'aspirant'
@@ -73,9 +75,11 @@ function estOfficier($grade) {
 
 // Fonction pour obtenir la signature selon le grade
 function getSignature($grade) {
-    return estOfficier($grade) ? 'JOSEPH BETI ASSOMO - Ministre de la Défense'
-                               : 'GOUFAN A RIM - Directeur des Ressources Humaines';
+    return estOfficier($grade)
+        ? 'JOSEPH BETI ASSOMO - Ministre de la Défense'
+        : 'GOUFAN A RIM - Directeur des Ressources Humaines';
 }
+
 
 
 // Fonction pour obtenir l'image du grade
