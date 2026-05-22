@@ -137,7 +137,7 @@ class SecurityEngine {
                 SELECT COUNT(*) as count, ip_adresse 
                 FROM login_attempts 
                 WHERE statut = 'ECHEC' 
-                AND tentative_time > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+                AND tentative_time > NOW() - INTERVAL '1' HOUR
                 GROUP BY ip_adresse
                 HAVING count > 5
             ");
@@ -165,7 +165,7 @@ class SecurityEngine {
                 SELECT COUNT(*) as count, ip_adresse 
                 FROM login_attempts 
                 WHERE statut = 'SUCCES' 
-                AND tentative_time > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+                AND tentative_time > NOW() - INTERVAL '5' MINUTE
                 GROUP BY ip_adresse
                 HAVING count > 10
             ");
@@ -193,8 +193,8 @@ class SecurityEngine {
                 SELECT COUNT(*) as count 
                 FROM login_attempts 
                 WHERE statut = 'SUCCES' 
-                AND HOUR(tentative_time) BETWEEN 2 AND 5
-                AND DATE(tentative_time) = CURDATE()
+                AND EXTRACT(HOUR FROM tentative_time) BETWEEN 2 AND 5
+                AND CAST(tentative_time AS DATE) = CURRENT_DATE
             ");
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -423,7 +423,7 @@ try {
     $stats['sessions_actives'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     
     // Tentatives de connexion échouées aujourd'hui
-    $stmt = $pdo->query("SELECT COUNT(*) as total FROM login_attempts WHERE statut = 'ECHEC' AND DATE(tentative_time) = CURDATE()");
+    $stmt = $pdo->query("SELECT COUNT(*) as total FROM login_attempts WHERE statut = 'ECHEC' AND CAST(tentative_time AS DATE) = CURRENT_DATE");
     $stats['tentatives_echec'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     
     // Demandes d'impression en attente
