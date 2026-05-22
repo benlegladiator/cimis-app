@@ -18,14 +18,28 @@ if (isset($_POST['action']) && $_POST['action'] == 'restore') {
     try {
         $ids = $_POST['ids'] ?? [];
         if (!empty($ids) && is_array($ids)) {
-            $placeholders = str_repeat('?,', count($ids));
-            $placeholders = rtrim($placeholders, ',');
-            
-            // Restaurer les cartes
-            $sql = "UPDATE candidat SET supprimer = 1, supprimer_par = NULL, date_suppression = NULL WHERE id IN ($placeholders) AND supprimer_par = :username";
+            // Construire les placeholders nommés
+            $placeholders = [];
+            foreach ($ids as $index => $id) {
+                $placeholders[] = ":id$index";
+            }
+            $placeholders_str = implode(',', $placeholders);
+
+            // Restaurer les cartes (supprimer = 0 = actif)
+            $sql = "UPDATE candidat 
+                    SET supprimer = 0, supprimer_par = NULL, date_suppression = NULL 
+                    WHERE id IN ($placeholders_str) AND supprimer_par = :username";
+
             $stmt = $pdo->prepare($sql);
-            $stmt->execute(array_merge($ids, ['username' => $username]));
-            
+
+            // Binder les IDs
+            foreach ($ids as $index => $id) {
+                $stmt->bindValue(":id$index", $id, PDO::PARAM_INT);
+            }
+            $stmt->bindValue(":username", $username, PDO::PARAM_STR);
+
+            $stmt->execute();
+
             $_SESSION['success'] = count($ids) . " carte(s) restaurée(s) avec succès / " . count($ids) . " card(s) restored successfully";
         } else {
             $_SESSION['error'] = "Aucune carte sélectionnée pour la restauration / No card selected for restoration";
@@ -42,7 +56,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'restore') {
 try {
     $sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, date_suppression 
             FROM candidat 
-            WHERE supprimer = 0 AND supprimer_par = :username 
+            WHERE supprimer = 1 AND supprimer_par = :username 
             ORDER BY date_suppression DESC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['username' => $username]);
