@@ -76,7 +76,7 @@ function estOfficier($grade) {
 // Fonction pour obtenir la signature selon le grade
 function getSignature($grade) {
     return estOfficier($grade)
-        ? 'JOSEPH BETI ASSOMO - Ministre de la Défense'
+        ? 'JOSEPH BETI ASSOMO'
         : 'GOUFAN A RIM - Directeur des Ressources Humaines';
 }
 
