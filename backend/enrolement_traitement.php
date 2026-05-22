@@ -77,23 +77,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $imc = $poids / pow($taille/100, 2);
         if ($imc < 16 || $imc > 35) throw new Exception("IMC hors normes.");
 
-        // 4. Date de dernière promotion
+        // 4. Date de dernière promotion (flexible)
         $unite = $_POST['unite'] ?? '';
-        $annee_galon = $_POST['annee_dernier_galon'] ?? '';
+        $date_promo_input = $_POST['annee_dernier_galon'] ?? '';
         $date_actuelle = date('Y-m-d');
+        
         if ($unite !== 'CIVIL') {
-            if (empty($annee_galon)) {
-                throw new Exception("L'année du dernier galon est requise.");
+            if (empty($date_promo_input)) {
+                throw new Exception("La date ou l'année du dernier galon est requise.");
             }
-            $dateObj = DateTime::createFromFormat('Y', $annee_galon);
-            if (!$dateObj) throw new Exception("Format d'année invalide.");
-            $date_dernier_grade = $dateObj->format('Y') . "-01-01";
+        
+            // Essayer plusieurs formats : AAAA, JJ/MM/AAAA, YYYY-MM-DD
+            $dateObj = DateTime::createFromFormat('Y', $date_promo_input);
+            if (!$dateObj) {
+                $dateObj = DateTime::createFromFormat('d/m/Y', $date_promo_input);
+            }
+            if (!$dateObj) {
+                $dateObj = DateTime::createFromFormat('Y-m-d', $date_promo_input);
+            }
+        
+            if (!$dateObj) {
+                throw new Exception("Format de date de promotion invalide. Utilisez AAAA, JJ/MM/AAAA ou YYYY-MM-DD.");
+            }
+        
+            $date_dernier_grade = $dateObj->format('Y-m-d'); // format PostgreSQL
+        
             if ($date_dernier_grade > $date_actuelle) {
                 throw new Exception("La date du dernier grade doit être antérieure à aujourd'hui.");
             }
         } else {
             $date_dernier_grade = null;
         }
+
 
         // 5. Validation matricule militaire
         if ($unite !== 'CIVIL' && empty($matricule_militaire)) {
