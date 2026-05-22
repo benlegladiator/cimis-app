@@ -73,14 +73,6 @@ function estOfficier($grade) {
     return in_array($grade_normalise, $grades_officiers);
 }
 
-// Fonction pour obtenir la signature selon le grade
-function getSignature($grade) {
-    return estOfficier($grade)
-        ? 'JOSEPH BETI ASSOMO'
-        : 'GOUFAN A RIM - Directeur des Ressources Humaines';
-}
-
-
 
 // Fonction pour obtenir l'image du grade
 function getGradeImage($grade) {
@@ -626,7 +618,6 @@ function renderRecto($candidat, $config, $unite, $fond_image, $logo_unit) {
     </div>
     <?php return ob_get_clean();
 }
-
 function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
     ob_start(); ?>
     <div class="card-subsection">
@@ -637,6 +628,7 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
             <div class="guilloche-pattern"></div>
             
             <div class="card-verso-content">
+                <!-- Header verso -->
                 <div class="card-verso-header">
                     <div class="verso-title-english">
                         <?php if ($candidat['unite'] === 'CIVIL'): ?>
@@ -649,6 +641,7 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
                 
                 <div class="verso-green-separator"></div>
                 
+                <!-- Body -->
                 <div class="card-verso-body">
                     <div class="verso-content-horizontal">
                         <!-- Labels -->
@@ -698,9 +691,9 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
                             <div class="signature-text signature-yellow" style="font-family:'Brush Script MT',cursive;font-size:10px;font-style:italic;color:#FFD700;">
                                 <?php 
                                     if (estOfficier($candidat['grade'])) {
-                                        echo 'J. B. ASSOMO';
+                                        echo 'J. Beti Assomo';
                                     } else {
-                                        echo 'G. A. RIM';
+                                        echo 'G. A. Rim';
                                     }
                                 ?>
                             </div>
@@ -735,6 +728,7 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
     </div>
     <?php return ob_get_clean();
 }
+
 
 function renderCarte($candidat) {
     $config_unites = include __DIR__ . '/config_unites.php';
