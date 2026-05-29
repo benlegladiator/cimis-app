@@ -25,9 +25,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'restore') {
             }
             $placeholders_str = implode(',', $placeholders);
 
-            // Restaurer les cartes (supprimer = 0 = actif)
+            // Restaurer les cartes (supprimer = 1 = actif)
             $sql = "UPDATE candidat 
-                    SET supprimer = 0, supprimer_par = NULL, date_suppression = NULL 
+                    SET supprimer = 1, supprimer_par = NULL, date_suppression = NULL 
                     WHERE id IN ($placeholders_str) AND supprimer_par = :username";
 
             $stmt = $pdo->prepare($sql);
@@ -57,7 +57,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'restore') {
 try {
     $sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, date_suppression 
             FROM candidat 
-            WHERE supprimer = 1 AND supprimer_par = :username 
+            WHERE supprimer = 0 AND supprimer_par = :username 
             ORDER BY date_suppression DESC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['username' => $username]);
@@ -67,6 +67,7 @@ try {
     $_SESSION['error'] = "Erreur lors du chargement de la corbeille / Error loading trash: " . $e->getMessage();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
