@@ -679,7 +679,7 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
                         <div class="verso-qr">
                             <div class="qr-secure">
                                 <img src="<?php echo $candidat['code_qr']; ?>" class="qr-code-image" alt="QR Code">
-                                <div class="qr-badge">🔒</div>
+                                
                             </div>
                             <span class="qr-text">QR Code</span>
                         </div>
