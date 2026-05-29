@@ -40,7 +40,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'restore') {
 
             $stmt->execute();
 
-            $_SESSION['success'] = count($ids) . " carte(s) restaurée(s) avec succès / " . count($ids) . " card(s) restored successfully";
+            $restoredCount = $stmt->rowCount();
+            $_SESSION['success'] = "$restoredCount carte(s) restaurée(s) avec succès / $restoredCount card(s) restored successfully";
         } else {
             $_SESSION['error'] = "Aucune carte sélectionnée pour la restauration / No card selected for restoration";
         }
@@ -66,7 +67,6 @@ try {
     $_SESSION['error'] = "Erreur lors du chargement de la corbeille / Error loading trash: " . $e->getMessage();
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="fr">
