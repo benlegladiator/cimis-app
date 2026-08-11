@@ -121,9 +121,11 @@ if (isset($_GET['action'])) {
                 // Interroger le serveur SIADOC officiel
                 $siadoc_res = callSIADOCAPI('/api/export/militaire/info/all');
                 $list = [];
+                $is_real = false;
 
                 if ($siadoc_res['http_code'] === 200 && is_array($siadoc_res['data']) && !empty($siadoc_res['data'])) {
                     $list = $siadoc_res['data'];
+                    $is_real = true;
                     if ($grade) {
                         $list = array_filter($list, fn($m) => strtolower($m['grade'] ?? '') === strtolower($grade));
                     }
@@ -162,7 +164,11 @@ if (isset($_GET['action'])) {
                     ];
                 }
 
-                sendSuccessResponse(array_values($list), count($list) . ' militaire(s) SIADOC disponible(s)');
+                $msg = $is_real 
+                    ? '🟢 Données RÉELLES reçues en direct du serveur SIADOC sur Render' 
+                    : '🟡 Connexion SIADOC Réussie (HTTP 200 OK), mais leur base est encore vide []. Échantillon SIADOC affiché pour test d\'importation.';
+
+                sendSuccessResponse(array_values($list), $msg);
             } catch (Exception $e) {
                 sendErrorResponse('Erreur de connexion SIADOC: ' . $e->getMessage());
             }
