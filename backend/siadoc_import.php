@@ -180,8 +180,9 @@ function generateCIMISMatricule(): string {
     $prefix = 'CIM-';
     $year   = date('Y');
 
-    // Verrouillage pour Ã©viter les conditions de course en cas d'imports simultanÃ©s
-    $pdo->exec("SELECT GET_LOCK('cimis_matricule_lock', 5)");
+    try {
+        $pdo->query("SELECT GET_LOCK('cimis_matricule_lock', 5)")->closeCursor();
+    } catch (Exception $e) {}
 
     try {
         $stmt = $pdo->prepare("
@@ -191,9 +192,12 @@ function generateCIMISMatricule(): string {
         ");
         $stmt->execute([$prefix . $year . '%']);
         $row      = $stmt->fetch();
-        $sequence = str_pad((int)$row['next_seq'], 4, '0', STR_PAD_LEFT);
+        $stmt->closeCursor();
+        $sequence = str_pad((int)($row['next_seq'] ?? 1), 4, '0', STR_PAD_LEFT);
     } finally {
-        $pdo->exec("SELECT RELEASE_LOCK('cimis_matricule_lock')");
+        try {
+            $pdo->query("SELECT RELEASE_LOCK('cimis_matricule_lock')")->closeCursor();
+        } catch (Exception $e) {}
     }
 
     return $prefix . $year . $sequence;
