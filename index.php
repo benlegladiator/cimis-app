@@ -341,21 +341,7 @@ if ($_SESSION['failed_attempts'] === 2 && $_SESSION['countdown_start'] > 0) {
             z-index: 3;
         }
         
-        .logo-container {
-            position: relative;
-        }
-        
-        .logo-container.left {
-            position: absolute;
-            left: 10%;
-            top: 20px;
-        }
-        
-        .logo-container.right {
-            position: absolute;
-            left: 90%;
-            top: 20px;
-        }
+        /* Logos positionnés en haut aux bords de la page */
         
         .logo-img {
             width: 240px;
@@ -430,28 +416,34 @@ if ($_SESSION['failed_attempts'] === 2 && $_SESSION['countdown_start'] > 0) {
         
         .logo-container {
             position: fixed;
-            z-index: 1;
+            z-index: 10;
+            pointer-events: auto;
         }
         
         .logo-container.left {
-            left: 5%;
-            top: 10%;
+            left: 25px;
+            top: 20px;
         }
         
         .logo-container.right {
-            left: 80%;
-            top: 10%;
+            right: 25px;
+            left: auto;
+            top: 20px;
         }
         
         .side-logo {
-            width: 270px;  /* 360px * 0.75 = 270px (réduction de 25%) */
+            width: 140px;
+            max-width: 12vw;
             height: auto;
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
+            opacity: 0.85;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 0 20px rgba(74, 222, 128, 0.3));
         }
         
         .side-logo:hover {
             opacity: 1;
+            transform: scale(1.08);
+            filter: drop-shadow(0 0 35px rgba(74, 222, 128, 0.6));
         }
         
         .form-container {
@@ -727,7 +719,17 @@ if ($_SESSION['failed_attempts'] === 2 && $_SESSION['countdown_start'] > 0) {
             }
         }
         
+        @media (max-width: 1024px) {
+            .logo-container.left { left: 15px; top: 15px; }
+            .logo-container.right { right: 15px; top: 15px; }
+            .side-logo { width: 105px; max-width: 14vw; }
+        }
+        
         @media (max-width: 768px) {
+            .logo-container.left { left: 10px; top: 10px; }
+            .logo-container.right { right: 10px; top: 10px; }
+            .side-logo { width: 75px; max-width: 18vw; opacity: 0.7; }
+            
             .header-container {
                 flex-direction: column;
                 gap: 2rem;
@@ -781,6 +783,10 @@ if ($_SESSION['failed_attempts'] === 2 && $_SESSION['countdown_start'] > 0) {
         }
         
         @media (max-width: 480px) {
+            .logo-container.left { left: 8px; top: 8px; }
+            .logo-container.right { right: 8px; top: 8px; }
+            .side-logo { width: 55px; opacity: 0.6; }
+            
             .header-container {
                 gap: 1.5rem;
                 margin-bottom: 2rem;
