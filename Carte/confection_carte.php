@@ -75,6 +75,7 @@ function estOfficier($grade) {
         // GÉNÉRAUX avec apostrophes
         'general d\'armee aerienne',
         'general de corps aerien',
+        'general de corps aerienne',
         'general de division aerienne',
         'general de brigade aerienne',
         'amiral d\'escadre',
@@ -153,8 +154,9 @@ function getGradeImage($grade) {
         // Variantes avec apostrophes (depuis enrolement.js)
         'general de corps d\'armee' => 'img/galons/generale_corps.png',
         'general de corps d\'armee aerienne' => 'img/galons/generale_corps.png',
-        'general de corps d\'armee aérienne' => 'img/galons/generale_corps.png',
         'general de corps aérien' => 'img/galons/generale_corps.png',
+        'general de corps aérienne' => 'img/galons/generale_corps.png',
+        'general de corps aerienne' => 'img/galons/generale_corps.png',
         'general de division aérienne' => 'img/galons/generale_division.png',
         'general de brigade aérienne' => 'img/galons/generale_brigade.png',
         'amiral d\'escadre' => 'img/galons/generale_corps.png',
@@ -433,7 +435,8 @@ function formatGradeDisplay($grade) {
         
         // ARMÉE DE L'AIR
         'GÉNÉRAL D ARMÉE AÉRIENNE' => 'GENERAL D ARMEE AERIENNE',
-        'GÉNÉRAL DE CORPS AÉRIEN' => 'GENERAL DE CORPS AERIEN',
+        'GÉNÉRAL DE CORPS AÉRIEN' => 'GENERAL DE CORPS AERIENNE',
+        'GÉNÉRAL DE CORPS AÉRIENNE' => 'GENERAL DE CORPS AERIENNE',
         'GÉNÉRAL DE DIVISION AÉRIENNE' => 'GENERAL DE DIVISION AERIENNE',
         'GÉNÉRAL DE BRIGADE AÉRIENNE' => 'GENERAL DE BRIGADE AERIENNE',
         'COLONEL (COL)' => 'COLONEL',

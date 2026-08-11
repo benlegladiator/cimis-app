@@ -700,7 +700,7 @@ $form_data = $form_data ?? $candidat;
             'ARMÉE DE L\'AIR': [
                 // OFFICIERS GENERAUX (4)
                 'Général d\'Armée Aérienne',
-                'Général de Corps Aérien',
+                'Général de Corps Aérienne',
                 'Général de Division Aérienne',
                 'Général de Brigade Aérienne',
                 
