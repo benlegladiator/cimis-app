@@ -411,9 +411,7 @@ switch ($action) {
             $page  = max(1, (int)($_GET['page'] ?? 1));
             $limit = min(500, max(1, (int)($_GET['limit'] ?? 100)));
             $offset = ($page - 1) * $limit;
-            $sql  .= " LIMIT ? OFFSET ?";
-            $params[] = $limit;
-            $params[] = $offset;
+            $sql  .= " LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
 
             $stmt  = $pdo->prepare($sql);
             $stmt->execute($params);
