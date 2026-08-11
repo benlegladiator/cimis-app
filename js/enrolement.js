@@ -811,8 +811,8 @@ const gradesParUnite = {
     ],
     'ARMÉE DE L\'AIR': [
         // OFFICIERS GENERAUX (4)
-        'Général d\'Armée Aérienne',
-        'Général de Corps Aérienne',
+        'Général d\'Armée',
+        'Général de Corps d\'Armée',
         'Général de Division Aérienne',
         'Général de Brigade Aérienne',
         

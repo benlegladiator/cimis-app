@@ -201,19 +201,21 @@ function getGradeImage($grade) {
         'quartier maitre de 2eme classe' => 'img/galons/caporal.png',
         'quartier maitre de 2e classe' => 'img/galons/caporal.png',
         
+        // MILITAIRES DU RANG AVEC GALON 1ER CLASSE
+        'soldat de 1ere classe' => 'img/galons/soldat_1er_classe.png',
+        'soldat de 1e classe' => 'img/galons/soldat_1er_classe.png',
+        'soldat de 1er classe' => 'img/galons/soldat_1er_classe.png',
+        'matelot de 1ere classe' => 'img/galons/soldat_1er_classe.png',
+        'matelot de 1e classe' => 'img/galons/soldat_1er_classe.png',
+        'matelot de 1er classe' => 'img/galons/soldat_1er_classe.png',
+        'aviateur de 1ere classe' => 'img/galons/soldat_1er_classe.png',
+        'aviateur de 1e classe' => 'img/galons/soldat_1er_classe.png',
+        
         // MILITAIRES DU RANG SANS GALON IMAGE
-        'soldat de 1ere classe' => '',
-        'soldat de 1e classe' => '',
-        'soldat de 1er classe' => '',
         'soldat de 2eme classe' => '',
         'soldat de 2e classe' => '',
-        'matelot de 1ere classe' => '',
-        'matelot de 1e classe' => '',
-        'matelot de 1er classe' => '',
         'matelot de 2eme classe' => '',
         'matelot de 2e classe' => '',
-        'aviateur de 1ere classe' => '',
-        'aviateur de 1e classe' => '',
         'aviateur de 2eme classe' => '',
         'aviateur de 2e classe' => '',
         'eleve gendarme' => '',
@@ -283,13 +285,12 @@ function getGradeImage($grade) {
         'gendarme' => 'img/galons/gendarme.png',
         'quartier maitre de 2eme classe' => 'img/galons/caporal.png',
         
-        'soldat de 1ere classe' => '',
-        'soldat de 1e classe' => '',
-        'matelot de 1ere classe' => '',
-        'matelot de 1e classe' => '',
-        'aviateur de 1ere classe' => '',
-        'aviateur de 1e classe' => '',
-        'gendarme de 1ere classe' => '',
+        'soldat de 1ere classe' => 'img/galons/soldat_1er_classe.png',
+        'soldat de 1e classe' => 'img/galons/soldat_1er_classe.png',
+        'matelot de 1ere classe' => 'img/galons/soldat_1er_classe.png',
+        'matelot de 1e classe' => 'img/galons/soldat_1er_classe.png',
+        'aviateur de 1ere classe' => 'img/galons/soldat_1er_classe.png',
+        'aviateur de 1e classe' => 'img/galons/soldat_1er_classe.png',
         
         // SANS GALON (soldat, aviateur, matelot, gendarme de 2eme classe)
         'soldat de 2eme classe' => '',
@@ -327,17 +328,17 @@ function getGradeImage($grade) {
     ];
     
     // Normalisation améliorée pour gérer les accents et caractères spéciaux
-    $grade_normalise = strtolower(trim($grade));
+    $grade_normalise = mb_strtolower(trim($grade), 'UTF-8');
     $grade_normalise = str_replace('_', ' ', $grade_normalise); // Remplacer underscores par espaces
     $grade_normalise = str_replace('-', ' ', $grade_normalise); // Remplacer tirets par espaces
     
     // Gestion des accents (conversion vers ASCII)
-    $grade_normalise = str_replace(['é', 'è', 'ê', 'ë'], ['e', 'e', 'e', 'e'], $grade_normalise);
-    $grade_normalise = str_replace(['à', 'â', 'ä'], ['a', 'a', 'a'], $grade_normalise);
-    $grade_normalise = str_replace(['î', 'ï'], ['i', 'i'], $grade_normalise);
-    $grade_normalise = str_replace(['ô', 'ö'], ['o', 'o'], $grade_normalise);
-    $grade_normalise = str_replace(['ù', 'û', 'ü'], ['u', 'u'], $grade_normalise);
-    $grade_normalise = str_replace(['ç'], ['c'], $grade_normalise);
+    $grade_normalise = str_replace(['é', 'è', 'ê', 'ë', 'É', 'È', 'Ê', 'Ë'], ['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'], $grade_normalise);
+    $grade_normalise = str_replace(['à', 'â', 'ä', 'À', 'Â', 'Ä'], ['a', 'a', 'a', 'a', 'a', 'a'], $grade_normalise);
+    $grade_normalise = str_replace(['î', 'ï', 'Î', 'Ï'], ['i', 'i', 'i', 'i'], $grade_normalise);
+    $grade_normalise = str_replace(['ô', 'ö', 'Ô', 'Ö'], ['o', 'o', 'o', 'o'], $grade_normalise);
+    $grade_normalise = str_replace(['ù', 'û', 'ü', 'Ù', 'Û', 'Ü'], ['u', 'u', 'u', 'u', 'u', 'u'], $grade_normalise);
+    $grade_normalise = str_replace(['ç', 'Ç'], ['c', 'c'], $grade_normalise);
     
     // Nettoyage des espaces multiples
     $grade_normalise = preg_replace('/\s+/', ' ', $grade_normalise);
