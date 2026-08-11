@@ -347,13 +347,14 @@ function importerMilitaire(array $raw_data): array {
         return ['success' => false, 'message' => 'Matricule militaire manquant ou vide', 'matricule' => 'N/A'];
     }
 
-    // 2. VÃ©rifier les doublons
+    // 2. Vérifier les doublons
     $stmt = $pdo->prepare("SELECT id, matricule FROM candidat WHERE matricule_militaire = ?");
     $stmt->execute([$data['matricule_militaire']]);
     $existing = $stmt->fetch();
+    $stmt->closeCursor();
 
     if ($existing) {
-        // Mise Ã  jour si le militaire existe dÃ©jÃ 
+        // Mise à jour si le militaire existe déjà
         try {
             $pdo->prepare("
                 UPDATE candidat SET
@@ -372,21 +373,21 @@ function importerMilitaire(array $raw_data): array {
                 $data['matricule_militaire']
             ]);
 
-            logSyncDetail($existing['id'], $data['matricule_militaire'], 'UPDATE', 'SUCCESS', 'Mis Ã  jour depuis SIADOC');
+            logSyncDetail($existing['id'], $data['matricule_militaire'], 'UPDATE', 'SUCCESS', 'Mis à jour depuis SIADOC');
             return [
                 'success'             => true,
                 'action'              => 'MISE_A_JOUR',
-                'message'             => 'Militaire mis Ã  jour avec succÃ¨s',
+                'message'             => 'Militaire mis à jour avec succès',
                 'matricule_militaire' => $data['matricule_militaire'],
                 'matricule_cimis'     => $existing['matricule'],
                 'candidat_id'         => $existing['id']
             ];
         } catch (Exception $e) {
-            return ['success' => false, 'message' => 'Erreur mise Ã  jour: ' . $e->getMessage(), 'matricule' => $data['matricule_militaire']];
+            return ['success' => false, 'message' => 'Erreur mise à jour: ' . $e->getMessage(), 'matricule' => $data['matricule_militaire']];
         }
     }
 
-    // 3. Nouveau militaire â€” gÃ©nÃ©rer matricule CIMIS et QR code
+    // 3. Nouveau militaire — générer matricule CIMIS et QR code
     try {
         $matricule_cimis = generateCIMISMatricule();
         $qr_data         = generateQRCode($data['matricule_militaire'], $matricule_cimis);
@@ -396,7 +397,7 @@ function importerMilitaire(array $raw_data): array {
                 matricule, matricule_militaire, nom, prenom,
                 date_naissance, lieu_naissance, sexe, numero_cni,
                 grade, unite, date_enrolement, date_dernier_grade,
-                annee_dernier_galon, statut_militaire, type_personnel,
+                annee_dernier_galon, statut_militaire,
                 taille, poids, groupe_sanguin,
                 code_qr, source_system,
                 supprimer, suspendus,
@@ -406,7 +407,7 @@ function importerMilitaire(array $raw_data): array {
                 ?, ?, ?, ?,
                 ?, ?, ?, ?,
                 ?, ?, ?, ?,
-                ?, ?, ?,
+                ?, ?,
                 ?, ?, ?,
                 ?, 'SIADOC',
                 1, 0,
@@ -428,7 +429,6 @@ function importerMilitaire(array $raw_data): array {
             $data['date_dernier_grade'],
             $data['annee_dernier_galon'],
             $data['statut_militaire'],
-            $data['type_personnel'],
             $data['taille'],
             $data['poids'],
             $data['groupe_sanguin'],
