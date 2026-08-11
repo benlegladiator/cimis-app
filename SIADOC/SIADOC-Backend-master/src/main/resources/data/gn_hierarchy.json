@@ -1,0 +1,983 @@
+{
+  "1ère Région de Gendarmerie": {
+    "EM": {},
+    "GCR1": {
+      "EM": [
+        "EM"
+      ],
+      "PRM ABONG-MBANG": [
+        "PRM ABONG-MBANG"
+      ],
+      "PRM AMBAM": [
+        "PRM AMBAM"
+      ],
+      "PRM BAFIA": [
+        "PRM BAFIA"
+      ],
+      "PRM BERTOUA": [
+        "PRM BERTOUA"
+      ],
+      "PRM BOUMNYEBEL": [
+        "PRM BOUMNYEBEL"
+      ],
+      "PRM EBOLOWA": [
+        "PRM EBOLOWA"
+      ],
+      "PRM KRIBI": [
+        "PRM KRIBI"
+      ],
+      "PRM NANGA EBOKO": [
+        "PRM NANGA EBOKO"
+      ],
+      "PRM SANGMELIMA": [
+        "PRM SANGMELIMA"
+      ],
+      "PRM YAOUNDE": [
+        "PRM YAOUNDE"
+      ]
+    },
+    "LC": {
+      "EM": [
+        "EM"
+      ],
+      "GGT YAOUNDE": [
+        "EM",
+        "CIE YAOUNDE1",
+        "CIE YAOUNDE2",
+        "CIE YAOUNDE3"
+      ],
+      "CIE AEROPORT YAOUNDE": [
+        "EM",
+        "BDE AEROPORT 1",
+        "BDE AEROPORT 2",
+        "BDE AEROPORT VILLE",
+        "BDE PISTES"
+      ],
+      "CIE AKONOLINGA": [
+        "EM",
+        "BDE AYOS",
+        "BDE ENDOM",
+        "BDE KOBDOMBO",
+        "BDE MENGANG",
+        "BDE TER",
+        "PTE EDJOM",
+        "PTE EMVAN-ESSO",
+        "PTE MEKONG SSO",
+        "PTE MENGUEME-SI"
+      ],
+      "CIE BAFIA": [
+        "EM",
+        "BDE BOKITO",
+        "BDE DEUK",
+        "BDE KIIKI",
+        "BDE KON YAMBETTA",
+        "BDE MAKENENE",
+        "BDE NDIKINIMEKI",
+        "BDE NITOUKOU",
+        "BDE OMBESSA",
+        "BDE TER",
+        "PTE BALAMBA",
+        "PTE BOURAKA",
+        "PTE MOUKO",
+        "PTE YANGBEN"
+      ],
+      "CIE ESEKA": [
+        "EM",
+        "BDE BIYOUHA",
+        "BDE BONDJOCK",
+        "BDE BOT-MAKAK",
+        "BDE DIBANG",
+        "BDE MAKAK",
+        "BDE MATOMB",
+        "BDE MESSONDO",
+        "BDE NGOG MAPOUBI",
+        "BDE NGUIBASSAL",
+        "BDE TER",
+        "PTE BADJOB",
+        "PTE MANGUEN2",
+        "PTE MOM GARE",
+        "PTE SONGMBONG"
+      ],
+      "CIE MBALMAYO": [
+        "EM",
+        "BDE AKOEMAN",
+        "BDE DZENG",
+        "BDE MENGUEME",
+        "BDE NGOMEDZAP",
+        "BDE NKOLMETET",
+        "BDE TER",
+        "PTE AKONGO",
+        "PTE ASSIE",
+        "PTE KOUMASSI",
+        "PTE NKOLNYAMA"
+      ],
+      "CIE MFOU": [
+        "EM",
+        "BDE AFANLOUM",
+        "BDE AWAE",
+        "BDE EDZANDOUAN",
+        "BDE ESSE",
+        "BDE NKOLAFAMBA",
+        "BDE OLANGUINA",
+        "BDE SOA",
+        "BDE TER",
+        "PTE ELAT",
+        "PTE NKOABANG",
+        "PTE NKOLNDA"
+      ],
+      "CIE MONATELE": [
+        "EM",
+        "BDE BATCHENGA",
+        "BDE EBEBDA",
+        "BDE ELIG-MFOMO",
+        "BDE EVODOULA",
+        "BDE LOBO",
+        "BDE OBALA",
+        "BDE OKOLA",
+        "BDE SA'A",
+        "BDE TER",
+        "PTE EKABITA",
+        "PTE NGOKSA",
+        "PTE NKOLVE"
+      ],
+      "CIE NANGA EBOKO": [
+        "EM",
+        "BDE BIBEY",
+        "BDE LEMBE YEZOUM",
+        "BDE MBANDJOCK",
+        "BDE MINTA",
+        "BDE NKOTENG",
+        "BDE NSEM",
+        "BDE TER",
+        "PTE WALL"
+      ],
+      "CIE NGOUMOU": [
+        "EM",
+        "BDE AKONO",
+        "BDE BIKOK",
+        "BDE MBANKOMO",
+        "BDE TER",
+        "PTE EVINDISSI"
+      ],
+      "CIE NTUI": [
+        "EM",
+        "BDE MBANGASSINA",
+        "BDE NGAMBE TIKAR",
+        "BDE NGORO",
+        "BDE TER",
+        "BDE YOKO",
+        "PTE ISSANDJA",
+        "PTE LINTE"
+      ],
+      "GE N°1": [
+        "EM",
+        "ESC 10",
+        "ESC 11",
+        "ESC 12",
+        "ESC 13",
+        "ESC 14",
+        "ESC 15",
+        "ESC 16"
+      ]
+    },
+    "LE": {
+      "EM": [],
+      "CIE BERTOUA": [
+        "EM",
+        "BDE BELABO",
+        "BDE BETARE-OYA",
+        "BDE DIANG",
+        "BDE GAROUA-BOULAI",
+        "BDE MANDJOU",
+        "BDE NGOURA",
+        "BDE NKOLBIKON",
+        "BDE TER",
+        "PTE BOULI",
+        "PTE DIMON",
+        "PTE LOM PANGAR",
+        "PTE MBITOM",
+        "PTE MOMBAL"
+      ],
+      "CIE ABONG-MBANG": [
+        "EM",
+        "BDE ANGOSSAS",
+        "BDE ATOK",
+        "BDE AZOUMEKOUT",
+        "BDE DIMAKO",
+        "BDE DOUMAINTANG",
+        "BDE DOUME",
+        "BDE LOMIE",
+        "BDE MBOMA",
+        "BDE MESSAMENA",
+        "BDE MESSOCK",
+        "BDE MINDOUROU",
+        "BDE NGUELEMENDOUKA",
+        "BDE SOMALOMO",
+        "BDE TER",
+        "PTE BAGOFIT",
+        "PTE DIMPAM",
+        "PTE ESSENG",
+        "PTE MBALLAM",
+        "PTE NGOYLA",
+        "PTE ZOULABOT"
+      ],
+      "CIE BATOURI": [
+        "EM",
+        "BDE KENTZOU",
+        "BDE KETTE",
+        "BDE MBANG",
+        "BDE NDELELE",
+        "BDE NGUELEBOK",
+        "BDE OULI",
+        "BDE TER",
+        "PTE ATSIECK",
+        "PTE BOLILOSSOU",
+        "PTE BOUBARA",
+        "PTE MINDOUROU",
+        "PTE TOCKTOYO"
+      ],
+      "CIE YOKADOUMA": [
+        "EM",
+        "BDE GARI-GOMBO",
+        "BDE MOLOUNDOU",
+        "BDE SALAPOUMBE",
+        "BDE TER",
+        "PTE KIKA",
+        "PTE LAMENDOUM",
+        "PTE LIBONGO",
+        "PTE MBOY2",
+        "PTE MOBILONG",
+        "PTE NGATTO",
+        "PTE SOCAMBO"
+      ],
+      "GE N°4": [
+        "EM",
+        "ESC 40",
+        "ESC 41",
+        "ESC 42",
+        "ESC 43",
+        "ESC 44"
+      ]
+    },
+    "LS": {
+      "EM": [
+        "EM"
+      ],
+      "CIE EBOLOWA": [
+        "EM",
+        "BDE ANGALE",
+        "BDE BIWONG-BANE",
+        "BDE BIWONG-BULU",
+        "BDE EBOLOWA SI",
+        "BDE EFOULAN EBWA",
+        "BDE MENGONG",
+        "BDE MVANGAN",
+        "BDE NGOULEMAKONG",
+        "PTE NGOAZIP",
+        "PTE NGOULESSAMAN",
+        "PTE NKOLANDOM",
+        "PTE NYANGONG"
+      ],
+      "CIE AMBAM": [
+        "EM",
+        "BDE KYE-OSSI",
+        "BDE MA'AN",
+        "BDE OLAMZE",
+        "BDE TER",
+        "PTE ABANG MINKO'O",
+        "PTE BILE BIBA",
+        "PTE EBENGON",
+        "PTE MEYO CENTRE",
+        "PTE NYABESSANG"
+      ],
+      "CIE KRIBI": [
+        "EM",
+        "BDE AKOM 2",
+        "BDE BIPINDI",
+        "BDE CAMPO",
+        "BDE DOMBE",
+        "BDE FIFINDA",
+        "BDE LOLODORF",
+        "BDE MASSAKA",
+        "BDE MVENGUE",
+        "BDE NYETE",
+        "PTE AFAN OVENG",
+        "PTE ATOG BOGA"
+      ],
+      "CIE PORT KRIBI": [
+        "EM",
+        "BDE MARITIME KRIBI",
+        "BDE PORT NORD KRIBI",
+        "BDE PORT SUD KRIBI"
+      ],
+      "CIE SANGMELIMA": [
+        "EM",
+        "BDE BENGBIS",
+        "BDE DJOUM",
+        "BDE MEYOMESSI",
+        "BDE MINTOM",
+        "BDE MVOMEKA'A",
+        "BDE OVENG",
+        "BDE TER",
+        "BDE ZOETELE",
+        "PTE ABOULOU",
+        "PTE AVEBE",
+        "PTE BIBA YEMFECK",
+        "PTE EBAMINA",
+        "PTE MEKIN",
+        "PTE MEYOMADJOM",
+        "PTE NKILZOCK",
+        "PTE NKOLOTOU'OUTOU",
+        "PTE NKOUMADJAP"
+      ],
+      "GE N°7": [
+        "EM",
+        "ESC 70",
+        "ESC 71",
+        "ESC 72",
+        "ESC 73",
+        "ESC 74",
+        "ESC 75"
+      ]
+    }
+  },
+  "2ème Région de Gendarmerie": {
+    "EM": {
+      "EM": [
+        "EM"
+      ]
+    },
+    "GCR2": {
+      "EM": [
+        "EM"
+      ],
+      "PRM BONABERI": [
+        "PRM BONABERI"
+      ],
+      "PRM BUEA": [
+        "PRM BUEA"
+      ],
+      "PRM DOUALA": [
+        "PRM DOUALA"
+      ],
+      "PRM EDEA": [
+        "PRM EDEA"
+      ],
+      "PRM MAMFE": [
+        "PRM MAMFE"
+      ],
+      "PRM NKNGSBA": [
+        "PRM NKNGSBA"
+      ]
+    },
+    "LL": {
+      "EM": [
+        "EM"
+      ],
+      "GGT DOUALA": [
+        "EM",
+        "CIE DOUALA 1",
+        "CIE DOUALA 2",
+        "CIE BONABERI"
+      ],
+      "GGT NKNGSBA": [
+        "EM",
+        "CIE NKNGSBA",
+        "CIE MBANGA"
+      ],
+      "CIE AEROPORT DOUALA": [
+        "EM",
+        "BDE AEROPORT 1",
+        "BDE AEROPORT 2",
+        "BDE PISTES"
+      ],
+      "CIE EDEA": [
+        "EM",
+        "BDE DIZANGUE",
+        "BDE EKITE",
+        "BDE LOGBADJECK",
+        "BDE MAKONDO",
+        "BDE MASSOCK",
+        "BDE MBONGO",
+        "BDE MOUANKO",
+        "BDE NDOM",
+        "BDE NGAMBE",
+        "BDE NYANON",
+        "BDE POUMA",
+        "BDE SONG MBENGUE",
+        "BDE TER",
+        "PTE NDOG BABEM NDEBI",
+        "PTE OKOTH",
+        "PTE SONG LOULOU",
+        "PTE SONGMBOG",
+        "PTE TOUWE"
+      ],
+      "CIE PORT DLA": [
+        "EM",
+        "BDE MANOKA",
+        "BDE MARITIME DLA",
+        "BDE PORT NORD DLA",
+        "BDE PORT SUD DLA"
+      ],
+      "CIE YABASSI": [
+        "EM",
+        "BDE BONEPOUPA",
+        "BDE NDOBIAN",
+        "BDE NKONDJOCK",
+        "BDE SOLE",
+        "BDE TER",
+        "BDE YINGUI"
+      ],
+      "GE N°2": [
+        "EM",
+        "ESC 20",
+        "ESC 21",
+        "ESC 22",
+        "ESC 23",
+        "ESC 24"
+      ]
+    },
+    "LSW": {
+      "EM": [
+        "EM"
+      ],
+      "CIE LIMBE": [
+        "EM",
+        "BDE BIMBIA",
+        "BDE BUEA",
+        "BDE IDENAU",
+        "BDE MUKUNDANGE",
+        "BDE MUYUKA",
+        "BDE POH",
+        "BDE SONARA",
+        "BDE TIKO",
+        "PTE BOJONGO",
+        "PTE MUTENGENE"
+      ],
+      "CIE BANGEM": [
+        "EM",
+        "BDE NGUTI",
+        "BDE TER",
+        "BDE TOMBEL",
+        "PTE NJOUNGO"
+      ],
+      "CIE ISANGUELE": [
+        "EM",
+        "BDE AKWA-BAKASSI",
+        "BDE IDABATO",
+        "BDE KOMBO ABEDIMO",
+        "BDE KOMBO ITINDI",
+        "BDE MARITIME MBONJO",
+        "BDE RIO DEL REY",
+        "BDE TER",
+        "PTE IDIBANYANGA"
+      ],
+      "CIE KUMBA": [
+        "EM",
+        "BDE FIANGO",
+        "BDE KONYE",
+        "BDE MAMBANDA",
+        "BDE MBONGE",
+        "BDE NJUKI",
+        "PTE BANGA BAKUNDU",
+        "PTE IKILIWINDI",
+        "PTE MUKONJE"
+      ],
+      "CIE MAMFE": [
+        "EM",
+        "BDE AKWAYA",
+        "BDE EYUMODJOCK",
+        "BDE TER",
+        "BDE TINTO",
+        "PTE BABONG",
+        "PTE BALIN",
+        "PTE KEMBONG",
+        "PTE KENDEM",
+        "PTE SABES"
+      ],
+      "CIE MENJI": [
+        "EM",
+        "BDE ALOU",
+        "BDE TER",
+        "BDE WABANE",
+        "PTE BECHATI",
+        "PTE NKONGLE"
+      ],
+      "CIE MUNDEMBA": [
+        "EM",
+        "BDE BAMUSSO",
+        "BDE DIKUME BALUE",
+        "BDE LOBE",
+        "BDE TER",
+        "BDE TOKO",
+        "PTE EKONDO TITI"
+      ],
+      "ESC 80": [
+        "PCDT",
+        "PM 801",
+        "PM 802",
+        "PM 803",
+        "PM 804"
+      ],
+      "ESC 81": [
+        "PCDT",
+        "PM 811",
+        "PM 812",
+        "PM 813"
+      ]
+    }
+  },
+  "3ème Région de Gendarmerie": {
+    "EM": {
+      "EM": [
+        "EM"
+      ]
+    },
+    "GCR3": {
+      "EM": [
+        "EM"
+      ],
+      "PRM GAROUA": [
+        "PRM GAROUA"
+      ],
+      "PRM GUIDER": [
+        "PRM GUIDER"
+      ],
+      "PRM NGAOUNDERE": [
+        "PRM NGAOUNDERE"
+      ],
+      "PRM TOUBORO": [
+        "PRM TOUBORO"
+      ]
+    },
+    "LN": {
+      "EM": [
+        "EM"
+      ],
+      "GGT GAROUA": [
+        "EM",
+        "CIE GAROUA 1",
+        "CIE GAROUA 2",
+        "CIE GAROUA 3"
+      ],
+      "CIE GUIDER": [
+        "EM",
+        "BDE FIGUIL",
+        "BDE MAYO OULO",
+        "BDE TER",
+        "PTE DOUMO"
+      ],
+      "CIE POLI": [
+        "EM",
+        "BDE BEKA",
+        "BDE TER",
+        "BDE VOKO",
+        "PTE WANGAI",
+        "PTE WATE"
+      ],
+      "CIE TCHOLLIRE": [
+        "EM",
+        "BDE MOMBORE",
+        "BDE REY BOUBA",
+        "BDE TER",
+        "PTE GAMBA"
+      ],
+      "CIE TOUBORO": [
+        "EM",
+        "BDE MADINGRING",
+        "BDE MBAI-MBOUM",
+        "BDE TER",
+        "PTE DOMPLA",
+        "PTE MBANG-REY"
+      ],
+      "GE N°6": [
+        "EM",
+        "ESC 60",
+        "ESC 61",
+        "ESC 62",
+        "ESC 63"
+      ]
+    },
+    "LA": {
+      "EM": [
+        "EM"
+      ],
+      "CIE NGAOUNDERE": [
+        "EM",
+        "BDE AEROPORT",
+        "BDE BELEL",
+        "BDE DANG",
+        "BDE GADA-MABANGA",
+        "BDE MARTAP",
+        "BDE MBE",
+        "BDE NGAN'HA",
+        "BDE NYAMBAKA",
+        "BDE RECH",
+        "BDE TER",
+        "PTE IDOOL"
+      ],
+      "CIE BANYO": [
+        "EM",
+        "BDE BANKIM",
+        "BDE MAYO DARLE",
+        "BDE TER",
+        "PTE ATTA",
+        "PTE BONHARI",
+        "PTE MAPE",
+        "PTE SAMBOLABO"
+      ],
+      "CIE MEIGANGA": [
+        "EM",
+        "BDE DIR",
+        "BDE DJOHONG",
+        "BDE NGAOUI",
+        "BDE TER",
+        "PTE BATOUA GODOLE",
+        "PTE YAMBA"
+      ],
+      "CIE TIBATI": [
+        "EM",
+        "BDE NGAOUNDAL",
+        "BDE TER",
+        "PTE MBAKAOU"
+      ],
+      "CIE TIGNERE": [
+        "EM",
+        "BDE GALIM TIGNERE",
+        "BDE MAYO BALEO",
+        "BDE TER",
+        "PTE KONTCHA"
+      ],
+      "ESC 100": [
+        "PCDT",
+        "PM 1001",
+        "PM 1002",
+        "PM 1003",
+        "PM 1004"
+      ],
+      "ESC 102": [
+        "PCDT",
+        "PM 1021",
+        "PM 1022",
+        "PM 1023",
+        "PM 1024"
+      ]
+    }
+  },
+  "4ème Région de Gendarmerie": {
+    "EM": {
+      "EM": [
+        "EM"
+      ]
+    },
+    "GCR4": {
+      "EM": [
+        "EM"
+      ],
+      "PRM KOUSSERI": [
+        "PRM KOUSSERI"
+      ],
+      "PRM MAROUA": [
+        "PRM MAROUA"
+      ],
+      "PRM MOKOLO": [
+        "PRM MOKOLO"
+      ]
+    },
+    "LEN": {
+      "EM": [
+        "EM"
+      ],
+      "CIE KAELE": [
+        "EM",
+        "BDE DZIGUILAO",
+        "BDE GUIDIGUIS",
+        "BDE MINDIF",
+        "BDE MOULVOUDAYE",
+        "BDE MOUTOURWA",
+        "BDE TER",
+        "BDE TOULOUM",
+        "PTE LARA",
+        "PTE MINDJIVIN"
+      ],
+      "CIE MAROUA": [
+        "EM",
+        "BDE AEROPORT",
+        "BDE BOGO",
+        "BDE DARGALA",
+        "BDE DOMAYO",
+        "BDE DOUALARE",
+        "BDE DOUGGOI",
+        "BDE GAZAWA",
+        "BDE MERI",
+        "BDE NDOUKOUKLA",
+        "BDE PETTE",
+        "BDE RECH",
+        "PTE KONGOLA"
+      ],
+      "CIE MOKOLO": [
+        "EM",
+        "BDE BOURHA",
+        "BDE HINA",
+        "BDE KOZA",
+        "BDE MOGODE",
+        "BDE MOZOGO",
+        "BDE SOULEDE",
+        "BDE TER",
+        "PTE ASHIGHASSIA",
+        "PTE TOUROU",
+        "PTE ZAMAI"
+      ],
+      "CIE MORA": [
+        "EM",
+        "PTE BONDERI",
+        "BDE KOLOFATA",
+        "BDE TER",
+        "BDE TOKOMBERE",
+        "PTE AMCHIDE"
+      ],
+      "CIE YAGOUA": [
+        "EM",
+        "BDE DATCHEKA",
+        "BDE GOBO",
+        "BDE GUEME",
+        "BDE GUERE",
+        "BDE KAI KAI",
+        "BDE KALFOU",
+        "BDE KARHAY",
+        "BDE MAGA",
+        "BDE TCHATIBALI",
+        "BDE TER",
+        "BDE WINA",
+        "PTE BANGANA"
+      ],
+      "GE N°3": [
+        "EM",
+        "ESC 30",
+        "ESC 31",
+        "ESC 32"
+      ]
+    },
+    "LLC": {
+      "EM": [
+        "EM"
+      ],
+      "CIE KOUSSERI": [
+        "EM",
+        "BDE LACKA",
+        "BDE LOGONE BIRNI",
+        "BDE MADAGASCAR",
+        "BDE TER",
+        "BDE ZINA",
+        "PTE DABANGA"
+      ],
+      "CIE MAKARY": [
+        "EM",
+        "BDE BLANGOUA",
+        "BDE DARACK",
+        "BDE FOTOKOL",
+        "BDE GOULFEY",
+        "BDE HILE ALIFA",
+        "BDE KOFIA",
+        "BDE SAGME",
+        "BDE TER",
+        "PTE AFADE"
+      ],
+      "CIE WAZA": [
+        "EM",
+        "BDE WAZA",
+        "BDE ZIGAGUE"
+      ],
+      "ESC 33": [
+        "PCDT",
+        "PM 331",
+        "PM 332",
+        "PM 333",
+        "PM 334"
+      ]
+    }
+  },
+  "5ème Région de Gendarmerie": {
+    "EM": {},
+    "GCR5": {
+      "EM": [
+        "EM"
+      ],
+      "PRM BAFOUSSAM": [
+        "PRM BAFOUSSAM"
+      ],
+      "PRM BAMENDA": [
+        "PRM BAMENDA"
+      ],
+      "PRM NKAMBE": [
+        "PRM NKAMBE"
+      ]
+    },
+    "LNW": {
+      "EM": [
+        "EM"
+      ],
+      "GGT BAMENDA": [
+        "EM",
+        "CIE BALI",
+        "CIE BAMENDA"
+      ],
+      "CIE FUNDONG": [
+        "EM",
+        "BDE BELO",
+        "BDE FONFUKA",
+        "BDE NJINIKOM",
+        "BDE TER",
+        "PTE MBESSA",
+        "PTE NDAWARA"
+      ],
+      "CIE KUMBO": [
+        "EM",
+        "BDE ELAK-OKU",
+        "BDE JAKIRI",
+        "BDE MBIAME",
+        "BDE NKOR",
+        "BDE TATUM",
+        "BDE TER"
+      ],
+      "CIE MBENGWI": [
+        "EM",
+        "BDE ANDEK",
+        "BDE BATIBO",
+        "BDE NJIKWA",
+        "BDE TER",
+        "BDE WIDIKUM",
+        "PTE ASHONG",
+        "PTE EWOH-BATIBO"
+      ],
+      "CIE NDOP": [
+        "EM",
+        "BDE BABESSI",
+        "BDE BALIKUMBAT",
+        "BDE BAMBALANG",
+        "BDE TER"
+      ],
+      "CIE NKAMBE": [
+        "EM",
+        "BDE AKO",
+        "BDE MISAJE",
+        "BDE NDU",
+        "BDE NWA",
+        "BDE TER",
+        "PTE NTEM"
+      ],
+      "CIE WUM": [
+        "EM",
+        "BDE BENAKUMA",
+        "BDE FURU-AWA",
+        "BDE TER",
+        "BDE ZHOA",
+        "PTE BAWORO"
+      ],
+      "ESC 90": [
+        "PCDT",
+        "PM 901",
+        "PM 902",
+        "PM 903",
+        "PM 904",
+        "PM 905"
+      ]
+    },
+    "LO": {
+      "EM": [],
+      "GGT BAFOUSSAM": [
+        "CIE BAFOUSSAM 1",
+        "CIE BAFOUSSAM 2"
+      ],
+      "CIE BAFANG": [
+        "EM",
+        "BDE BAKOU",
+        "BDE BANA",
+        "BDE BANDJA",
+        "BDE BANKA",
+        "BDE BANWA",
+        "BDE KEKEM",
+        "BDE TER",
+        "PTE BABOUTCHA",
+        "PTE BAYON",
+        "PTE FOYEMTCHA"
+      ],
+      "CIE BAHAM": [
+        "EM",
+        "BDE BAMENDJOU",
+        "BDE BANGOU",
+        "BDE BATIE",
+        "BDE TER",
+        "PTE BALAMBO",
+        "PTE KANMALI"
+      ],
+      "CIE BANDJOUN": [
+        "EM",
+        "BDE BAYANGAM",
+        "BDE DEMDENG",
+        "BDE TER"
+      ],
+      "CIE BANGANTE": [
+        "EM",
+        "BDE BASSAMBA",
+        "BDE BAZOU",
+        "BDE TER",
+        "BDE TONGA",
+        "PTE BAMENA",
+        "PTE BANGOUA",
+        "PTE BANTOUM"
+      ],
+      "CIE DSCHANG": [
+        "EM",
+        "BDE FOKOUE",
+        "BDE FONGO TONGO",
+        "BDE NKONG NHI",
+        "BDE PENKA MICHEL",
+        "BDE RECH",
+        "BDE SANTCHOU",
+        "BDE TER",
+        "PTE BALEVONLI",
+        "PTE NDZIIH"
+      ],
+      "CIE FOUMBAN": [
+        "EM",
+        "BDE BAGOURAIN",
+        "BDE FOUMBOT",
+        "BDE KOUOPTAMO",
+        "BDE KOUTABA",
+        "BDE MAGBA",
+        "BDE MALENTOUEN",
+        "BDE MASSANGAM",
+        "BDE NJIMOM",
+        "BDE TER",
+        "PTE KOUCHONG SOMPTAIN",
+        "PTE KOUPA MATAPIT",
+        "PTE KWETVU"
+      ],
+      "CIE MBOUDA": [
+        "EM",
+        "BDE BABADJOU",
+        "BDE BATCHAM",
+        "BDE GALIM",
+        "BDE TER",
+        "PTE BALATCHI",
+        "PTE BALEGHANG",
+        "PTE BAMESSO",
+        "PTE NZINDONG"
+      ],
+      "ESC 50": [
+        "PCDT",
+        "PM 501",
+        "PM 502",
+        "PM 503",
+        "PM 504"
+      ],
+      "ESC 51": [
+        "PCDT",
+        "PM 511",
+        "PM 512",
+        "PM 513"
+      ]
+    }
+  }
+}

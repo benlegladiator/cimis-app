@@ -1,0 +1,304 @@
+<div class="form-card">
+
+  <h2>📋 PROFIL MILITAIRE / MILITARY PROFILE</h2>
+
+  <!-- ==========================================
+       SECTION 1 : PIÈCES MATRICULES
+       ========================================== -->
+  <h3>SECTION 1 : PIÈCE(S) MATRICULE(S) / SERVICE RECORDS</h3>
+
+  <div *ngIf="loading" class="loading">
+    Chargement... / Loading...
+  </div>
+
+  <div class="form-grid" *ngIf="!loading">
+
+    <!-- Ancienneté de grade -->
+    <div class="form-group">
+      <label>1. Ancienneté de grade / Rank Seniority</label>
+      <input type="text" [value]="form.ancienneteGrade || 'N/A'" readonly class="form-control">
+    </div>
+
+    <!-- Ancienneté de service -->
+    <div class="form-group">
+      <label>2. Ancienneté de service / Service Seniority</label>
+      <input type="text" [value]="form.ancienneteService || 'N/A'" readonly class="form-control">
+    </div>
+
+    <!-- Corps -->
+    <div class="form-group">
+      <label>3. Corps / Branch</label>
+      <select [(ngModel)]="form.corps" (change)="onCorpsChange()" class="form-control" [disabled]="readOnly">
+        <option value="">-- Sélectionner / Select --</option>
+        <option value="GN">Gendarmerie Nationale</option>
+        <option value="AT">Armée de Terre / Army</option>
+        <option value="AA">Armée de l'Air / Air Force</option>
+        <option value="AM">Marine Nationale / Navy</option>
+      </select>
+    </div>
+
+    <!-- Spécialité -->
+    <div class="form-group">
+      <label>4. Spécialité / Specialty</label>
+      <select [(ngModel)]="form.arme" [disabled]="!form.corps || readOnly" class="form-control">
+        <option value="">-- Sélectionner / Select --</option>
+        <option *ngFor="let arme of armesDisponibles()" [value]="arme">{{ arme }}</option>
+      </select>
+    </div>
+
+    <!-- Origine -->
+    <div class="form-group">
+      <label>5. Origine / Recruitment Source</label>
+      <select [(ngModel)]="form.origine" class="form-control" [disabled]="readOnly">
+        <option value="">-- Sélectionner / Select --</option>
+        <option value="BIR">Recrutement BIR/GP</option>
+        <option value="ORDINAIRE">Recrutement Ordinaires</option>
+        <option value="CIESO">CIESO</option>
+        <option value="EMIA">EMIA</option>
+        <option value="ECOLE_ETRANGERE_OFF">ECOLE_ETRANGERE/OFF</option>
+        <option value="ECOLE_ETRANGERE_SOUS_OFF">ECOLE_ETRANGERE/SOUS_OFF</option>
+      </select>
+    </div>
+
+    <!-- Carte d'identité militaire -->
+    <div class="form-group">
+      <label>6. Carte d'identité Militaire / ID Card</label>
+      <input type="text" [(ngModel)]="form.cnim" class="form-control" placeholder="Numéro CIM / ID Number" [readonly]="readOnly">
+    </div>
+
+    <!-- Statut -->
+    <div class="form-group">
+      <label>7. Statut / Status</label>
+      <input type="text" [(ngModel)]="form.statut" readonly class="form-control">
+    </div>
+
+    <!-- MAT.SOLDE -->
+    <div class="form-group">
+      <label>8. MAT.SOLDE</label>
+      <input type="text" [(ngModel)]="form.matriculeSolde" readonly class="form-control">
+    </div>
+
+    <!-- MAT.MILITAIRE -->
+    <div class="form-group">
+      <label>9. MAT.MILITAIRE</label>
+      <input type="text" [(ngModel)]="form.matriculeMilitaire" readonly class="form-control">
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       SECTION 2 : FORMATION ET STRUCTURE
+       ========================================== -->
+  <h3>SECTION 2 : FORMATION ET STRUCTURE / UNIT & ASSIGNMENT</h3>
+
+  <div class="form-grid" *ngIf="!loading">
+
+    <!-- Formation / Structure -->
+    <div class="form-group">
+      <label>10. Formation / Structure / Unit Type</label>
+      <select [(ngModel)]="form.formationStructure" class="form-control" [disabled]="readOnly">
+        <option value="">-- Sélectionner / Select --</option>
+        <option value="BATAILLON">Bataillon / Battalion</option>
+        <option value="REGIMENT">Régiment / Regiment</option>
+        <option value="COMPAGNIE">Compagnie / Company</option>
+        <option value="ESCADRON">Escadron / Squadron</option>
+        <option value="BASE">Base</option>
+        <option value="ETAT_MAJOR">État-Major / General Staff</option>
+      </select>
+    </div>
+
+    <!-- Compagnie -->
+    <div class="form-group">
+      <label>11. Compagnie / Company</label>
+      <input type="text" [(ngModel)]="form.compagnie" class="form-control" placeholder="Nom / Name" [readonly]="readOnly">
+    </div>
+
+    <!-- Observation sur l'emploi -->
+    <div class="form-group">
+      <label>12. Observation sur l'emploi / Job Remarks</label>
+      <input type="text" [(ngModel)]="form.observationEmploi" class="form-control" placeholder="..." [readonly]="readOnly">
+    </div>
+
+    
+  </div>
+
+  <!-- ==========================================
+       SECTION 3 : RÉENGAGEMENT
+       ========================================== -->
+  <h3>SECTION 3 : RÉENGAGEMENT / RE-ENLISTMENT</h3>
+
+  <!-- Bouton Ajouter -->
+  <div class="form-actions" *ngIf="!readOnly">
+    <button class="btn-primary" (click)="toggleFormReengagement()">
+      <span *ngIf="!afficherFormReengagement">➕ Ajouter / Add Re-enlistment</span>
+      <span *ngIf="afficherFormReengagement">❌ Annuler / Cancel</span>
+    </button>
+  </div>
+
+  <!-- Formulaire d'ajout -->
+  <div *ngIf="afficherFormReengagement" class="form-card mini-form">
+    <h4>Nouveau réengagement / New Re-enlistment</h4>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Désignation / Title <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="nouveauReengagement.designation" placeholder="Ex: Réengagement 5 ans">
+      </div>
+      <div class="form-group">
+        <label>Lieu / Location <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="nouveauReengagement.lieu" placeholder="Ex: Yaoundé">
+      </div>
+      <div class="form-group">
+        <label>Date <span class="required">*</span></label>
+        <input type="date" [(ngModel)]="nouveauReengagement.date">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-success" (click)="ajouterReengagement()">💾 Enregistrer / Save</button>
+    </div>
+  </div>
+
+  <!-- Liste des réengagements -->
+  <div class="table-container" *ngIf="form.reengagements && form.reengagements.length > 0">
+    <table class="military-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Désignation / Title</th>
+          <th>Lieu / Location</th>
+          <th>Date</th>
+          <th *ngIf="!readOnly">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of form.reengagements; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ r.designation }}</td>
+          <td>{{ r.lieu }}</td>
+          <td>{{ formatDate(r.date) }}</td>
+          <td class="actions" *ngIf="!readOnly">
+            <button class="btn-icon btn-danger" (click)="supprimerReengagement(r.id!)" title="Supprimer">
+              🗑️
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!form.reengagements?.length" class="empty-state">
+    <p>Aucun réengagement / No re-enlistment recorded.</p>
+  </div>
+
+  <!-- ==========================================
+       SECTION 4 : ADMISSION SOC
+       ========================================== -->
+  <h3>SECTION 4 : ADMISSION AU SERVICE / SERVICE ADMISSION (SOC)</h3>
+
+  <!-- Bouton Ajouter -->
+  <div class="form-actions" *ngIf="!readOnly">
+    <button class="btn-primary" (click)="toggleFormAdmission()">
+      <span *ngIf="!afficherFormAdmission">➕ Ajouter / Add Admission</span>
+      <span *ngIf="afficherFormAdmission">❌ Annuler / Cancel</span>
+    </button>
+  </div>
+
+  <!-- Formulaire d'ajout -->
+  <div *ngIf="afficherFormAdmission" class="form-card mini-form">
+    <h4>Nouvelle admission / New Admission</h4>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Désignation / Title <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="nouvelleAdmission.designation" placeholder="Ex: Admission au service">
+      </div>
+      <div class="form-group">
+        <label>Lieu / Location <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="nouvelleAdmission.lieu" placeholder="Ex: Yaoundé">
+      </div>
+      <div class="form-group">
+        <label>Date <span class="required">*</span></label>
+        <input type="date" [(ngModel)]="nouvelleAdmission.date">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-success" (click)="ajouterAdmission()">💾 Enregistrer / Save</button>
+    </div>
+  </div>
+
+  <!-- Liste des admissions -->
+  <div class="table-container" *ngIf="form.admissionSocs && form.admissionSocs.length > 0">
+    <table class="military-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Désignation / Title</th>
+          <th>Lieu / Location</th>
+          <th>Date</th>
+          <th *ngIf="!readOnly">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of form.admissionSocs; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ a.designation }}</td>
+          <td>{{ a.lieu }}</td>
+          <td>{{ formatDate(a.date) }}</td>
+          <td class="actions" *ngIf="!readOnly">
+            <button class="btn-icon btn-danger" (click)="supprimerAdmission(a.id!)" title="Supprimer">
+              🗑️
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!form.admissionSocs?.length" class="empty-state">
+    <p>Aucune admission / No admission recorded.</p>
+  </div>
+
+  <!-- ==========================================
+       SECTION 5 : DOCUMENT
+       ========================================== -->
+  <h3>SECTION 5 : DOCUMENT</h3>
+
+  <div class="form-grid">
+    <div class="form-group">
+      <label>Document (PDF / Image)</label>
+      <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png" class="form-control" *ngIf="!readOnly">
+      <small *ngIf="fichierSelectionne" class="file-selected">
+        📎 {{ fichierSelectionne.name }}
+      </small>
+      <small *ngIf="form.nomFichier && !fichierSelectionne" class="file-selected">
+        📄 Fichier actuel / Current File : {{ form.nomFichier }}
+      </small>
+    </div>
+    
+    <div class="form-group" *ngIf="form.nomFichier">
+      <label>&nbsp;</label>
+      <button class="btn-link" (click)="voirDocument()">
+        👁️ Voir le document / View Document
+      </button>
+    </div>
+  </div>
+
+  <!-- Visualiseur de document -->
+  <div *ngIf="afficherDocument && documentUrl" class="preview-box">
+    <div class="viewer-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+      <h3 style="margin: 0;">📄 Document carrière / Career Document</h3>
+      <button class="btn-close-preview" (click)="fermerDocument()">✕ Fermer / Close</button>
+    </div>
+    <div class="doc-viewer-container">
+      <iframe [src]="documentUrl" width="100%" height="600px" style="border: none; background: white;"></iframe>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       ACTIONS GLOBALES
+       ========================================== -->
+  <div class="form-actions main-actions" *ngIf="!readOnly">
+    <button class="btn-success" (click)="enregistrer()">
+      💾 Enregistrer tout / Save All
+    </button>
+  </div>
+
+</div>

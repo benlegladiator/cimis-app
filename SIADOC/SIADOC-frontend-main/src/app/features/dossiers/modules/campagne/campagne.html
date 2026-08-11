@@ -1,0 +1,141 @@
+<div class="form-card">
+  <h2>🎖️ CAMPAGNE(S) MILITAIRE(S) / MILITARY CAMPAIGN(S)</h2>
+
+  <!-- ========================================== -->
+  <!-- BOUTON AJOUTER -->
+  <!-- ========================================== -->
+  <div class="form-actions" *ngIf="!readOnly">
+    <button class="btn-primary" (click)="toggleFormulaire()">
+      <span *ngIf="!afficherFormulaire">➕ Ajouter une campagne / Add Campaign</span>
+      <span *ngIf="afficherFormulaire">❌ Annuler / Cancel</span>
+    </button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- FORMULAIRE D'AJOUT -->
+  <!-- ========================================== -->
+  <div *ngIf="afficherFormulaire && !readOnly" class="form-card mini-form">
+    <h3>Nouvelle campagne / New Campaign</h3>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Document de Mise en Route / Deployment Document <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="nouvelleCampagne.designation" placeholder="Ex: Campagne du Sahel">
+      </div>
+
+      <div class="form-group">
+        <label>Signataire / Signatory</label>
+        <input type="text" [(ngModel)]="nouvelleCampagne.signataire" placeholder="Nom du signataire / Signatory Name">
+      </div>
+
+      <div class="form-group">
+        <label>Date <span class="required">*</span></label>
+        <input type="date" [(ngModel)]="nouvelleCampagne.date">
+      </div>
+
+      <div class="form-group">
+        <label>Document (PDF, JPG, PNG)</label>
+        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
+        <small *ngIf="fichierSelectionne" class="file-selected">
+          📎 {{ fichierSelectionne.name }}
+        </small>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-success" (click)="enregistrer()">
+        💾 Enregistrer / Save
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- LISTE DES CAMPAGNES -->
+  <!-- ========================================== -->
+  <div *ngIf="loading" class="loading">
+    Chargement des campagnes... / Loading campaigns...
+  </div>
+
+  <div *ngIf="!loading && campagnes.length === 0" class="empty-state">
+    <p>Aucune campagne enregistrée pour ce militaire / No campaigns recorded for this personnel.</p>
+  </div>
+
+  <div *ngIf="!loading && campagnes.length > 0" class="table-container">
+    <table class="military-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Désignation / Designation</th>
+          <th>Signataire / Signatory</th>
+          <th>Date</th>
+          <th>Document</th>
+          <th *ngIf="!readOnly">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let campagne of campagnes; let i = index">
+          <!-- MODE AFFICHAGE -->
+          <ng-container *ngIf="editionId !== campagne.id">
+            <td>{{ i + 1 }}</td>
+            <td>{{ campagne.designation }}</td>
+            <td>{{ campagne.signataire || '-' }}</td>
+            <td>{{ formatDate(campagne.date) }}</td>
+            <td>
+              <button *ngIf="campagne.document" class="btn-link" (click)="voirDocument(campagne)">
+                📄 {{ campagne.document }}
+              </button>
+              <span *ngIf="!campagne.document" class="no-doc">-</span>
+            </td>
+            <td class="actions" *ngIf="!readOnly">
+              <button class="btn-icon" (click)="commencerEdition(campagne)" title="Modifier / Edit">
+                ✏️
+              </button>
+              <button class="btn-icon btn-danger" (click)="supprimer(campagne.id)" title="Supprimer / Delete">
+                🗑️
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- MODE ÉDITION -->
+          <ng-container *ngIf="editionId === campagne.id">
+            <td>{{ i + 1 }}</td>
+            <td>
+              <input type="text" [(ngModel)]="formEdition.designation">
+            </td>
+            <td>
+              <input type="text" [(ngModel)]="formEdition.signataire">
+            </td>
+            <td>
+              <input type="date" [(ngModel)]="formEdition.date">
+            </td>
+            <td>
+              <span *ngIf="campagne.document" class="doc-name">{{ campagne.document }}</span>
+              <span *ngIf="!campagne.document" class="no-doc">-</span>
+            </td>
+            <td class="actions">
+              <button class="btn-icon btn-success" (click)="sauvegarderEdition()" title="Enregistrer / Save">
+                💾
+              </button>
+              <button class="btn-icon" (click)="annulerEdition()" title="Annuler / Cancel">
+                ❌
+              </button>
+            </td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- VISUALISEUR DE DOCUMENT -->
+  <!-- ========================================== -->
+  <div *ngIf="pieceSelectionnee" class="preview-box">
+    <div class="viewer-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+      <h3 style="margin: 0;">📄 {{ pieceSelectionnee.designation }}</h3>
+      <button class="btn-close-preview" (click)="fermerDocument()">✕ Fermer / Close</button>
+    </div>
+    <div class="doc-viewer-container">
+      <iframe [src]="documentUrl" width="100%" height="600px" style="border: none; background: white;"></iframe>
+    </div>
+  </div>
+</div>

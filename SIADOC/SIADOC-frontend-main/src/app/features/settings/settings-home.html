@@ -1,0 +1,21 @@
+<div class="settings-container">
+  <div class="header">
+    <h1>⚙️ Module de Paramétrage / Settings Module</h1>
+    <p>Configurez les données de base et les référentiels de l'application.</p>
+  </div>
+
+  <div class="settings-grid">
+    <div class="settings-card shadow-sm clickable" *ngFor="let cat of categories" [routerLink]="cat.link">
+      <div class="icon-box">
+        <i class="fa-solid" [class]="cat.icon"></i>
+      </div>
+      <div class="card-body">
+        <h3>{{ cat.title }}</h3>
+        <p>{{ cat.desc }}</p>
+      </div>
+      <div class="card-footer">
+        <span>Gérer <i class="fa-solid fa-arrow-right"></i></span>
+      </div>
+    </div>
+  </div>
+</div>

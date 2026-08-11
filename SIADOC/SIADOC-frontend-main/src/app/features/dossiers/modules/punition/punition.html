@@ -1,0 +1,116 @@
+<div class="punition-container">
+
+  <!-- HEADER -->
+  <div class="header-section">
+    <div class="titre-group">
+      <h2 class="titre-page">⚖️ PUNITIONS & SANCTIONS / PUNISHMENTS & SANCTIONS</h2>
+      <div class="discipline-badge" *ngIf="punitions">
+        <span [ngClass]="{
+          'badge-green': punitions.length === 0,
+          'badge-orange': punitions.length > 0 && punitions.length < 3,
+          'badge-red': punitions.length >= 3
+        }">
+          {{ getBadgeMessage() }}
+        </span>
+      </div>
+    </div>
+
+    <button *ngIf="!readOnly" class="btn-primary" (click)="afficherFormulaire = !afficherFormulaire">
+      {{ afficherFormulaire ? '❌ Annuler / Cancel' : '➕ Ajouter une sanction / Add Sanction' }}
+    </button>
+  </div>
+
+  <!-- FORM -->
+  <div *ngIf="afficherFormulaire && !readOnly" class="form-card">
+    <h3>Nouvelle sanction / New Sanction</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Désignation / Designation</label>
+        <input placeholder="Ex: 10 jours de prison" [(ngModel)]="form.designation">
+      </div>
+
+      <div class="form-group">
+        <label>Texte / Décision / Decision Text</label>
+        <input placeholder="N° décision..." [(ngModel)]="form.texte">
+      </div>
+
+      <div class="form-group">
+        <label>Date d'effet / Effective Date</label>
+        <input type="date" [(ngModel)]="form.dateEffet">
+      </div>
+
+      <div class="form-group full-width">
+        <label>Document justificatif / Supporting Document</label>
+        <input type="file" (change)="onFileSelected($event)">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-success" (click)="enregistrer()">
+        💾 Enregistrer la punition / Save Punishment
+      </button>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-container">
+    <table class="military-table">
+      <thead>
+        <tr>
+          <th>Désignation / Designation</th>
+          <th>Décision / Texte / Decision / Text</th>
+          <th>Date</th>
+          <th *ngIf="!readOnly">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="punitions.length === 0">
+          <td colspan="4" class="empty-cell">NÉANT - Aucun antécédent disciplinaire enregistré / NONE - No disciplinary history recorded.</td>
+        </tr>
+        <tr *ngFor="let p of punitions" (click)="voir(p)" style="cursor:pointer;" [class.active-row]="selection?.id === p.id">
+          <td><strong>{{ p.designation }}</strong></td>
+          <td>{{ p.texte }}</td>
+          <td>{{ p.dateEffet | date:'dd/MM/yyyy' }}</td>
+          <td *ngIf="!readOnly">
+            <button class="btn-delete-small" (click)="supprimer(p.id); $event.stopPropagation()">🗑</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ================= DETAILS ================= -->
+    <div *ngIf="selection" class="preview-box">
+      <h3>📑 Détails de la sanction / Sanction Details</h3>
+
+      <div class="preview-grid">
+        <div><b>Sanction :</b> {{ selection.designation }}</div>
+        <div><b>Date :</b> {{ selection.dateEffet | date:'dd/MM/yyyy' }}</div>
+        <div class="full"><b>Motif / Texte / Reason / Text :</b> {{ selection.texte }}</div>
+      </div>
+
+      <!-- DOCUMENT VIEWER -->
+      <div class="doc-viewer-container">
+        <div *ngIf="selection.id" style="width: 100%;">
+          <div style="margin-bottom: 15px; display: flex; justify-content: flex-end;">
+            <button class="btn-close-preview" (click)="selection = null">
+               ✖ Fermer / Close
+            </button>
+          </div>
+
+          <div *ngIf="!selection.document" class="no-doc-alert">
+            ⚠️ Aucun document justificatif / No supporting document
+          </div>
+
+          <iframe
+            *ngIf="selection.document && selection.safeUrl"
+            [src]="selection.safeUrl"
+            width="100%"
+            height="600px"
+            style="border: none; background: white;">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

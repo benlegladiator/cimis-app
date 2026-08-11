@@ -1,0 +1,112 @@
+<div class="recompense-container">
+  
+  <div class="header-section">
+    <h2 class="titre-page">🎖️ Récompense(s) / Reward(s)</h2>
+    <button *ngIf="!readOnly" class="btn-primary" (click)="afficherFormulaire = !afficherFormulaire">
+      {{ afficherFormulaire ? '✖️ Fermer / Close' : '➕ Ajouter / Add Reward' }}
+    </button>
+  </div>
+
+  <!-- ================= FORMULAIRE ================= -->
+  <div *ngIf="afficherFormulaire && !readOnly" class="form-card">
+    <h3>Nouvelle récompense / New Reward</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Désignation / Title *</label>
+        <select [(ngModel)]="form.designation">
+          <option value="">-- Choisir / Select --</option>
+          <option value="Ordre de la valeur">Ordre de la valeur / Order of Valour</option>
+          <option value="Ordre du mérite Camerounais">Ordre du mérite / Order of Merit</option>
+          <option value="Ordre du mérite agricole">Mérite agricole / Agricultural Merit</option>
+          <option value="Ordre du mérite sportif">Mérite sportif / Sporting Merit</option>
+          <option value="Croix de la valeur militaire">Croix de la valeur militaire / Military Valour Cross</option>
+          <option value="Médaille de la vaillance">Médaille de la vaillance / Medal of Valour</option>
+          <option value="Médaille de la force publique">Force publique / Public Force Medal</option>
+          <option value="Lettre de félicitations">Félicitations / Letter of Congratulations</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Référence / Decision / Reference *</label>
+        <input type="text" [(ngModel)]="form.texte" placeholder="Ex: Décret N°...">
+      </div>
+
+      <div class="form-group">
+        <label>Date d’effet / Date *</label>
+        <input type="date" [(ngModel)]="form.dateEffet">
+      </div>
+
+      <div class="form-group full-width">
+        <label>Document (PDF / Image)</label>
+        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-secondary" (click)="afficherFormulaire = false">Annuler / Cancel</button>
+      <button class="btn-success" (click)="enregistrer()">💾 Enregistrer / Save</button>
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- ================= LISTE ================= -->
+  <h3>Historique / History</h3>
+  <div class="table-container">
+    <table class="military-table">
+      <thead>
+        <tr>
+          <th>Désignation / Title</th>
+          <th>Référence / Reference</th>
+          <th>Date</th>
+          <th>Document</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of recompenses" (click)="selectionner(r)" [class.active-row]="selectionnee?.id === r.id">
+          <td><strong>{{ r.designation }}</strong></td>
+          <td>{{ r.texte }}</td>
+          <td>{{ r.dateEffet | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <span class="file-badge" *ngIf="r.documentNom">
+              📄 {{ r.documentNom }}
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="recompenses.length === 0">
+          <td colspan="4" class="empty-cell">Aucune récompense / No rewards recorded.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================= PREVIEW ================= -->
+  <div *ngIf="selectionnee" class="preview-box">
+    <h3>📑 Détails / Details</h3>
+    
+    <div class="preview-grid">
+      <div><b>Désignation / Title :</b> {{ selectionnee.designation }}</div>
+      <div><b>Date :</b> {{ selectionnee.dateEffet | date:'dd/MM/yyyy' }}</div>
+      <div class="full"><b>Référence / Ref :</b> {{ selectionnee.texte }}</div>
+    </div>
+
+    <div class="doc-viewer-container">
+      <div *ngIf="selectionnee.id" style="width: 100%;">
+        <div style="margin-bottom: 15px; display: flex; justify-content: flex-end;">
+          <button (click)="fermerPreview()" class="btn-close-preview">
+             ✖️ Fermer / Close
+          </button>
+        </div>
+
+        <iframe
+          *ngIf="selectionnee.safeUrl"
+          [src]="selectionnee.safeUrl"
+          width="100%"
+          height="600px"
+          style="border: none; background: white;">
+        </iframe>
+      </div>
+    </div>
+  </div>
+
+</div>

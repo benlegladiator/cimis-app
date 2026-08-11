@@ -1,0 +1,323 @@
+/* CONTAINER GLOBAL */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background: transparent; 
+}
+
+/* SIDEBAR PLEINE HAUTEUR */
+.sidebar {
+  width: 280px; /* Augmenté de 240px à 280px */
+  height: 100vh;
+  background: linear-gradient( 180deg, rgba(68, 130, 20, 0.95), rgba(24, 69, 50, 0.95) );
+  color: #f5f5f5;
+  padding: 30px 15px;
+  display: flex;
+  flex-direction: column;
+  border-right: 4px solid #000;
+  box-shadow: 6px 0 20px rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* LOGO */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 40px;
+  color: #e4c77f;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+/* MENU PRINCIPAL */
+.menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  user-select: none;
+  white-space: nowrap; /* Empêche le texte de se couper en deux */
+}
+
+.menu-item:hover {
+  background: rgba(255,255,255,0.08);
+  transform: translateX(6px);
+}
+
+/* SUBMENU */
+.submenu {
+  display: none; /* Par défaut caché */
+  flex-direction: column;
+  gap: 4px;
+  margin-left: 15px;
+  margin-top: 5px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 5px;
+  transition: opacity 0.3s ease;
+}
+
+.submenu.open {
+  display: flex; /* Affiché en flex quand ouvert */
+  opacity: 1;
+}
+
+/* LIENS DANS LE SUBMENU */
+.submenu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #ffffff !important; /* Force la couleur blanche */
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.submenu a:hover {
+  background: rgba(0,0,0,0.35);
+  transform: translateX(5px);
+}
+
+.submenu a.active {
+  background: #a41c1c;
+  font-weight: 600;
+}
+
+/* BADGE NOTIFICATION */
+.notification-link {
+  position: relative;
+}
+
+.badge {
+  background: #e74c3c;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: auto;
+  box-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* CONTENU */
+.content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.shell-container {
+  display: flex;
+  min-height: 100vh; /* IMPORTANT */
+}
+
+html, body {
+  height: 100%;
+}
+
+.app-container {
+  height: 100%;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  height: 100vh;          /* Fixe la hauteur */
+  min-height: 100vh;      
+  position: sticky;       
+  top: 0;
+  overflow-y: auto;       /* Défilement */
+}
+
+.sidebar a,
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-weight: 500;
+  color: white !important;
+  text-decoration: none !important; /* Enlève le surlignement */
+}
+
+.sidebar a:hover,
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+.sidebar a.active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.logout {
+  color: #ffdddd;
+}
+
+.logout:hover {
+  background: rgba(255, 0, 0, 0.2);
+}
+
+
+.global-back {
+  cursor: pointer;
+  font-weight: 600;
+  margin: 10px 0 20px 0;
+  color: #1e3a8a;
+  transition: 0.2s;
+}
+
+.global-back:hover {
+  transform: translateX(-5px);
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-retour {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 16px;
+  border-radius: 8px;
+
+  border: none;
+  background: #1e293b; /* bleu foncé pro */
+  color: white;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-retour i {
+  font-size: 14px;
+}
+
+.btn-retour:hover {
+  background: #334155;
+  transform: translateX(-4px);
+}
+
+.btn-retour:active {
+  transform: scale(0.96);
+}
+
+/* STYLES POUR PETITS ÉCRANS (TV HDMI, TABLETTES) */
+@media (max-width: 1400px) {
+  .sidebar {
+    width: 220px;
+  }
+  
+  .submenu {
+    margin-left: 10px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 200px;
+    padding: 20px 15px;
+  }
+  
+  .menu-item {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  
+  .submenu a {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 180px;
+    padding: 15px 10px;
+  }
+  
+  .logo {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  
+  .menu-item {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  
+  .submenu {
+    margin-left: 8px;
+  }
+  
+  .submenu a {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+/* STYLES D'IMPRESSION GLOBAUX */
+@media print {
+  .sidebar {
+    display: none !important;
+  }
+  
+  .page-header {
+    display: none !important;
+  }
+  
+  .content, .main-content, .app-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}

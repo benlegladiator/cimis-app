@@ -1,0 +1,153 @@
+<div class="settings-page">
+  <div class="breadcrumb">
+    <a routerLink="/settings">Paramètres</a> / Hiérarchie
+  </div>
+
+  <div class="header-section">
+    <h1>🌍 Gestion de la Hiérarchie Militaire</h1>
+  </div>
+
+  <!-- TABS NAVIGATION -->
+  <div class="hierarchy-tabs">
+    <button [class.active]="activeTab === 'AC'" (click)="setTab('AC')">Administration Centrale</button>
+    <button [class.active]="activeTab === 'FS'" (click)="setTab('FS')">Formations Spécialisées</button>
+    <button [class.active]="activeTab === 'CT'" (click)="setTab('CT')">Commandements Territoriaux</button>
+  </div>
+
+  <div class="hierarchy-tree" *ngIf="activeTab === 'CT'">
+    <div class="section-actions">
+      <button class="btn-primary" (click)="ouvrirModal('RMIA')">
+        <i class="fa-solid fa-plus"></i> Nouvelle Structure
+      </button>
+    </div>
+
+    
+    <!-- NIVEAU 1 : RMIA -->
+    <div class="node rmia-node" *ngFor="let rmia of rmias">
+      <div class="node-header accordion-header" (click)="toggleNode(rmia.id)">
+        <div class="left-content">
+          <i class="fa-solid fa-chevron-right chevron-icon" [class.expanded]="isExpanded(rmia.id)"></i>
+          <i class="fa-solid fa-earth-africa"></i>
+          <span>{{ rmia.nom }}</span>
+        </div>
+        <button class="btn-add-child" (click)="ouvrirModal('BRIGADE', rmia.id, rmia.nom); $event.stopPropagation()">+ Grande Formation</button>
+      </div>
+
+      <!-- NIVEAU 2 : BRIGADES -->
+      <div class="children" *ngIf="isExpanded(rmia.id)">
+        <div class="node brigade-node" *ngFor="let b of getBrigadesByRMIA(rmia.id)">
+          <div class="node-header accordion-header" (click)="toggleNode(b.id)">
+            <div class="left-content">
+              <i class="fa-solid fa-chevron-right chevron-icon" [class.expanded]="isExpanded(b.id)"></i>
+              <i class="fa-solid fa-layer-group"></i>
+              <span>{{ b.nom }}</span>
+            </div>
+            <button class="btn-add-child" (click)="ouvrirModal('BATAILLON', b.id, b.nom); $event.stopPropagation()">+ Formation</button>
+          </div>
+
+          <!-- NIVEAU 3 : BATAILLONS -->
+          <div class="children" *ngIf="isExpanded(b.id)">
+            <div class="node bataillon-node" *ngFor="let bat of getBataillonsByBrigade(b.id)">
+              <div class="node-header accordion-header" (click)="toggleNode(bat.id)">
+                <div class="left-content">
+                  <i class="fa-solid fa-chevron-right chevron-icon" [class.expanded]="isExpanded(bat.id)"></i>
+                  <i class="fa-solid fa-shield-halved"></i>
+                  <span>{{ bat.nom }}</span>
+                </div>
+                <button class="btn-add-child" (click)="ouvrirModal('COMPAGNIE', bat.id, bat.nom); $event.stopPropagation()">+ Compagnie</button>
+              </div>
+
+              <!-- NIVEAU 4 : COMPAGNIES -->
+              <div class="children" *ngIf="isExpanded(bat.id)">
+                <div class="node compagnie-node" *ngFor="let comp of getCompagniesByBataillon(bat.id)">
+                  <div class="node-header leaf-node">
+                    <div class="left-content">
+                      <i class="fa-solid fa-users"></i>
+                      <span>{{ comp.nom }}</span>
+                    </div>
+                    <button class="btn-delete" (click)="supprimerCompagnie(comp.id); $event.stopPropagation()">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BRANCHE : ADMINISTRATION CENTRALE (AC) -->
+  <div class="hierarchy-tree" *ngIf="activeTab === 'AC'">
+    <div class="section-actions">
+        <button class="btn-primary" (click)="ouvrirModal('UNIT_AC')">
+          <i class="fa-solid fa-plus"></i> Nouvelle Unité AC
+        </button>
+    </div>
+    <div class="empty-state" *ngIf="acUnits.length === 0">
+      <i class="fa-solid fa-building-columns"></i>
+      <p>Aucune unité paramétrée pour l'Administration Centrale.</p>
+    </div>
+    
+    <div class="node ac-node" *ngFor="let u of acUnits">
+      <div class="node-header">
+        <i class="fa-solid fa-building"></i>
+        <span>{{ u.nom }}</span>
+        <button class="btn-delete" (click)="supprimerUnite(u.id)">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRANCHE : FORMATIONS SPECIALISEES (FS) -->
+  <div class="hierarchy-tree" *ngIf="activeTab === 'FS'">
+    <div class="section-actions">
+        <button class="btn-primary" (click)="ouvrirModal('UNIT_FS')">
+          <i class="fa-solid fa-plus"></i> Nouvelle Unité FS
+        </button>
+    </div>
+    <div class="empty-state" *ngIf="fsUnits.length === 0">
+      <i class="fa-solid fa-bolt-lightning"></i>
+      <p>Aucune unité paramétrée pour les Formations Spécialisées.</p>
+    </div>
+
+    <div class="node fs-node" *ngFor="let u of fsUnits">
+      <div class="node-header">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>{{ u.nom }}</span>
+        <button class="btn-delete" (click)="supprimerUnite(u.id)">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- MODAL D'AJOUT -->
+
+  <div class="modal-overlay" *ngIf="showModal">
+    <div class="modal-card">
+      <h2>Ajouter : {{ modalType === 'UNIT_AC' ? 'Unité Admin Centrale' : (modalType === 'UNIT_FS' ? 'Unité Formation Spécialisée' : (modalType === 'BRIGADE' ? 'Grande Formation' : (modalType === 'BATAILLON' ? 'Formation' : modalType))) }}</h2>
+      <p *ngIf="parentId" class="parent-info">Dans : <strong>{{ parentName }}</strong></p>
+      
+      <div class="form-group">
+        <label>Nom de l'unité</label>
+        <input type="text" [(ngModel)]="newName" placeholder="Ex: 11ème Brigade d'Infanterie Motorisée...">
+      </div>
+
+      <div class="form-group" *ngIf="modalType === 'COMPAGNIE'">
+        <label>Localisation (Optionnel)</label>
+        <input type="text" [(ngModel)]="newLocalisation" placeholder="Ex: Bertoua, Yaoundé...">
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="fermerModal()">Annuler</button>
+        <button class="btn-save" (click)="enregistrer()" [disabled]="!newName">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+</div>

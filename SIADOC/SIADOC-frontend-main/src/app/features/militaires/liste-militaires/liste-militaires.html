@@ -1,0 +1,145 @@
+<h2>Militaires</h2>
+
+
+
+<div class="table-container">
+
+  <div class="search-container">
+    <input
+      type="text"
+      [(ngModel)]="filtre"
+      placeholder="Rechercher par nom ou matricule..."
+      class="search-input"
+    >
+  </div>
+
+  <table *ngIf="!loading" class="militaires-table">
+    <thead>
+      <tr>
+        <th>Matricule</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Date naissance</th>
+        <th>Grade</th>
+        <th>Échelon</th>
+        <th>Armée</th>
+        <th>Statut</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let m of militairesFiltres">
+
+        <td>{{ m.matriculeMilitaire }}</td>
+        <td>{{ m.nom }}</td>
+        <td>{{ m.prenom }}</td>
+        <td>{{ m.dateNaissance || '-' }}</td>
+        <td>{{ m.grade }}</td>
+        <td>{{ m.echelon || '-' }}</td>
+        <td>{{ m.armeService || '-' }}</td>
+        <td>{{ m.statut || '-' }}</td>
+
+        <td class="actions">
+          <button class="btn-open" [routerLink]="['/dossier', m.id]" title="Ouvrir dossier">
+            <i class="fa-solid fa-folder-open"></i>
+          </button>
+
+          <button class="btn-cimis" [routerLink]="['/cimis']" [queryParams]="{matricule: m.matriculeMilitaire || m.matriculeSolde}" title="Biométrie CIMIS">
+            <i class="fa-solid fa-fingerprint"></i>
+          </button>
+
+          
+          
+
+          <button 
+            *ngIf="user?.role === Role.DRH"
+            class="btn-archive"
+            (click)="archiver(m.id); $event.stopPropagation()"
+            title="Archiver le dossier">
+            <i class="fa-solid fa-box-archive"></i> Archiver
+          </button>
+        </td>
+
+
+      </tr>
+
+      <tr *ngIf="militairesFiltres.length === 0">
+        <td colspan="9" class="empty">
+          Aucun militaire trouvé.
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <div class="modal-overlay" *ngIf="showArchiveModal">
+
+    <div class="modal">
+
+      <h2>📦 Archivage définitif</h2>
+
+      <p>
+        Le dossier ne sera plus modifiable.
+      </p>
+
+      <div class="modal-actions">
+
+        <button class="btn-cancel" (click)="cancelArchive()">
+          Annuler
+        </button>
+
+        <button class="btn-confirm" (click)="confirmArchive()">
+          Confirmer
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div *ngIf="loading">
+    Chargement...
+  </div>
+
+  <!-- ================= MODAL AFFECTATION ================= -->
+  <div class="modal-overlay" *ngIf="showAffecterModal">
+    <div class="modal">
+      <h2><i class="fa-solid fa-paper-plane"></i> Affectation d'un militaire</h2>
+      <p>Militaire : <strong>{{ selectedMilitaire?.nom }} {{ selectedMilitaire?.prenom }}</strong></p>
+
+      <div class="form-group">
+        <label>Compagnie de destination</label>
+        <select [(ngModel)]="affectationRequest.compagnieId" class="form-control">
+          <option value="">-- Sélectionner une compagnie --</option>
+          <option *ngFor="let c of compagnies" [value]="c.id">{{ c.nom }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>N° Texte</label>
+          <input type="text" [(ngModel)]="affectationRequest.numeroTexte" class="form-control" placeholder="Ex: 123/DRH">
+        </div>
+        <div class="form-group">
+          <label>Date Texte</label>
+          <input type="date" [(ngModel)]="affectationRequest.dateTexte" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Emploi / Fonction</label>
+        <input type="text" [(ngModel)]="affectationRequest.emploi" class="form-control" placeholder="Ex: Chef de section">
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="showAffecterModal = false">Annuler</button>
+        <button class="btn-confirm" (click)="validerAffectation()" [disabled]="!affectationRequest.compagnieId">
+          Valider l'affectation
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

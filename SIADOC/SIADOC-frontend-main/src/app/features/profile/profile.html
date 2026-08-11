@@ -1,0 +1,64 @@
+<div class="profile-container">
+  <div class="header-section">
+    <h2>👤 Mon Profil</h2>
+    <p class="subtitle">Gestion de vos informations et sécurité</p>
+  </div>
+
+  <div class="profile-content">
+    
+    <!-- Informations Utilisateur -->
+    <div class="card info-card">
+      <h3>Informations Générales</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Nom d'utilisateur</span>
+          <span class="value">{{ user?.username }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Rôle d'accès</span>
+          <span class="value role-badge" [ngClass]="user?.role">{{ user?.role?.replace('_', ' ') }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Unité de rattachement</span>
+          <span class="value unit-name">{{ getUnitName() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modification Mot de Passe -->
+    <div class="card password-card">
+      <h3>🔒 Changer de Mot de Passe</h3>
+      <form (ngSubmit)="changePassword()" #passForm="ngForm">
+        
+        <div class="alert success" *ngIf="successMsg">
+          <i class="fa-solid fa-circle-check"></i> {{ successMsg }}
+        </div>
+        
+        <div class="alert error" *ngIf="errorMsg">
+          <i class="fa-solid fa-circle-exclamation"></i> {{ errorMsg }}
+        </div>
+
+        <div class="form-group">
+          <label for="oldPass">Ancien mot de passe</label>
+          <input type="password" id="oldPass" name="oldPass" [(ngModel)]="passwordData.oldPassword" required>
+        </div>
+
+        <div class="form-group">
+          <label for="newPass">Nouveau mot de passe</label>
+          <input type="password" id="newPass" name="newPass" [(ngModel)]="passwordData.newPassword" required minlength="6">
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPass">Confirmer le nouveau mot de passe</label>
+          <input type="password" id="confirmPass" name="confirmPass" [(ngModel)]="passwordData.confirmPassword" required>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="!passForm.form.valid || isLoading">
+          <i class="fa-solid fa-spinner fa-spin" *ngIf="isLoading"></i> 
+          <span *ngIf="!isLoading">Sauvegarder</span>
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>

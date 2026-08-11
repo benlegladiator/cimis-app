@@ -1,0 +1,281 @@
+<div *ngIf="dossier as d" class="page-dossier" [class.read-only-mode]="!canEdit">
+
+  <h1 class="titre-page">Dossier administratif / Administrative File</h1>
+
+  <!-- ===================== -->
+  <!-- CARTE MILITAIRE FIXE -->
+  <!-- ===================== -->
+  <div class="carte-militaire-fixe">
+
+    <div class="carte-militaire">
+
+      <div class="infos-militaire">
+
+        <div class="ligne">
+          <div>
+            <label>Nom / Name :</label>
+            <span>{{ d.militaire?.nom }}</span>
+          </div>
+
+          <div>
+            <label>Prénom / First Name :</label>
+            <span>{{ d.militaire?.prenom }}</span>
+          </div>
+
+          <div>
+            <label>Armée / Branch :</label>
+            <span>{{ d.militaire?.armeService }}</span>
+          </div>
+        </div>
+
+        <div class="ligne">
+          <div>
+            <label>Matricule / Service ID :</label>
+            <span>{{ d.militaire?.matriculeMilitaire }}</span>
+          </div>
+
+          <div>
+            <label>Matricule Solde / Payroll ID :</label>
+            <span>{{ d.militaire?.matriculeSolde }}</span>
+          </div>
+
+          <div>
+            <label>Date de naissance / Date of Birth :</label>
+            <span>{{ d.militaire?.dateNaissance }}</span>
+          </div>
+        </div>
+
+        <div class="ligne">
+          <div>
+            <label>Grade / Rank :</label>
+            <span>{{ d.militaire?.grade }}</span>
+          </div>
+
+          <div *ngIf="d.militaire?.categorie">
+            <label>Catégorie / Category :</label>
+            <span class="cat-badge">{{ d.militaire?.categorie }}</span>
+          </div>
+
+          <div>
+            <label>Date grade / Rank Date :</label>
+            <span>{{ d.militaire?.dateGrade }}</span>
+          </div>
+
+          <div>
+            <label>Échelon / Step :</label>
+            <span>{{ d.militaire?.echelon }}</span>
+          </div>
+
+          <div>
+            <label>Date Service :</label>
+            <span>{{ d.militaire?.dateEchelon }}</span>
+          </div>
+        </div>
+
+        <div class="ligne">
+          <div>
+            <label>Lieu de naissance / Place of Birth :</label>
+            <span>{{ d.militaire?.lieuNaissance }}</span>
+          </div>
+
+          <div>
+            <label>Sexe / Gender :</label>
+            <span>{{ d.militaire?.sexe }}</span>
+          </div>
+
+          <div class="statut-container">
+            <label>Statut / Status :</label>
+            <span class="statut-badge">{{ d.statut }}</span>
+
+            <div *ngIf="d.compagnie" style="margin-left: 15px; display: flex; align-items: center;">
+              <label style="margin-right: 5px;">Unité / Unit :</label>
+              <span class="statut-badge" style="background: #4a5568;">{{ d.compagnie.nom }}</span>
+            </div>
+            
+            <!-- Badge de Validation -->
+            <span class="val-badge" [ngClass]="d.statutValidation">
+              {{ d.statutValidation }}
+            </span>
+
+            <button 
+              *ngIf="d.statut === 'EN_ATTENTE_VALIDATION' && user?.compagnie?.id === d.compagnie?.id"
+              class="btn-recevoir"
+              (click)="recevoir()">
+              📥 Recevoir le dossier / Receive File
+            </button>
+
+            <!-- BOUTONS WORKFLOW -->
+            <button 
+              *ngIf="user?.role === Role.COMMANDANT_COMPAGNIE && d.statutValidation !== 'EN_ATTENTE_VALIDATION'"
+              class="btn-soumettre"
+              (click)="soumettrePourValidation()">
+              🚀 Soumettre / Submit for validation
+            </button>
+
+            <div class="bataillon-actions" *ngIf="user?.role === Role.BATAILLON && d.statutValidation === 'EN_ATTENTE_VALIDATION'">
+              <button class="btn-approuver" (click)="approuverModifications()">✅ Approuver / Approve</button>
+              <button class="btn-rejeter" (click)="rejeterModifications()">❌ Rejeter / Reject</button>
+            </div>
+
+            <button class="btn-biometrie" (click)="voirBiometrie()" title="Consulter les données biométriques CIMIS">
+              <i class="fa-solid fa-fingerprint"></i> Biométrie / Biometrics
+            </button>
+
+            <button 
+              *ngIf="user?.role === Role.DRH && d.statut !== 'ARCHIVE' && d.statut !== 'CAMPAGNE'"
+              class="btn-retraite"
+              (click)="mettreEnRetraite()"
+              title="Mettre en retraite ce militaire">
+              <i class="fa-solid fa-hourglass-end"></i> Retraite / Retirement
+            </button>
+
+            <button 
+              *ngIf="user?.role === Role.DRH && d.statut !== 'ARCHIVE'"
+              class="btn-archive-detail"
+              (click)="archiver()"
+              title="Archiver définitivement ce dossier">
+              <i class="fa-solid fa-box-archive"></i> Archiver / Archive
+            </button>
+          </div>
+        </div>
+
+        <!-- AFFICHAGE DU REFUS SI EXISTANT -->
+        <div class="motif-refus-alert" *ngIf="d.statutValidation === 'REJETE'">
+          <strong>⚠️ Modifications rejetées par le Bataillon / Rejected by Battalion :</strong>
+          <p>{{ d.motifRefus }}</p>
+        </div>
+
+        <div class="info-validation-alert" *ngIf="d.statutValidation === 'EN_ATTENTE_VALIDATION'">
+          <strong>ℹ️ Dossier en attente de validation / Pending validation (Bataillon)</strong>
+          <p *ngIf="d.modulesModifies">Modules concernés / Affected : {{ d.modulesModifies }}</p>
+        </div>
+
+
+      </div>
+
+      <!-- PHOTO -->
+      <div class="photo-militaire">
+        <img
+          *ngIf="d.militaire?.id; else defaultPhoto"
+          [src]="environment.apiUrl + '/api/militaires/' + d.militaire.id + '/photo'"
+          alt="Photo militaire"
+        />
+
+        <ng-template #defaultPhoto>
+          <img src="assets/avatar.png" alt="Photo par défaut" />
+        </ng-template>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ===================== -->
+  <!-- ZONE MODULES SCROLL  -->
+  <!-- ===================== -->
+  <div class="zone-modules-scroll">
+
+    <!-- BARRE MODULES -->
+    <div class="modules-bar">
+
+      <button
+        *ngFor="let m of modules"
+        (click)="choisirModule(m)"
+        [class.actif]="moduleActif === m.key">
+        {{ m.label }}
+      </button>
+
+    </div>
+
+    <!-- MODULES -->
+    <div class="zone-module" *ngIf="moduleActif">
+
+      <app-etat-civil
+        *ngIf="moduleActif === 'ETAT_CIVIL'"
+        [etatCivilId]="dossier.etatCivil?.id"
+        [militaire]="dossier.militaire"
+        [readOnly]="!canEdit">
+      </app-etat-civil>
+
+      <app-mutation
+        *ngIf="moduleActif === 'MUTATION'"
+        [militaireId]="d.militaire?.id"
+        [readOnly]="!canEdit">
+      </app-mutation>
+
+      <app-recompense
+        *ngIf="moduleActif === 'RECOMPENSES'"
+        [militaireId]="d.militaire?.id"
+        [readOnly]="!canEdit">
+      </app-recompense>
+
+      <app-identification
+        *ngIf="moduleActif === 'IDENTIFICATION'"
+        [militaireId]="d.militaire?.id"
+        [readOnly]="!canEdit">
+      </app-identification>
+
+      <app-avancement
+        *ngIf="moduleActif === 'AVANCEMENT'"
+        [avancementModuleId]="dossier.avancementModule?.id"
+        [militaire]="dossier.militaire"
+        [readOnly]="!canEdit">
+      </app-avancement>
+
+      <app-notation
+        *ngIf="moduleActif === 'NOTATION'"
+        [militaireId]="d.militaire?.id"
+        [readOnly]="!canEdit">
+      </app-notation>
+
+      <app-punition
+        *ngIf="moduleActif === 'PUNITION'"
+        [militaireId]="d.militaire?.id"
+        [readOnly]="!canEdit">
+      </app-punition>
+
+      <app-medical
+        *ngIf="moduleActif === 'DOSSIER_MEDICAL'"
+        [militaireId]="dossier.militaire?.id"
+        [readOnly]="!canEdit">
+      </app-medical>
+
+      <app-stage
+        *ngIf="moduleActif === 'STAGE'"
+        [militaireId]="dossier.militaire?.id"
+        [readOnly]="!canEdit">
+      </app-stage>
+
+      <app-diplome
+        *ngIf="moduleActif === 'DIPLOME'"
+        [militaireId]="dossier.militaire?.id"
+        [readOnly]="!canEdit">
+      </app-diplome>
+
+      <app-campagne
+        *ngIf="moduleActif === 'CAMPAGNE'"
+        [militaireId]="dossier.militaire?.id"
+        [readOnly]="!canEdit">
+      </app-campagne>
+
+      <app-historique
+        *ngIf="moduleActif === 'HISTORIQUE'"
+        [militaireId]="dossier.militaire?.id">
+      </app-historique>
+
+      <app-habillement
+        *ngIf="moduleActif === 'CARNET_HABILLEMENT'"
+        [militaireId]="dossier.militaire?.id"
+        [sexe]="dossier.militaire?.sexe">
+      </app-habillement>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div *ngIf="loading">
+  CHARGEMENT DOSSIER...
+</div>

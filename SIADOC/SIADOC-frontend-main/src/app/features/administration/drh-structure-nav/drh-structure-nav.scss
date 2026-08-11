@@ -1,0 +1,180 @@
+.drh-nav-container {
+  padding: 2.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: radial-gradient(circle at top right, rgba(27, 48, 34, 0.08), transparent),
+              radial-gradient(circle at bottom left, rgba(67, 83, 32, 0.08), transparent);
+}
+
+.drh-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 3rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 2rem;
+
+  .header-left {
+    h1 { 
+      margin: 0; 
+      font-size: 2.2rem; 
+      color: #1b3022; 
+      font-weight: 800; 
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+    p { margin: 0.5rem 0 0 0; color: #0e0f12; font-size: 1.1rem; font-weight: 500; }
+  }
+
+  .search-box {
+    position: relative;
+    width: 350px;
+    i { position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: #4a5568; }
+    input {
+      width: 100%;
+      padding: 0.85rem 1.25rem 0.85rem 3rem;
+      border: 2px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 1rem;
+      background: white;
+      transition: all 0.3s;
+      &:focus { outline: none; border-color: #1b3022; box-shadow: 0 0 0 4px rgba(27, 48, 34, 0.1); }
+    }
+  }
+}
+
+.drh-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+  background: #1b3022;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  width: fit-content;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    color: #a0aec0;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+
+    &:last-child { color: #facc15; font-weight: 700; cursor: default; }
+    &:not(:last-child):hover { color: white; }
+
+    i:not(.separator) { font-size: 1rem; color: #facc15; }
+    .separator { font-size: 0.7rem; color: #4a5568; margin-left: 0.25rem; }
+  }
+}
+
+.unit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.unit-card {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid #d1d5db;
+  border-left: 6px solid #1b3022;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    border-color: #1b3022;
+    background: #f8fafc;
+
+    .card-icon { background: #1b3022; color: #facc15; }
+    .card-footer { color: #1b3022; }
+  }
+
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    background: #f3f4f6;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.6rem;
+    color: #1b3022;
+    transition: all 0.3s;
+    border: 1px solid #e5e7eb;
+  }
+
+  .card-info {
+    h3 { margin: 0; font-size: 1.3rem; color: #1a202c; font-weight: 800; letter-spacing: -0.01em; }
+    p { margin: 0.5rem 0 0 0; color: #4a5568; font-size: 0.9rem; line-height: 1.4; font-weight: 500; }
+  }
+
+  .card-stats {
+    margin-top: auto;
+    .badge {
+      background: #fefce8;
+      color: #854d0e;
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid #fef08a;
+      text-transform: uppercase;
+    }
+    
+    &.leaf-stats {
+      .dossier-badge {
+        background: rgba(34, 197, 94, 0.1);
+        color: #15803d;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        i { margin-right: 5px; }
+      }
+    }
+  }
+
+  .card-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+    color: #718096;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 5rem 0;
+  color: #a0aec0;
+  i { font-size: 3rem; margin-bottom: 1.5rem; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.unit-card {
+  animation: slideIn 0.4s ease-out backwards;
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) { animation-delay: #{$i * 0.05}s; }
+  }
+}

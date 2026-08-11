@@ -1,0 +1,5 @@
+# Configuration CIMIS - Redirection 403
+ErrorDocument 403 /cim/403.php
+
+# Empêcher le listing des répertoires
+Options -Indexes

@@ -1,0 +1,90 @@
+<div class="page-container" *ngIf="personnel">
+  
+  <div class="breadcrumb">
+    <a routerLink="/archives-civiles">Archives</a> / {{ personnel.nom }} {{ personnel.prenom }}
+  </div>
+
+  <div class="dossier-header shadow-sm">
+    <div class="user-profile">
+      <div class="avatar-placeholder">
+        <i class="fa-solid fa-user-tie"></i>
+      </div>
+      <div class="info">
+        <h1>{{ personnel.nom }} {{ personnel.prenom }}</h1>
+        <p class="matricule">Matricule: {{ personnel.matricule }}</p>
+      </div>
+    </div>
+    <div class="details-grid">
+      <div class="item"><strong>Poste:</strong> {{ personnel.poste }}</div>
+      <div class="item"><strong>Entrée en service:</strong> {{ personnel.dateEntreeService | date:'dd/MM/yyyy' }}</div>
+      <div class="item"><strong>Date Naissance:</strong> {{ personnel.dateNaissance | date:'dd/MM/yyyy' }} ({{ personnel.lieuNaissance }})</div>
+      <div class="item"><strong>Sexe:</strong> {{ personnel.sexe === 'M' ? 'Masculin' : 'Féminin' }}</div>
+    </div>
+  </div>
+
+  <div class="actions-section">
+    <h2>📁 Documents du dossier</h2>
+    <button class="btn-add" (click)="toggleUpload()">
+      <i class="fa-solid" [class.fa-plus]="!showUploadForm" [class.fa-minus]="showUploadForm"></i> 
+      {{ showUploadForm ? 'Annuler' : 'Ajouter un document' }}
+    </button>
+  </div>
+
+  <!-- Formulaire de téléversement -->
+  <div class="upload-form shadow-sm" *ngIf="showUploadForm">
+    <div class="form-group">
+      <label>Nom du document (Libellé)</label>
+      <input type="text" [(ngModel)]="newDoc.label" placeholder="EX: Acte de naissance, Contrat...">
+    </div>
+    <div class="form-group">
+      <label>Choisir le fichier</label>
+      <input type="file" (change)="onFileSelected($event)" class="file-input">
+    </div>
+    <button class="btn-save" (click)="televerser()" [disabled]="!newDoc.label || !newDoc.file">
+      <i class="fa-solid fa-upload"></i> Enregistrer le document
+    </button>
+  </div>
+
+  <!-- Liste des documents (empilés) -->
+  <div class="documents-stack">
+    <div class="doc-card shadow-sm" *ngFor="let doc of documents" [class.active-preview]="documentSelectionne?.id === doc.id">
+      <div class="doc-clickable-area" (click)="voirDocument(doc)">
+        <div class="doc-icon">
+          <i class="fa-solid" [class.fa-file-pdf]="doc.typeFichier === 'application/pdf'" [class.fa-file-image]="doc.typeFichier.includes('image')"></i>
+        </div>
+        <div class="doc-info">
+          <h3>{{ doc.label }}</h3>
+          <p class="file-meta">{{ doc.nomFichier }} • Ajouté le {{ doc.dateTeleversement | date:'dd/MM/yyyy HH:mm' }}</p>
+        </div>
+      </div>
+      <div class="doc-actions">
+        <a [href]="getDownloadUrl(doc.id)" [download]="doc.nomFichier" class="btn-download" title="Télécharger">
+          <i class="fa-solid fa-download"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- PREVIEW BOX (Embedded Viewer) -->
+    <div *ngIf="documentSelectionne" class="preview-box shadow-lg">
+      <div class="preview-header">
+        <h3><i class="fa-solid fa-file-lines"></i> Aperçu : {{ documentSelectionne.label }}</h3>
+        <button class="btn-close-preview" (click)="fermerPreview()"><i class="fa-solid fa-xmark"></i> Fermer</button>
+      </div>
+      <div class="doc-viewer-container">
+        <iframe
+          *ngIf="documentSelectionne.safeUrl"
+          [src]="documentSelectionne.safeUrl"
+          width="100%"
+          height="650px"
+          style="border: none; background: #f1f5f9;">
+        </iframe>
+      </div>
+    </div>
+
+    <div *ngIf="documents.length === 0" class="empty-state">
+      <i class="fa-solid fa-folder-open"></i>
+      <p>Aucun document téléversé pour le moment.</p>
+    </div>
+  </div>
+
+</div>

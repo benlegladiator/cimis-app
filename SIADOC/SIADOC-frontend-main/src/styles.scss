@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: url("/log.jpg") center / cover no-repeat fixed;
+  //position: relative;
+  background-size: 55%;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(112, 117, 116, 0.6);
+  backdrop-filter: blur(5px);
+  filter: brightness(0.8);
+  z-index: 0;
+}
+
+app-root {
+  display: block;
+  position: relative;
+  z-index: 1000; /* Bien au-dessus du pseudo-élément body::after */
+  min-height: 100vh;
+}

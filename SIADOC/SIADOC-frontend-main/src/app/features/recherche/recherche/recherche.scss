@@ -1,0 +1,195 @@
+/* ================= CONTAINER ================= */
+
+.recherche-container {
+  padding: 30px;
+  animation: fadeIn 0.5s ease;
+}
+
+/* ================= TITRE ================= */
+
+h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1b3a2f;
+  margin-bottom: 25px;
+}
+
+/* ================= MODULES ================= */
+
+.modules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.modules button {
+  padding: 12px 22px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg,#1b3a2f,#254d3d);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.modules button:hover {
+  background: #c9a227;
+  color: #1b3a2f;
+  transform: translateY(-2px);
+}
+
+/* ================= MENU PIECE ================= */
+
+.piece-select {
+  margin-bottom: 20px;
+}
+
+.piece-select label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #1b3a2f;
+}
+
+.piece-select select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 260px;
+  background: #f7f7f7;
+}
+
+/* ================= FORM ================= */
+
+.search-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.search-form input {
+  padding: 11px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  transition: 0.2s;
+}
+
+.search-form input:focus {
+  border-color: #c9a227;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(201,162,39,0.2);
+  background: white;
+}
+
+/* ================= BOUTON RECHERCHE ================= */
+
+.btn-search {
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg,#c9a227,#e0b832);
+  color: #1b3a2f;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-search:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+/* ================= RESULTATS ================= */
+
+.resultats {
+  margin-top: 30px;
+  display: grid;
+  gap: 12px;
+}
+
+/* ================= CARD RESULTAT ================= */
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  border-left: 5px solid #1b3a2f;
+  box-shadow: 0 5px 14px rgba(0,0,0,0.08);
+  transition: 0.25s;
+}
+
+.card:hover {
+  transform: translateX(6px);
+  background: #fafafa;
+}
+
+.card h3 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  color: #1b3a2f;
+}
+
+.card p {
+  margin: 2px 0;
+  font-size: 13px;
+  color: #555;
+}
+
+.modules {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.modules button{
+  padding: 10px 18px;
+  border: none;
+  background:#1b3a2f;
+  color:white;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.modules button:hover{
+  background:#c9a227;
+}
+
+.search-form{
+  display:grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap:12px;
+  margin:20px 0;
+}
+
+.resultats{
+  margin-top:30px;
+}
+
+.card{
+  background:white;
+  padding:18px;
+  border-radius:10px;
+  margin-bottom:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+/* ================= ANIMATION ================= */
+
+@keyframes fadeIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}

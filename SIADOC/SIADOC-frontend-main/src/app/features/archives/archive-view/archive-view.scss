@@ -1,0 +1,130 @@
+/* CONTENEUR PRINCIPAL */
+
+.archive-container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+
+/* TITRES */
+
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+h3 {
+  margin-top: 35px;
+  margin-bottom: 10px;
+  border-left: 4px solid #2563eb;
+  padding-left: 10px;
+  font-weight: 600;
+}
+
+
+/* IDENTITE */
+
+.section {
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+
+/* LISTE DES PIECES */
+
+.archive-container div div {
+  padding: 10px 14px;
+  margin: 6px 0;
+  border-radius: 6px;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.archive-container div div:hover {
+  background: #eef2ff;
+  transform: translateX(4px);
+  cursor: pointer;
+}
+
+
+/* CHECKBOX */
+
+input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+
+/* BOUTON EXPORT */
+
+.btn-export {
+  margin-top: 30px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg,#2563eb,#1e40af);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-export:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+.actions{
+  margin-top:30px;
+  display:flex;
+  gap:15px;
+}
+
+.btn-print{
+  padding:12px 18px;
+  background:#16a34a;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:500;
+}
+
+.btn-export{
+  padding:12px 18px;
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:500;
+}
+
+.btn-print:hover,
+.btn-export:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 14px rgba(0,0,0,0.15);
+}
+
+
+/* VIEWER DOCUMENT */
+
+.viewer {
+  margin-top: 30px;
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.viewer iframe {
+  border: none;
+  width: 100%;
+  height: 650px;
+}

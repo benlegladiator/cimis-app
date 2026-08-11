@@ -1,0 +1,5339 @@
+[
+  {
+    "id": "premiere-region-de-gendarmerie",
+    "label": "PREMIERE REGION DE GENDARMERIE",
+    "description": "Région de Gendarmerie",
+    "icon": "fa-map",
+    "children": []
+  },
+  {
+    "id": "r-gion-de-gendarmerie-1",
+    "label": "Région de Gendarmerie 1",
+    "description": "Région de Gendarmerie",
+    "icon": "fa-map",
+    "children": [
+      {
+        "id": "em",
+        "label": "EM",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": []
+      },
+      {
+        "id": "gcr1",
+        "label": "GCR1",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-abong-mbang",
+            "label": "PRM ABONG-MBANG",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-abong-mbang",
+                "label": "PRM ABONG-MBANG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-ambam",
+            "label": "PRM AMBAM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-ambam",
+                "label": "PRM AMBAM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-bafia",
+            "label": "PRM BAFIA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-bafia",
+                "label": "PRM BAFIA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-bertoua",
+            "label": "PRM BERTOUA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-bertoua",
+                "label": "PRM BERTOUA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-boumnyebel",
+            "label": "PRM BOUMNYEBEL",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-boumnyebel",
+                "label": "PRM BOUMNYEBEL",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-ebolowa",
+            "label": "PRM EBOLOWA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-ebolowa",
+                "label": "PRM EBOLOWA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-kribi",
+            "label": "PRM KRIBI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-kribi",
+                "label": "PRM KRIBI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-nanga-eboko",
+            "label": "PRM NANGA EBOKO",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-nanga-eboko",
+                "label": "PRM NANGA EBOKO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-sangmelima",
+            "label": "PRM SANGMELIMA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-sangmelima",
+                "label": "PRM SANGMELIMA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-yaounde",
+            "label": "PRM YAOUNDE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-yaounde",
+                "label": "PRM YAOUNDE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "lc",
+        "label": "LC",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "ggt-yaounde",
+            "label": "GGT YAOUNDE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-yaounde1",
+                "label": "CIE YAOUNDE1",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-yaounde2",
+                "label": "CIE YAOUNDE2",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-yaounde3",
+                "label": "CIE YAOUNDE3",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-aeroport-yaounde",
+            "label": "CIE AEROPORT YAOUNDE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-aeroport-1",
+                "label": "BDE AEROPORT 1",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-aeroport-2",
+                "label": "BDE AEROPORT 2",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-aeroport-ville",
+                "label": "BDE AEROPORT VILLE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-pistes",
+                "label": "BDE PISTES",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-akonolinga",
+            "label": "CIE AKONOLINGA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ayos",
+                "label": "BDE AYOS",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-endom",
+                "label": "BDE ENDOM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kobdombo",
+                "label": "BDE KOBDOMBO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mengang",
+                "label": "BDE MENGANG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-edjom",
+                "label": "PTE EDJOM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-emvan-esso",
+                "label": "PTE EMVAN-ESSO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mekong-sso",
+                "label": "PTE MEKONG SSO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mengueme-si",
+                "label": "PTE MENGUEME-SI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-bafia",
+            "label": "CIE BAFIA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bokito",
+                "label": "BDE BOKITO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-deuk",
+                "label": "BDE DEUK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kiiki",
+                "label": "BDE KIIKI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kon-yambetta",
+                "label": "BDE KON YAMBETTA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-makenene",
+                "label": "BDE MAKENENE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ndikinimeki",
+                "label": "BDE NDIKINIMEKI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nitoukou",
+                "label": "BDE NITOUKOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ombessa",
+                "label": "BDE OMBESSA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-balamba",
+                "label": "PTE BALAMBA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bouraka",
+                "label": "PTE BOURAKA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mouko",
+                "label": "PTE MOUKO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-yangben",
+                "label": "PTE YANGBEN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-eseka",
+            "label": "CIE ESEKA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-biyouha",
+                "label": "BDE BIYOUHA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bondjock",
+                "label": "BDE BONDJOCK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bot-makak",
+                "label": "BDE BOT-MAKAK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-dibang",
+                "label": "BDE DIBANG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-makak",
+                "label": "BDE MAKAK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-matomb",
+                "label": "BDE MATOMB",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-messondo",
+                "label": "BDE MESSONDO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ngog-mapoubi",
+                "label": "BDE NGOG MAPOUBI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nguibassal",
+                "label": "BDE NGUIBASSAL",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-badjob",
+                "label": "PTE BADJOB",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-manguen2",
+                "label": "PTE MANGUEN2",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mom-gare",
+                "label": "PTE MOM GARE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-songmbong",
+                "label": "PTE SONGMBONG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-mbalmayo",
+            "label": "CIE MBALMAYO",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-akoeman",
+                "label": "BDE AKOEMAN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-dzeng",
+                "label": "BDE DZENG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mengueme",
+                "label": "BDE MENGUEME",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ngomedzap",
+                "label": "BDE NGOMEDZAP",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nkolmetet",
+                "label": "BDE NKOLMETET",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-akongo",
+                "label": "PTE AKONGO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-assie",
+                "label": "PTE ASSIE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-koumassi",
+                "label": "PTE KOUMASSI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-nkolnyama",
+                "label": "PTE NKOLNYAMA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-mfou",
+            "label": "CIE MFOU",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-afanloum",
+                "label": "BDE AFANLOUM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-awae",
+                "label": "BDE AWAE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-edzandouan",
+                "label": "BDE EDZANDOUAN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-esse",
+                "label": "BDE ESSE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nkolafamba",
+                "label": "BDE NKOLAFAMBA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-olanguina",
+                "label": "BDE OLANGUINA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-soa",
+                "label": "BDE SOA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-elat",
+                "label": "PTE ELAT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-nkoabang",
+                "label": "PTE NKOABANG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-nkolnda",
+                "label": "PTE NKOLNDA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-monatele",
+            "label": "CIE MONATELE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-batchenga",
+                "label": "BDE BATCHENGA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ebebda",
+                "label": "BDE EBEBDA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-elig-mfomo",
+                "label": "BDE ELIG-MFOMO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-evodoula",
+                "label": "BDE EVODOULA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-lobo",
+                "label": "BDE LOBO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-obala",
+                "label": "BDE OBALA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-okola",
+                "label": "BDE OKOLA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-sa-a",
+                "label": "BDE SA'A",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ekabita",
+                "label": "PTE EKABITA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ngoksa",
+                "label": "PTE NGOKSA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-nkolve",
+                "label": "PTE NKOLVE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-nanga-eboko",
+            "label": "CIE NANGA EBOKO",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bibey",
+                "label": "BDE BIBEY",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-lembe-yezoum",
+                "label": "BDE LEMBE YEZOUM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mbandjock",
+                "label": "BDE MBANDJOCK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-minta",
+                "label": "BDE MINTA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nkoteng",
+                "label": "BDE NKOTENG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nsem",
+                "label": "BDE NSEM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-wall",
+                "label": "PTE WALL",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-ngoumou",
+            "label": "CIE NGOUMOU",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-akono",
+                "label": "BDE AKONO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bikok",
+                "label": "BDE BIKOK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mbankomo",
+                "label": "BDE MBANKOMO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-evindissi",
+                "label": "PTE EVINDISSI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-ntui",
+            "label": "CIE NTUI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mbangassina",
+                "label": "BDE MBANGASSINA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ngambe-tikar",
+                "label": "BDE NGAMBE TIKAR",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ngoro",
+                "label": "BDE NGORO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-yoko",
+                "label": "BDE YOKO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-issandja",
+                "label": "PTE ISSANDJA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-linte",
+                "label": "PTE LINTE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "ge-n-1",
+            "label": "GE N°1",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-10",
+                "label": "ESC 10",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-11",
+                "label": "ESC 11",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-12",
+                "label": "ESC 12",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-13",
+                "label": "ESC 13",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-14",
+                "label": "ESC 14",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-15",
+                "label": "ESC 15",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-16",
+                "label": "ESC 16",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "le",
+        "label": "LE",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": []
+          },
+          {
+            "id": "cie-bertoua",
+            "label": "CIE BERTOUA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-belabo",
+                "label": "BDE BELABO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-betare-oya",
+                "label": "BDE BETARE-OYA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-diang",
+                "label": "BDE DIANG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-garoua-boulai",
+                "label": "BDE GAROUA-BOULAI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mandjou",
+                "label": "BDE MANDJOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ngoura",
+                "label": "BDE NGOURA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nkolbikon",
+                "label": "BDE NKOLBIKON",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bouli",
+                "label": "PTE BOULI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-dimon",
+                "label": "PTE DIMON",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-lom-pangar",
+                "label": "PTE LOM PANGAR",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mbitom",
+                "label": "PTE MBITOM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mombal",
+                "label": "PTE MOMBAL",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-abong-mbang",
+            "label": "CIE ABONG-MBANG",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-angossas",
+                "label": "BDE ANGOSSAS",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-atok",
+                "label": "BDE ATOK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-azoumekout",
+                "label": "BDE AZOUMEKOUT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-dimako",
+                "label": "BDE DIMAKO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-doumaintang",
+                "label": "BDE DOUMAINTANG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-doume",
+                "label": "BDE DOUME",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-lomie",
+                "label": "BDE LOMIE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mboma",
+                "label": "BDE MBOMA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-messamena",
+                "label": "BDE MESSAMENA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-messock",
+                "label": "BDE MESSOCK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mindourou",
+                "label": "BDE MINDOUROU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nguelemendouka",
+                "label": "BDE NGUELEMENDOUKA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-somalomo",
+                "label": "BDE SOMALOMO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bagofit",
+                "label": "PTE BAGOFIT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-dimpam",
+                "label": "PTE DIMPAM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-esseng",
+                "label": "PTE ESSENG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mballam",
+                "label": "PTE MBALLAM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ngoyla",
+                "label": "PTE NGOYLA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-zoulabot",
+                "label": "PTE ZOULABOT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-batouri",
+            "label": "CIE BATOURI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kentzou",
+                "label": "BDE KENTZOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kette",
+                "label": "BDE KETTE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mbang",
+                "label": "BDE MBANG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ndelele",
+                "label": "BDE NDELELE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nguelebok",
+                "label": "BDE NGUELEBOK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ouli",
+                "label": "BDE OULI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-atsieck",
+                "label": "PTE ATSIECK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bolilossou",
+                "label": "PTE BOLILOSSOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-boubara",
+                "label": "PTE BOUBARA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mindourou",
+                "label": "PTE MINDOUROU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-tocktoyo",
+                "label": "PTE TOCKTOYO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-yokadouma",
+            "label": "CIE YOKADOUMA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-gari-gombo",
+                "label": "BDE GARI-GOMBO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-moloundou",
+                "label": "BDE MOLOUNDOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-salapoumbe",
+                "label": "BDE SALAPOUMBE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-kika",
+                "label": "PTE KIKA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-lamendoum",
+                "label": "PTE LAMENDOUM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-libongo",
+                "label": "PTE LIBONGO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mboy2",
+                "label": "PTE MBOY2",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mobilong",
+                "label": "PTE MOBILONG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ngatto",
+                "label": "PTE NGATTO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-socambo",
+                "label": "PTE SOCAMBO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "ge-n-4",
+            "label": "GE N°4",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-40",
+                "label": "ESC 40",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-41",
+                "label": "ESC 41",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-42",
+                "label": "ESC 42",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-43",
+                "label": "ESC 43",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-44",
+                "label": "ESC 44",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ls",
+        "label": "LS",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-ebolowa",
+            "label": "CIE EBOLOWA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-angale",
+                "label": "BDE ANGALE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-biwong-bane",
+                "label": "BDE BIWONG-BANE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-biwong-bulu",
+                "label": "BDE BIWONG-BULU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ebolowa-si",
+                "label": "BDE EBOLOWA SI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-efoulan-ebwa",
+                "label": "BDE EFOULAN EBWA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mengong",
+                "label": "BDE MENGONG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mvangan",
+                "label": "BDE MVANGAN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ngoulemakong",
+                "label": "BDE NGOULEMAKONG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ngoazip",
+                "label": "PTE NGOAZIP",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ngoulessaman",
+                "label": "PTE NGOULESSAMAN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-nkolandom",
+                "label": "PTE NKOLANDOM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-nyangong",
+                "label": "PTE NYANGONG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-ambam",
+            "label": "CIE AMBAM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kye-ossi",
+                "label": "BDE KYE-OSSI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ma-an",
+                "label": "BDE MA'AN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-olamze",
+                "label": "BDE OLAMZE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-abang-minko-o",
+                "label": "PTE ABANG MINKO'O",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bile-biba",
+                "label": "PTE BILE BIBA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ebengon",
+                "label": "PTE EBENGON",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-meyo-centre",
+                "label": "PTE MEYO CENTRE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-nyabessang",
+                "label": "PTE NYABESSANG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-kribi",
+            "label": "CIE KRIBI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-akom-2",
+                "label": "BDE AKOM 2",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bipindi",
+                "label": "BDE BIPINDI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-campo",
+                "label": "BDE CAMPO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-dombe",
+                "label": "BDE DOMBE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-fifinda",
+                "label": "BDE FIFINDA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-lolodorf",
+                "label": "BDE LOLODORF",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-massaka",
+                "label": "BDE MASSAKA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mvengue",
+                "label": "BDE MVENGUE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nyete",
+                "label": "BDE NYETE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-afan-oveng",
+                "label": "PTE AFAN OVENG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-atog-boga",
+                "label": "PTE ATOG BOGA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-port-kribi",
+            "label": "CIE PORT KRIBI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-maritime-kribi",
+                "label": "BDE MARITIME KRIBI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-port-nord-kribi",
+                "label": "BDE PORT NORD KRIBI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-port-sud-kribi",
+                "label": "BDE PORT SUD KRIBI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-sangmelima",
+            "label": "CIE SANGMELIMA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bengbis",
+                "label": "BDE BENGBIS",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-djoum",
+                "label": "BDE DJOUM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-meyomessi",
+                "label": "BDE MEYOMESSI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mintom",
+                "label": "BDE MINTOM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mvomeka-a",
+                "label": "BDE MVOMEKA'A",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-oveng",
+                "label": "BDE OVENG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-zoetele",
+                "label": "BDE ZOETELE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-aboulou",
+                "label": "PTE ABOULOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-avebe",
+                "label": "PTE AVEBE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-biba-yemfeck",
+                "label": "PTE BIBA YEMFECK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ebamina",
+                "label": "PTE EBAMINA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mekin",
+                "label": "PTE MEKIN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-meyomadjom",
+                "label": "PTE MEYOMADJOM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-nkilzock",
+                "label": "PTE NKILZOCK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-nkolotou-outou",
+                "label": "PTE NKOLOTOU'OUTOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-nkoumadjap",
+                "label": "PTE NKOUMADJAP",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "ge-n-7",
+            "label": "GE N°7",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-70",
+                "label": "ESC 70",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-71",
+                "label": "ESC 71",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-72",
+                "label": "ESC 72",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-73",
+                "label": "ESC 73",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-74",
+                "label": "ESC 74",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-75",
+                "label": "ESC 75",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "deuxieme-region-de-gendarmerie",
+    "label": "DEUXIEME REGION DE GENDARMERIE",
+    "description": "Région de Gendarmerie",
+    "icon": "fa-map",
+    "children": []
+  },
+  {
+    "id": "r-gion-de-gendarmerie-2",
+    "label": "Région de Gendarmerie 2",
+    "description": "Région de Gendarmerie",
+    "icon": "fa-map",
+    "children": [
+      {
+        "id": "em",
+        "label": "EM",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "gcr2",
+        "label": "GCR2",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-bonaberi",
+            "label": "PRM BONABERI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-bonaberi",
+                "label": "PRM BONABERI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-buea",
+            "label": "PRM BUEA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-buea",
+                "label": "PRM BUEA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-douala",
+            "label": "PRM DOUALA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-douala",
+                "label": "PRM DOUALA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-edea",
+            "label": "PRM EDEA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-edea",
+                "label": "PRM EDEA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-mamfe",
+            "label": "PRM MAMFE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-mamfe",
+                "label": "PRM MAMFE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-nkngsba",
+            "label": "PRM NKNGSBA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-nkngsba",
+                "label": "PRM NKNGSBA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ll",
+        "label": "LL",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "ggt-douala",
+            "label": "GGT DOUALA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-douala-1",
+                "label": "CIE DOUALA 1",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-douala-2",
+                "label": "CIE DOUALA 2",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-bonaberi",
+                "label": "CIE BONABERI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "ggt-nkngsba",
+            "label": "GGT NKNGSBA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-nkngsba",
+                "label": "CIE NKNGSBA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-mbanga",
+                "label": "CIE MBANGA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-aeroport-douala",
+            "label": "CIE AEROPORT DOUALA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-aeroport-1",
+                "label": "BDE AEROPORT 1",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-aeroport-2",
+                "label": "BDE AEROPORT 2",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-pistes",
+                "label": "BDE PISTES",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-edea",
+            "label": "CIE EDEA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-dizangue",
+                "label": "BDE DIZANGUE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ekite",
+                "label": "BDE EKITE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-logbadjeck",
+                "label": "BDE LOGBADJECK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-makondo",
+                "label": "BDE MAKONDO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-massock",
+                "label": "BDE MASSOCK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mbongo",
+                "label": "BDE MBONGO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mouanko",
+                "label": "BDE MOUANKO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ndom",
+                "label": "BDE NDOM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ngambe",
+                "label": "BDE NGAMBE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nyanon",
+                "label": "BDE NYANON",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-pouma",
+                "label": "BDE POUMA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-song-mbengue",
+                "label": "BDE SONG MBENGUE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ndog-babem-ndebi",
+                "label": "PTE NDOG BABEM NDEBI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-okoth",
+                "label": "PTE OKOTH",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-song-loulou",
+                "label": "PTE SONG LOULOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-songmbog",
+                "label": "PTE SONGMBOG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-touwe",
+                "label": "PTE TOUWE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-port-dla",
+            "label": "CIE PORT DLA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-manoka",
+                "label": "BDE MANOKA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-maritime-dla",
+                "label": "BDE MARITIME DLA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-port-nord-dla",
+                "label": "BDE PORT NORD DLA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-port-sud-dla",
+                "label": "BDE PORT SUD DLA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-yabassi",
+            "label": "CIE YABASSI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bonepoupa",
+                "label": "BDE BONEPOUPA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ndobian",
+                "label": "BDE NDOBIAN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nkondjock",
+                "label": "BDE NKONDJOCK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-sole",
+                "label": "BDE SOLE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-yingui",
+                "label": "BDE YINGUI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "ge-n-2",
+            "label": "GE N°2",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-20",
+                "label": "ESC 20",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-21",
+                "label": "ESC 21",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-22",
+                "label": "ESC 22",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-23",
+                "label": "ESC 23",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-24",
+                "label": "ESC 24",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "lsw",
+        "label": "LSW",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-limbe",
+            "label": "CIE LIMBE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bimbia",
+                "label": "BDE BIMBIA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-buea",
+                "label": "BDE BUEA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-idenau",
+                "label": "BDE IDENAU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mukundange",
+                "label": "BDE MUKUNDANGE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-muyuka",
+                "label": "BDE MUYUKA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-poh",
+                "label": "BDE POH",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-sonara",
+                "label": "BDE SONARA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-tiko",
+                "label": "BDE TIKO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bojongo",
+                "label": "PTE BOJONGO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mutengene",
+                "label": "PTE MUTENGENE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-bangem",
+            "label": "CIE BANGEM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nguti",
+                "label": "BDE NGUTI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-tombel",
+                "label": "BDE TOMBEL",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-njoungo",
+                "label": "PTE NJOUNGO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-isanguele",
+            "label": "CIE ISANGUELE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-akwa-bakassi",
+                "label": "BDE AKWA-BAKASSI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-idabato",
+                "label": "BDE IDABATO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kombo-abedimo",
+                "label": "BDE KOMBO ABEDIMO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kombo-itindi",
+                "label": "BDE KOMBO ITINDI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-maritime-mbonjo",
+                "label": "BDE MARITIME MBONJO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-rio-del-rey",
+                "label": "BDE RIO DEL REY",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-idibanyanga",
+                "label": "PTE IDIBANYANGA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-kumba",
+            "label": "CIE KUMBA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-fiango",
+                "label": "BDE FIANGO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-konye",
+                "label": "BDE KONYE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mambanda",
+                "label": "BDE MAMBANDA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mbonge",
+                "label": "BDE MBONGE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-njuki",
+                "label": "BDE NJUKI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-banga-bakundu",
+                "label": "PTE BANGA BAKUNDU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ikiliwindi",
+                "label": "PTE IKILIWINDI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mukonje",
+                "label": "PTE MUKONJE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-mamfe",
+            "label": "CIE MAMFE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-akwaya",
+                "label": "BDE AKWAYA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-eyumodjock",
+                "label": "BDE EYUMODJOCK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-tinto",
+                "label": "BDE TINTO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-babong",
+                "label": "PTE BABONG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-balin",
+                "label": "PTE BALIN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-kembong",
+                "label": "PTE KEMBONG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-kendem",
+                "label": "PTE KENDEM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-sabes",
+                "label": "PTE SABES",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-menji",
+            "label": "CIE MENJI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-alou",
+                "label": "BDE ALOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-wabane",
+                "label": "BDE WABANE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bechati",
+                "label": "PTE BECHATI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-nkongle",
+                "label": "PTE NKONGLE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-mundemba",
+            "label": "CIE MUNDEMBA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bamusso",
+                "label": "BDE BAMUSSO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-dikume-balue",
+                "label": "BDE DIKUME BALUE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-lobe",
+                "label": "BDE LOBE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-toko",
+                "label": "BDE TOKO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ekondo-titi",
+                "label": "PTE EKONDO TITI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "esc-80",
+            "label": "ESC 80",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "pcdt",
+                "label": "PCDT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-801",
+                "label": "PM 801",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-802",
+                "label": "PM 802",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-803",
+                "label": "PM 803",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-804",
+                "label": "PM 804",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "esc-81",
+            "label": "ESC 81",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "pcdt",
+                "label": "PCDT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-811",
+                "label": "PM 811",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-812",
+                "label": "PM 812",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-813",
+                "label": "PM 813",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "troisieme-region-de-gendarmerie",
+    "label": "TROISIEME REGION DE GENDARMERIE",
+    "description": "Région de Gendarmerie",
+    "icon": "fa-map",
+    "children": []
+  },
+  {
+    "id": "r-gion-de-gendarmerie-3",
+    "label": "Région de Gendarmerie 3",
+    "description": "Région de Gendarmerie",
+    "icon": "fa-map",
+    "children": [
+      {
+        "id": "em",
+        "label": "EM",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "gcr3",
+        "label": "GCR3",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-garoua",
+            "label": "PRM GAROUA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-garoua",
+                "label": "PRM GAROUA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-guider",
+            "label": "PRM GUIDER",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-guider",
+                "label": "PRM GUIDER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-ngaoundere",
+            "label": "PRM NGAOUNDERE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-ngaoundere",
+                "label": "PRM NGAOUNDERE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-touboro",
+            "label": "PRM TOUBORO",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-touboro",
+                "label": "PRM TOUBORO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ln",
+        "label": "LN",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "ggt-garoua",
+            "label": "GGT GAROUA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-garoua-1",
+                "label": "CIE GAROUA 1",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-garoua-2",
+                "label": "CIE GAROUA 2",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-garoua-3",
+                "label": "CIE GAROUA 3",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-guider",
+            "label": "CIE GUIDER",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-figuil",
+                "label": "BDE FIGUIL",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mayo-oulo",
+                "label": "BDE MAYO OULO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-doumo",
+                "label": "PTE DOUMO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-poli",
+            "label": "CIE POLI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-beka",
+                "label": "BDE BEKA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-voko",
+                "label": "BDE VOKO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-wangai",
+                "label": "PTE WANGAI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-wate",
+                "label": "PTE WATE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-tchollire",
+            "label": "CIE TCHOLLIRE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mombore",
+                "label": "BDE MOMBORE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-rey-bouba",
+                "label": "BDE REY BOUBA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-gamba",
+                "label": "PTE GAMBA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-touboro",
+            "label": "CIE TOUBORO",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-madingring",
+                "label": "BDE MADINGRING",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mbai-mboum",
+                "label": "BDE MBAI-MBOUM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-dompla",
+                "label": "PTE DOMPLA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mbang-rey",
+                "label": "PTE MBANG-REY",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "ge-n-6",
+            "label": "GE N°6",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-60",
+                "label": "ESC 60",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-61",
+                "label": "ESC 61",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-62",
+                "label": "ESC 62",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-63",
+                "label": "ESC 63",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "la",
+        "label": "LA",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-ngaoundere",
+            "label": "CIE NGAOUNDERE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-aeroport",
+                "label": "BDE AEROPORT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-belel",
+                "label": "BDE BELEL",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-dang",
+                "label": "BDE DANG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-gada-mabanga",
+                "label": "BDE GADA-MABANGA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-martap",
+                "label": "BDE MARTAP",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mbe",
+                "label": "BDE MBE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ngan-ha",
+                "label": "BDE NGAN'HA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nyambaka",
+                "label": "BDE NYAMBAKA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-rech",
+                "label": "BDE RECH",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-idool",
+                "label": "PTE IDOOL",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-banyo",
+            "label": "CIE BANYO",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bankim",
+                "label": "BDE BANKIM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mayo-darle",
+                "label": "BDE MAYO DARLE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-atta",
+                "label": "PTE ATTA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bonhari",
+                "label": "PTE BONHARI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mape",
+                "label": "PTE MAPE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-sambolabo",
+                "label": "PTE SAMBOLABO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-meiganga",
+            "label": "CIE MEIGANGA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-dir",
+                "label": "BDE DIR",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-djohong",
+                "label": "BDE DJOHONG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ngaoui",
+                "label": "BDE NGAOUI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-batoua-godole",
+                "label": "PTE BATOUA GODOLE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-yamba",
+                "label": "PTE YAMBA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-tibati",
+            "label": "CIE TIBATI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ngaoundal",
+                "label": "BDE NGAOUNDAL",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mbakaou",
+                "label": "PTE MBAKAOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-tignere",
+            "label": "CIE TIGNERE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-galim-tignere",
+                "label": "BDE GALIM TIGNERE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mayo-baleo",
+                "label": "BDE MAYO BALEO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-kontcha",
+                "label": "PTE KONTCHA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "esc-100",
+            "label": "ESC 100",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "pcdt",
+                "label": "PCDT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-1001",
+                "label": "PM 1001",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-1002",
+                "label": "PM 1002",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-1003",
+                "label": "PM 1003",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-1004",
+                "label": "PM 1004",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "esc-102",
+            "label": "ESC 102",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "pcdt",
+                "label": "PCDT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-1021",
+                "label": "PM 1021",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-1022",
+                "label": "PM 1022",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-1023",
+                "label": "PM 1023",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-1024",
+                "label": "PM 1024",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "quatrieme-region-de-gendarmerie",
+    "label": "QUATRIEME REGION DE GENDARMERIE",
+    "description": "Région de Gendarmerie",
+    "icon": "fa-map",
+    "children": []
+  },
+  {
+    "id": "r-gion-de-gendarmerie-4",
+    "label": "Région de Gendarmerie 4",
+    "description": "Région de Gendarmerie",
+    "icon": "fa-map",
+    "children": [
+      {
+        "id": "em",
+        "label": "EM",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "gcr4",
+        "label": "GCR4",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-kousseri",
+            "label": "PRM KOUSSERI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-kousseri",
+                "label": "PRM KOUSSERI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-maroua",
+            "label": "PRM MAROUA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-maroua",
+                "label": "PRM MAROUA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-mokolo",
+            "label": "PRM MOKOLO",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-mokolo",
+                "label": "PRM MOKOLO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "len",
+        "label": "LEN",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-kaele",
+            "label": "CIE KAELE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-dziguilao",
+                "label": "BDE DZIGUILAO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-guidiguis",
+                "label": "BDE GUIDIGUIS",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mindif",
+                "label": "BDE MINDIF",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-moulvoudaye",
+                "label": "BDE MOULVOUDAYE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-moutourwa",
+                "label": "BDE MOUTOURWA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-touloum",
+                "label": "BDE TOULOUM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-lara",
+                "label": "PTE LARA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mindjivin",
+                "label": "PTE MINDJIVIN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-maroua",
+            "label": "CIE MAROUA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-aeroport",
+                "label": "BDE AEROPORT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bogo",
+                "label": "BDE BOGO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-dargala",
+                "label": "BDE DARGALA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-domayo",
+                "label": "BDE DOMAYO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-doualare",
+                "label": "BDE DOUALARE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-douggoi",
+                "label": "BDE DOUGGOI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-gazawa",
+                "label": "BDE GAZAWA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-meri",
+                "label": "BDE MERI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ndoukoukla",
+                "label": "BDE NDOUKOUKLA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-pette",
+                "label": "BDE PETTE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-rech",
+                "label": "BDE RECH",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-kongola",
+                "label": "PTE KONGOLA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-mokolo",
+            "label": "CIE MOKOLO",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bourha",
+                "label": "BDE BOURHA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-hina",
+                "label": "BDE HINA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-koza",
+                "label": "BDE KOZA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mogode",
+                "label": "BDE MOGODE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mozogo",
+                "label": "BDE MOZOGO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-soulede",
+                "label": "BDE SOULEDE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ashighassia",
+                "label": "PTE ASHIGHASSIA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-tourou",
+                "label": "PTE TOUROU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-zamai",
+                "label": "PTE ZAMAI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-mora",
+            "label": "CIE MORA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bonderi",
+                "label": "PTE BONDERI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kolofata",
+                "label": "BDE KOLOFATA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-tokombere",
+                "label": "BDE TOKOMBERE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-amchide",
+                "label": "PTE AMCHIDE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-yagoua",
+            "label": "CIE YAGOUA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-datcheka",
+                "label": "BDE DATCHEKA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-gobo",
+                "label": "BDE GOBO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-gueme",
+                "label": "BDE GUEME",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-guere",
+                "label": "BDE GUERE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kai-kai",
+                "label": "BDE KAI KAI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kalfou",
+                "label": "BDE KALFOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-karhay",
+                "label": "BDE KARHAY",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-maga",
+                "label": "BDE MAGA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-tchatibali",
+                "label": "BDE TCHATIBALI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-wina",
+                "label": "BDE WINA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bangana",
+                "label": "PTE BANGANA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "ge-n-3",
+            "label": "GE N°3",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-30",
+                "label": "ESC 30",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-31",
+                "label": "ESC 31",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "esc-32",
+                "label": "ESC 32",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "llc",
+        "label": "LLC",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-kousseri",
+            "label": "CIE KOUSSERI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-lacka",
+                "label": "BDE LACKA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-logone-birni",
+                "label": "BDE LOGONE BIRNI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-madagascar",
+                "label": "BDE MADAGASCAR",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-zina",
+                "label": "BDE ZINA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-dabanga",
+                "label": "PTE DABANGA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-makary",
+            "label": "CIE MAKARY",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-blangoua",
+                "label": "BDE BLANGOUA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-darack",
+                "label": "BDE DARACK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-fotokol",
+                "label": "BDE FOTOKOL",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-goulfey",
+                "label": "BDE GOULFEY",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-hile-alifa",
+                "label": "BDE HILE ALIFA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kofia",
+                "label": "BDE KOFIA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-sagme",
+                "label": "BDE SAGME",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-afade",
+                "label": "PTE AFADE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-waza",
+            "label": "CIE WAZA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-waza",
+                "label": "BDE WAZA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-zigague",
+                "label": "BDE ZIGAGUE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "esc-33",
+            "label": "ESC 33",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "pcdt",
+                "label": "PCDT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-331",
+                "label": "PM 331",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-332",
+                "label": "PM 332",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-333",
+                "label": "PM 333",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-334",
+                "label": "PM 334",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cinquieme-region-de-gendarmerie",
+    "label": "CINQUIEME REGION DE GENDARMERIE",
+    "description": "Région de Gendarmerie",
+    "icon": "fa-map",
+    "children": []
+  },
+  {
+    "id": "r-gion-de-gendarmerie-5",
+    "label": "Région de Gendarmerie 5",
+    "description": "Région de Gendarmerie",
+    "icon": "fa-map",
+    "children": [
+      {
+        "id": "em",
+        "label": "EM",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": []
+      },
+      {
+        "id": "gcr5",
+        "label": "GCR5",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-bafoussam",
+            "label": "PRM BAFOUSSAM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-bafoussam",
+                "label": "PRM BAFOUSSAM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-bamenda",
+            "label": "PRM BAMENDA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-bamenda",
+                "label": "PRM BAMENDA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "prm-nkambe",
+            "label": "PRM NKAMBE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "prm-nkambe",
+                "label": "PRM NKAMBE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "lnw",
+        "label": "LNW",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "ggt-bamenda",
+            "label": "GGT BAMENDA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-bali",
+                "label": "CIE BALI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-bamenda",
+                "label": "CIE BAMENDA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-fundong",
+            "label": "CIE FUNDONG",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-belo",
+                "label": "BDE BELO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-fonfuka",
+                "label": "BDE FONFUKA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-njinikom",
+                "label": "BDE NJINIKOM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-mbessa",
+                "label": "PTE MBESSA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ndawara",
+                "label": "PTE NDAWARA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-kumbo",
+            "label": "CIE KUMBO",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-elak-oku",
+                "label": "BDE ELAK-OKU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-jakiri",
+                "label": "BDE JAKIRI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-mbiame",
+                "label": "BDE MBIAME",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nkor",
+                "label": "BDE NKOR",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-tatum",
+                "label": "BDE TATUM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-mbengwi",
+            "label": "CIE MBENGWI",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-andek",
+                "label": "BDE ANDEK",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-batibo",
+                "label": "BDE BATIBO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-njikwa",
+                "label": "BDE NJIKWA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-widikum",
+                "label": "BDE WIDIKUM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ashong",
+                "label": "PTE ASHONG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ewoh-batibo",
+                "label": "PTE EWOH-BATIBO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-ndop",
+            "label": "CIE NDOP",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-babessi",
+                "label": "BDE BABESSI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-balikumbat",
+                "label": "BDE BALIKUMBAT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bambalang",
+                "label": "BDE BAMBALANG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-nkambe",
+            "label": "CIE NKAMBE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ako",
+                "label": "BDE AKO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-misaje",
+                "label": "BDE MISAJE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ndu",
+                "label": "BDE NDU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nwa",
+                "label": "BDE NWA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ntem",
+                "label": "PTE NTEM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-wum",
+            "label": "CIE WUM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-benakuma",
+                "label": "BDE BENAKUMA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-furu-awa",
+                "label": "BDE FURU-AWA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-zhoa",
+                "label": "BDE ZHOA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-baworo",
+                "label": "PTE BAWORO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "esc-90",
+            "label": "ESC 90",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "pcdt",
+                "label": "PCDT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-901",
+                "label": "PM 901",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-902",
+                "label": "PM 902",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-903",
+                "label": "PM 903",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-904",
+                "label": "PM 904",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-905",
+                "label": "PM 905",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "lo",
+        "label": "LO",
+        "description": "Direction",
+        "icon": "fa-building-shield",
+        "children": [
+          {
+            "id": "em",
+            "label": "EM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": []
+          },
+          {
+            "id": "ggt-bafoussam",
+            "label": "GGT BAFOUSSAM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "cie-bafoussam-1",
+                "label": "CIE BAFOUSSAM 1",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "cie-bafoussam-2",
+                "label": "CIE BAFOUSSAM 2",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-bafang",
+            "label": "CIE BAFANG",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bakou",
+                "label": "BDE BAKOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bana",
+                "label": "BDE BANA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bandja",
+                "label": "BDE BANDJA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-banka",
+                "label": "BDE BANKA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-banwa",
+                "label": "BDE BANWA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kekem",
+                "label": "BDE KEKEM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-baboutcha",
+                "label": "PTE BABOUTCHA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bayon",
+                "label": "PTE BAYON",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-foyemtcha",
+                "label": "PTE FOYEMTCHA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-baham",
+            "label": "CIE BAHAM",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bamendjou",
+                "label": "BDE BAMENDJOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bangou",
+                "label": "BDE BANGOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-batie",
+                "label": "BDE BATIE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-balambo",
+                "label": "PTE BALAMBO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-kanmali",
+                "label": "PTE KANMALI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-bandjoun",
+            "label": "CIE BANDJOUN",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bayangam",
+                "label": "BDE BAYANGAM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-demdeng",
+                "label": "BDE DEMDENG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-bangante",
+            "label": "CIE BANGANTE",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bassamba",
+                "label": "BDE BASSAMBA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bazou",
+                "label": "BDE BAZOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-tonga",
+                "label": "BDE TONGA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bamena",
+                "label": "PTE BAMENA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bangoua",
+                "label": "PTE BANGOUA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bantoum",
+                "label": "PTE BANTOUM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-dschang",
+            "label": "CIE DSCHANG",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-fokoue",
+                "label": "BDE FOKOUE",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-fongo-tongo",
+                "label": "BDE FONGO TONGO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-nkong-nhi",
+                "label": "BDE NKONG NHI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-penka-michel",
+                "label": "BDE PENKA MICHEL",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-rech",
+                "label": "BDE RECH",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-santchou",
+                "label": "BDE SANTCHOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-balevonli",
+                "label": "PTE BALEVONLI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-ndziih",
+                "label": "PTE NDZIIH",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-foumban",
+            "label": "CIE FOUMBAN",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-bagourain",
+                "label": "BDE BAGOURAIN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-foumbot",
+                "label": "BDE FOUMBOT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-kouoptamo",
+                "label": "BDE KOUOPTAMO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-koutaba",
+                "label": "BDE KOUTABA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-magba",
+                "label": "BDE MAGBA",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-malentouen",
+                "label": "BDE MALENTOUEN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-massangam",
+                "label": "BDE MASSANGAM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-njimom",
+                "label": "BDE NJIMOM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-kouchong-somptain",
+                "label": "PTE KOUCHONG SOMPTAIN",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-koupa-matapit",
+                "label": "PTE KOUPA MATAPIT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-kwetvu",
+                "label": "PTE KWETVU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "cie-mbouda",
+            "label": "CIE MBOUDA",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "em",
+                "label": "EM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-babadjou",
+                "label": "BDE BABADJOU",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-batcham",
+                "label": "BDE BATCHAM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-galim",
+                "label": "BDE GALIM",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "bde-ter",
+                "label": "BDE TER",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-balatchi",
+                "label": "PTE BALATCHI",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-baleghang",
+                "label": "PTE BALEGHANG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-bamesso",
+                "label": "PTE BAMESSO",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pte-nzindong",
+                "label": "PTE NZINDONG",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "esc-50",
+            "label": "ESC 50",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "pcdt",
+                "label": "PCDT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-501",
+                "label": "PM 501",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-502",
+                "label": "PM 502",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-503",
+                "label": "PM 503",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-504",
+                "label": "PM 504",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          },
+          {
+            "id": "esc-51",
+            "label": "ESC 51",
+            "description": "Service",
+            "icon": "fa-file-lines",
+            "children": [
+              {
+                "id": "pcdt",
+                "label": "PCDT",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-511",
+                "label": "PM 511",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-512",
+                "label": "PM 512",
+                "description": "Unité",
+                "icon": "fa-shield"
+              },
+              {
+                "id": "pm-513",
+                "label": "PM 513",
+                "description": "Unité",
+                "icon": "fa-shield"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

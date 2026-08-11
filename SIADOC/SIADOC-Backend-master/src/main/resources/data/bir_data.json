@@ -1,0 +1,286 @@
+[
+  {
+    "id": "1-gpt",
+    "label": "1°GPT",
+    "description": "Groupement",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ccs",
+        "label": "CCS",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "1-cc",
+        "label": "1°CC",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "2-cc",
+        "label": "2°CC",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "3-cc",
+        "label": "3°CC",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "ca",
+        "label": "CA",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "eb",
+        "label": "EB",
+        "description": "Unité",
+        "icon": "fa-shield"
+      }
+    ]
+  },
+  {
+    "id": "2-gpt",
+    "label": "2°GPT",
+    "description": "Groupement",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ccs",
+        "label": "CCS",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "1-cc",
+        "label": "1°CC",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "2-cc",
+        "label": "2°CC",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "camphibie",
+        "label": "CAmphibie",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "cappui",
+        "label": "CAppui",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "eb",
+        "label": "EB",
+        "description": "Unité",
+        "icon": "fa-shield"
+      }
+    ]
+  },
+  {
+    "id": "3-gpt",
+    "label": "3°GPT",
+    "description": "Groupement",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ccs",
+        "label": "CCS",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "1-cc",
+        "label": "1°CC",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "2-cc",
+        "label": "2°CC",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "calpine",
+        "label": "CAlpine",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "cappui",
+        "label": "CAppui",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "eb",
+        "label": "EB",
+        "description": "Unité",
+        "icon": "fa-shield"
+      }
+    ]
+  },
+  {
+    "id": "4-gpt",
+    "label": "4°GPT",
+    "description": "Groupement",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ccs",
+        "label": "CCS",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "1-cc",
+        "label": "1°CC",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "2-cc",
+        "label": "2°CC",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "3-cc",
+        "label": "3°CC",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "cappui",
+        "label": "CAppui",
+        "description": "Unité",
+        "icon": "fa-shield"
+      }
+    ]
+  },
+  {
+    "id": "5-gpt",
+    "label": "5°GPT",
+    "description": "Groupement",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ccs",
+        "label": "CCS",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "1-cc",
+        "label": "1°CC",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "2-cc",
+        "label": "2°CC",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "cappui",
+        "label": "CAppui",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "camphibie",
+        "label": "CAmphibie",
+        "description": "Unité",
+        "icon": "fa-shield"
+      }
+    ]
+  },
+  {
+    "id": "6-gpt",
+    "label": "6°GPT",
+    "description": "Groupement",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ccs",
+        "label": "CCS",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "cat",
+        "label": "CAT",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "cp",
+        "label": "CP",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "cappui",
+        "label": "CAppui",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "ci-bir",
+        "label": "CI-BIR",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "cir",
+        "label": "CIR",
+        "description": "Unité",
+        "icon": "fa-shield"
+      }
+    ]
+  },
+  {
+    "id": "7-gpt",
+    "label": "7°GPT",
+    "description": "Groupement",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ccs",
+        "label": "CCS",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "1-cappui",
+        "label": "1°CAppui",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "2-cappui",
+        "label": "2°CAppui",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "camphibie",
+        "label": "CAmphibie",
+        "description": "Unité",
+        "icon": "fa-shield"
+      }
+    ]
+  }
+]

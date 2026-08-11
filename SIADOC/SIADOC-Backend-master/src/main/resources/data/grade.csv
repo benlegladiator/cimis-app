@@ -1,0 +1,82 @@
+"GRADE_ID","ARMEE_ID","GRADE_NAME","GRADE_NAME_UK","NIVEAU_GRADE_ID","CATEGORIE_GRADE_ID","GRADE_SHORT_NAME","GRADE_SHORT_NAME_UK","ORDRE_GRADE"
+"8b6a782b-6950-4ae1-ae0e-95a88fc55303","GN","Général d'Armée","General","1","1","GA","GA",1
+"d7261fa2-cb5f-4e1c-a1f6-8479cd6a356a","AA","Général d'Armée","General","1","1","A","A",3
+"e015207b-2040-4aed-862c-2dc406abe993","AT","Général de Corps d'Armée","Lieutenant-General","2","1","GCA","GCA",6
+"27a090f4-40cd-45e1-b17f-437b9741dd10","AA","Général de Corps d'Armée","Lieutnant-General","2","1","GCA","GCA",7
+"7ffdbcd2-04ef-4f04-88f4-be8ee5636f94","MN","Vice-Amiral d'Escadre","Vice-Admiral","2","1","VAE","VAE",8
+"f80deba6-374f-4e7e-b130-30d56423a2c8","GN","Général de Division","Major-General","3","1","GD","GD",9
+"ce6ee3f9-a637-4a34-b1c6-6bf69ce0778a","AT","Général de Division","Major-General","3","1","GD","GD",10
+"7da504ca-261a-4209-8011-5564befcd533","AA","Général de Division Aérienne","Air Vice Marshal","3","1","GDA","GDA",11
+"0fd0eb66-f932-4a6e-aeed-8b82c7c665cf","MN","Vice-amiral","Vice-Admiral","3","1","VA","VA",12
+"84036d27-36df-4261-9d22-e333cc31f6c9","GN","Général de Brigade","Brigadier General","4","1","GB","GB",13
+"f98aa4f9-4aa7-45e2-96e0-d4ee5efeaec7","AT","Général de Brigade","Brigadier General","4","1","GB","GB",14
+"584b4761-08e3-45fe-8f51-e9274d0f087e","AA","Général de Brigade Aérienne","Air Commodore","4","1","GB","GB",15
+"b87b452d-8f72-427f-a86d-0d3370462ad7","MN","Contre-amiral","Rear Admiral","4","1","CA","CA",16
+"7873b01e-780b-435c-a28e-b6b10cc86f21","GN","Colonel","Colonel","5","1","COL","COL",17
+"e5932c32-5c5e-443e-9231-c44ea85d81b1","AT","Colonel","Colonel","5","1","COL","COL",18
+"7eeb4e12-de6e-47e1-a864-08ef2a20f103","AA","Colonel","Colonel","5","1","COL","COL",19
+"cd3b0d56-d808-4e7d-b75e-bc0d69391311","MN","Capitaine de Vaisseau","Navy Captain","5","1","CV","CV",20
+"9aea9cbd-3964-4b83-82a6-43b5f6115b11","GN","Lieutenant-Colonel","Lieutenant-Colonel","6","1","LCL","LCL",21
+"679f0947-c93f-478d-84fa-e3df810f3cc8","AT","Lieutenant-Colonel","Lieutenant-Colonel","6","1","LCL","LCL",22
+"17a5d232-9ae4-4dfa-a521-eecbd5655864","AA","Lieutenant-Colonel","Lieutenant-Colonel","6","1","CF","CF",23
+"f59088e8-8d1c-48c3-845f-a2ed9991091c","MN","Capitaine de Frégate","Navy Commander","6","1","CF","CF",24
+"1f2c9432-fd5c-48e9-85b4-48a34abf4a11","GN","Chef d'Escadron","Major","7","1","CE","CE",25
+"8b69cf34-5e50-43b3-9038-6d8b6da8fbdb","AT","Chef de Bataillon","Major","7","1","CBA","CBA",26
+"58a3532d-0598-46bb-8e73-dcb5600319fa","AA","Commandant","Major","7","1","CDT","CDT",27
+"898df6aa-275e-4f6e-b5f7-ac3dee438259","MN","Capitaine de Corvette","Lieutenant Commander","7","1","CC","CC",28
+"c522086a-3fa6-4bf2-a085-d484a7d7b8ac","GN","Capitaine","Captain","8","1","CNE","CNE",29
+"5445b873-e394-4182-b5e0-5b2baa0918ab","AT","Capitaine","Captain","8","1","CNE","CNE",30
+"0c16f860-84ab-46e4-856d-f41d584c6891","AA","Capitaine","Captain","8","1","CNE","CNE",31
+"c95a8e9a-d408-4612-83da-74a7a1cca58c","MN","Lieutenant de Vaisseau","Navy Lieutenant","8","1","LV","LV",32
+"dc6a9321-da46-4639-b9e1-6536830a662b","GN","Lieutenant","Lieutenant","9","1","LT","LT",33
+"d9cd22ab-67ac-4b81-a014-9c3219bd9a6a","AT","Lieutenant","Lieutenant","9","1","LT","LT",34
+"27343785-3076-4b23-b6a5-e00fbdc1a26d","AA","Lieutenant","Lieutenant","9","1","LT","LT",35
+"990f0e65-0bc0-47bf-acdb-d946b5853304","MN","Enseigne de Vaisseau 1ère Classe","Sub-Lieutenant (SLt)","9","1","EV1","EV1",36
+"015fd16b-ba36-49ba-be74-0c66915012fd","GN","Sous-lieutenant","Sub-Lieutenant","10","2","S/LT","S/LT",37
+"9e734f55-e8e6-4543-ae93-d7134b0f7b69","AT","Sous-lieutenant","Sub-Lieutenant","10","2","S/LT","S/LT",38
+"a7e07412-39cd-4274-a14a-8249df6c1fbb","AA","Sous-lieutenant","Sub-Lieutenant","10","2","S/LT","S/LT",39
+"f644ff54-66f5-431d-9852-44ecc6116e77","MN","Enseigne de Vaisseau 2ème Classe","Midshipman","10","2","EV2","EV2",40
+"dc35af35-58ce-41aa-898a-2a0db2969507","GN","Aspirant","Aspirant","11","2","ASP","ASP",41
+"c3deaea9-6e31-43a4-8cb6-3533344ebcb8","AT","Aspirant","Aspirant","11","2","ASP","ASP",42
+"2664d46a-1f01-41b5-8a0c-97a9758e56f3","AA","Aspirant","Aspirant","11","2","ASP","ASP",43
+"520e4a9d-bd8e-4461-9f53-a2f0377219f8","MN","Aspirant","Midshipman","11","2","ASP","ASP",44
+"0407f579-6e76-4dca-b762-21181590310c","GN","Elève Officier 2e Année","Officer Cadet","12","2","EO2","EO2",45
+"5716422d-6fbb-4048-b17f-af4880bb98b0","MN","Elève Officier 1èer Année","Cadet","12","2","EO1","EO1",46
+"0833117a-2e46-4dbf-a872-a4fc54139c3c","GN","Adjudant-chef Major","Senior Chief Warrant Officer","13","3","A/CM","A/CM",47
+"8e18894c-4edd-4495-862a-2b897cc90176","AT","Adjudant-chef Major","Senior Chief Warrant Officer","13","3","A/CM","A/CM",48
+"5466adb7-f248-4b5a-b70b-a07ab4d00d46","AA","Adjudant-chef Major","Senior Chief Warrant Officer","13","3","A/CM","A/CM",49
+"3e6ab7d4-ba28-4491-b3c6-e8ecdf926b38","MN","Maître Principal Major","Fleet Chief Petty Officer","13","3","MPM","MPM",50
+"12897531-0f4d-478f-81ad-eee0a34adfd0","GN","Adjudant Chef","Chief Warrant Officer","14","3","A/C","A/C",51
+"b5165a08-141c-49ad-aeb1-b72bdb376839","AT","Adjudant Chef","Chief Warrant Officer","14","3","A/C","A/C",52
+"7ee66b21-5212-40df-a0f9-5de1798857bb","AA","Adjudant Chef","Chief Warrant Officer","14","3","A/C","A/C",53
+"c669bab4-218a-4a83-96f7-db216639d7b7","MN","Maître Principal","Chief  Petty Officer","14","3","MP","MP",54
+"9d1eb1d8-9cba-4ad2-a239-618afe1e0330","GN","Adjudant","Warrant Officer","15","3","ADJT","ADJT",55
+"d2126076-7bf8-44bf-8c16-4ff4c0ad4588","AT","Adjudant","Warrant Officer","15","3","ADJT","ADJJT",56
+"b70e718c-2b19-40d3-a942-1d0b11aa0a3f","AA","Adjudant","Warrant Officer","15","3","ADJT","ADJT",57
+"77644805-0203-42c5-9495-414055485881","MN","Premier Maître","Petty Officer Class 1","15","3","PM","PM",58
+"368295fc-6121-4ce5-aa50-4e974af01f81","GN","Maréchal des logis-chef","Staff Sergent","16","3","MDL/C","MDL/C",59
+"a6db5e4a-eb5b-4341-a0a3-9ee170f3eea0","AT","Sergent-chef","Staff Sergent","16","3","S/C","S/C",60
+"e3374d02-8afb-48b8-8837-770279664933","AA","Sergent chef","Staff Sergent","16","3","S/C","S/C",61
+"0e6fd25d-715d-4c0a-bc07-74bcd74655b3","MN","Maître","Petty Officer Class 2","16","3","MTRE","MTRE",62
+"a1ea623f-3ec2-4c37-a195-66df7b930143","GN","Maréchal des Logis","Sergent","17","3","MDL","MDL",63
+"33c67b13-4c7b-40f9-981f-32cbdb9f75f3","AT","Sergent","Sergent","17","3","SGT","SGT",64
+"fb433081-ada4-44ff-a660-deeb514387ca","AA","Sergent","Sergent","17","3","SGT","SGT",65
+"84a2efcd-8ca0-4fff-b05c-1b36e6836438","MN","Second Maître","Petty Officer Class 3","17","3","SM","SM",66
+"bb3b0919-efc8-4c9a-9877-18cfdd885a7f","GN","Gendarme Major","Lance Corporal","18","4","G/M","G/M",67
+"0cdc2ef0-0912-4f23-a384-b06c92e599bc","AT","Caporal-chef","Lance Corporal","18","4","C/C","C/C",68
+"b664e9ce-e9bb-4f7b-a567-0d5d233addd9","AA","Caporal-chef","Lance Corporal","18","4","C/C","C/C",69
+"1d14b266-bd9d-4b14-b68d-46b496238fbf","MN","Quartier Maître de 1ere Classe","Leading Rating First Class","18","4","QM1","QM1",70
+"fe1fe59e-49bf-43d9-90ac-e591e3bc8daf","GN","Gendarme","Private First Class","19","4","GEND","GEND",71
+"6084e1fc-73f5-43a1-832f-e5f0ae1c0798","AT","Caporal","Corporal","19","4","CAL","CAL",72
+"3b7e8531-6f6b-4db6-90bf-0055f156761d","AA","Caporal","Corporal","19","4","CAL","CAl",73
+"02c01426-af63-458b-9d31-3ebc987612fd","MN","Quartier Maître de 2è Classe","Leading Rating Second Class","19","4","QM2","QM2",74
+"d6660084-b8e1-4a49-aba0-1d530a29b8cf","AT","Soldat de 1ère Classe","Private First Class","20","4","SDT1","SDT1",75
+"c931a156-1f90-43db-b769-25b65e653265","AA","Soldat de 1ère Classe","Private First Class","20","4","SDT1","SDT1",76
+"b44f3274-960f-4aa6-9a9a-010d8031ee43","MN","Matelot de 1ère Classe","Seaman Fist Class","20","4","MLOT1","MLOT1",77
+"5556f0e6-a384-4499-a35c-fe982aee6189","GN","Elève Gendarme","Student-Gendarme","21","4","E/G","E/G",78
+"d7707bbe-c12f-498d-a1a4-f57f433fa85b","AT","Soldat de 2è Classe","Private Second Class","21","4","SDT2","SDT2",79
+"9de704e6-7213-4885-97e6-d9c54190da37","AA","Soldat de 2è Classe","Private Second Class","21","4","SDT2","SDT2",80
+"265251a5-b13e-4ced-96de-77d4d7dc05c1","MN","Matelot de 2è Classe","Seaman Second Class","21","4","MLOT2","MLOT2",81
+"d726ec3c-35f2-4364-b2fa-10a8379871ee","AT","Général d'Armée","General","1","1","GA","GA",2
+"d8a28bdc-28b3-4d2a-83c1-f56747899278","GN","Général de Corps d'Armée","Lieutenant-General","2","1","GCA","GCA",5
+"f848d715-15b2-4303-a9db-c312f49bc919","MN","Amiral","Admiral","1","1","A","A",4

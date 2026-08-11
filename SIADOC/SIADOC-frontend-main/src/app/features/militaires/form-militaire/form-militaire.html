@@ -1,0 +1,163 @@
+<h2 class="page-title">Création d’un dossier administratif</h2>
+
+<div *ngIf="errorMessage" class="error-alert">
+  <i class="fa-solid fa-circle-exclamation"></i> {{ errorMessage }}
+</div>
+
+<div class="form-container" style="position: relative;">
+
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div> Patientez...
+  </div>
+
+  <form (ngSubmit)="enregistrer()" #f="ngForm" class="militaire-form">
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Nom *</label>
+        <input type="text" [(ngModel)]="militaire.nom" name="nom" required placeholder="Nom de famille">
+      </div>
+
+      <div class="form-group">
+        <label>Prénom *</label>
+        <input type="text" [(ngModel)]="militaire.prenom" name="prenom" required placeholder="Prénoms">
+      </div>
+
+      <div class="form-group">
+        <label>Date de Naissance </label>
+        <input type="date" [(ngModel)]="militaire.dateNaissance" name="dateNaissance">
+      </div>
+
+      <div class="form-group">
+        <label>Lieu de Naissance </label>
+        <input type="text" [(ngModel)]="militaire.lieuNaissance" name="lieuNaissance" placeholder="Lieu de naissance">
+      </div>
+
+      <div class="form-group">
+        <label>Genre *</label>
+        <select [(ngModel)]="militaire.sexe" name="sexe" required>
+          <option value="">-- Sélectionner --</option>
+          <option value="M">Masculin</option>
+          <option value="F">Féminin</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Matricule Incorporation <span *ngIf="militaire.statut !== 'ARCHIVE'">*</span></label>
+        <input type="text" [(ngModel)]="militaire.matriculeMilitaire" name="matriculeMilitaire" [required]="militaire.statut !== 'ARCHIVE'" placeholder="Ex: G12345">
+      </div>
+
+      <div class="form-group">
+        <label>Matricule Solde</label>
+        <input type="text" [(ngModel)]="militaire.matriculeSolde" name="matriculeSolde" placeholder="Ex: 567890Z">
+      </div>
+
+      <div class="form-group">
+        <label>Corps d'appartenance *</label>
+        <select [(ngModel)]="militaire.armeService" name="armeService" required (change)="onArmeChange()">
+          <option value="">-- Sélectionner --</option>
+          <option value="GN">Gendarmerie Nationale</option>
+          <option value="AT">Armée de Terre</option>
+          <option value="AA">Armée de l'Air</option>
+          <option value="AM">Marine Nationale</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Grade *</label>
+        <select [(ngModel)]="militaire.grade" name="grade" required [disabled]="!militaire.armeService">
+          <option value="">-- Sélectionner un grade --</option>
+          <option *ngFor="let g of gradesDisponibles" [value]="g">{{ g }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Date du Grade</label>
+        <input type="date" [(ngModel)]="militaire.dateGrade" name="dateGrade">
+      </div>
+
+      <div class="form-group">
+        <label>Échelon (Max: 4)</label>
+        <input type="number" [(ngModel)]="militaire.echelon" name="echelon" min="0" max="4" #echelon="ngModel">
+        <div *ngIf="echelon.value > 4" class="field-error">L'échelon maximum est de 4.</div>
+      </div>
+
+      <div class="form-group">
+        <label>Date de l'Échelon</label>
+        <input type="date" [(ngModel)]="militaire.dateEchelon" name="dateEchelon">
+      </div>
+
+      <div class="form-group">
+        <label>Date de prise de service</label>
+        <input type="date" [(ngModel)]="militaire.dateService" name="dateService">
+      </div>
+
+      <div class="form-group full" *ngIf="user?.role !== Role.COMMANDANT_COMPAGNIE">
+        <!-- Hiérarchie Manuelle -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>RMIA *</label>
+            <select [(ngModel)]="selectedRMIA" name="rmia" (change)="onRMIAChange()" required>
+              <option value="">Sélectionnez RMIA</option>
+              <option *ngFor="let r of allRMIA" [value]="r.id">{{r.nom}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Grande Formation *</label>
+            <select [(ngModel)]="selectedBrigade" name="brigade" (change)="onBrigadeChange()" [disabled]="!selectedRMIA" required>
+              <option value="">Sélectionnez Grande Formation</option>
+              <option *ngFor="let b of filteredBrigades" [value]="b.id">{{b.nom}}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row mt-3">
+          <div class="form-group">
+            <label>Formation *</label>
+            <select [(ngModel)]="selectedBataillon" name="bataillon" (change)="onBataillonChange()" [disabled]="!selectedBrigade" required>
+              <option value="">Sélectionnez Formation</option>
+              <option *ngFor="let bat of filteredBataillons" [value]="bat.id">{{bat.nom}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Unité *</label>
+            <select [(ngModel)]="selectedCompagnieId" name="compagnieId" [disabled]="!selectedBataillon" required (change)="onCompagnieChange()">
+              <option value="">Sélectionnez Unité</option>
+              <option *ngFor="let c of filteredCompagnies" [value]="c.id">{{c.nom}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- AFFICHAGE HIERARCHIE INFEREE -->
+      <div class="hierarchy-preview full" *ngIf="inferredHierarchy">
+        <div class="hierarchy-item">
+          <span class="label">RMIA:</span>
+          <span class="value">{{ inferredHierarchy.rmia || 'N/A' }}</span>
+        </div>
+        <div class="hierarchy-item">
+          <span class="label">Grande Formation:</span>
+          <span class="value">{{ inferredHierarchy.brigade || 'N/A' }}</span>
+        </div>
+        <div class="hierarchy-item">
+          <span class="label">Formation:</span>
+          <span class="value">{{ inferredHierarchy.bataillon || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="form-group full">
+        <label>Photo d'identité</label>
+        <input type="file" (change)="onFileSelected($event)" accept="image/*">
+      </div>
+
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="f.invalid || loading">
+        <i class="fa-solid fa-floppy-disk"></i> Enregistrer le militaire
+      </button>
+    </div>
+
+  </form>
+</div>

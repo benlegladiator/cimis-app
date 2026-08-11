@@ -1,0 +1,189 @@
+<div class="habillement-container">
+  <!-- Header -->
+  <div class="header">
+    <h3>
+      <span class="icon">🎒</span>
+      Carnet d'Habillement / Clothing Record
+      <span class="badge-sexe" *ngIf="sexe === 'FEMININ'">Féminin / Female</span>
+      <span class="badge-sexe masculin" *ngIf="sexe === 'MASCULIN'">Masculin / Male</span>
+    </h3>
+    
+    <!-- Messages -->
+    <div class="alert alert-success" *ngIf="messageSucces">{{ messageSucces }}</div>
+    <div class="alert alert-error" *ngIf="messageErreur">{{ messageErreur }}</div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="loading">
+    <span class="spinner"></span> Chargement... / Loading...
+  </div>
+
+  <!-- Navigation par onglets -->
+  <div class="tabs" *ngIf="!loading">
+    <button 
+      class="tab-btn" 
+      [class.active]="ongletActif === 'mensurations'"
+      (click)="setOnglet('mensurations')">
+      <span class="tab-icon">📏</span>
+      Mensuration(s) / Measurements
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="ongletActif === 'campagne'"
+      (click)="setOnglet('campagne')">
+      <span class="tab-icon">🎖️</span>
+      Campagne / Campaign
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="ongletActif === 'service'"
+      (click)="setOnglet('service')">
+      <span class="tab-icon">👔</span>
+      Service
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="ongletActif === 'linge'"
+      (click)="setOnglet('linge')">
+      <span class="tab-icon">🧦</span>
+      Linge / Linen
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="ongletActif === 'specifique'"
+      (click)="setOnglet('specifique')">
+      <span class="tab-icon">🎯</span>
+      Spécifique / Specific
+    </button>
+  </div>
+
+  <!-- Contenu des onglets -->
+  <div class="tab-content" *ngIf="!loading">
+    
+    <!-- ONGLET MENSURATIONS -->
+    <div class="onglet-panel" *ngIf="ongletActif === 'mensurations'">
+      <h4>Mensurations du Militaire / Military Measurements</h4>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Taille (cm) / Height (cm)</label>
+          <input type="number" [(ngModel)]="mensurations.tailleCm" placeholder="Ex: 175">
+        </div>
+        
+        <div class="form-group">
+          <label>Poids (kg) / Weight (kg)</label>
+          <input type="number" [(ngModel)]="mensurations.poidsKg" placeholder="Ex: 70">
+        </div>
+        
+        <div class="form-group">
+          <label>Tour de tête / Head circumference</label>
+          <input type="text" [(ngModel)]="mensurations.tourDeTete" placeholder="Ex: 56-57">
+        </div>
+        
+        <div class="form-group">
+          <label>Pointure / Shoe size</label>
+          <input type="text" [(ngModel)]="mensurations.pointure" placeholder="Ex: 42">
+        </div>
+        
+        <div class="form-group">
+          <label>Taille de veste / vareuse / Jacket / tunic size</label>
+          <input type="text" [(ngModel)]="mensurations.tailleVeste" placeholder="Ex: 48L">
+        </div>
+        
+        <div class="form-group">
+          <label>Taille de pantalon / Trousers size</label>
+          <input type="text" [(ngModel)]="mensurations.taillePantalon" placeholder="Ex: 40L">
+        </div>
+      </div>
+    </div>
+
+    <!-- ONGLETS ARTICLES (Campagne, Service, Linge, Spécifique) -->
+    <div class="onglet-panel" *ngIf="ongletActif !== 'mensurations'">
+      <div class="panel-header">
+        <h4>{{ getTitreOnglet() }}</h4>
+        <button class="btn-add" (click)="ajouterArticleDepuisOnglet()" *ngIf="!readOnly">
+          <span>+</span> Ajouter un article / Add item
+        </button>
+      </div>
+
+      <div class="table-container">
+        <table class="articles-table">
+          <thead>
+            <tr>
+              <th>Désignation(s) / Designation(s)</th>
+              <th>Quantité(s) / Quantity</th>
+              <th>État(s) / Condition</th>
+              <th>Date(s) de perception / Date(s) received</th>
+              <th>Observation(s) / Remarks</th>
+              <th *ngIf="!readOnly">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let article of getArticlesParCategorie(ongletActif); let i = index">
+              <td>
+                <input 
+                  type="text" 
+                  [(ngModel)]="article.designation" 
+                  placeholder="Nom de l'article"
+                  class="input-designation"
+                  [readonly]="readOnly">
+              </td>
+              <td>
+                <input 
+                  type="number" 
+                  [(ngModel)]="article.quantite" 
+                  min="0"
+                  class="input-quantite"
+                  [readonly]="readOnly">
+              </td>
+              <td>
+                <select [(ngModel)]="article.etat" class="input-etat" [disabled]="readOnly">
+                  <option value="Neuf">Neuf / New</option>
+                  <option value="Bon">Bon état / Good</option>
+                  <option value="Usé">Usé / Worn</option>
+                  <option value="A remplacer">À remplacer / To replace</option>
+                </select>
+              </td>
+              <td>
+                <input 
+                  type="date" 
+                  [(ngModel)]="article.datePerception"
+                  class="input-date"
+                  [readonly]="readOnly">
+              </td>
+              <td>
+                <input 
+                  type="text" 
+                  [(ngModel)]="article.observation" 
+                  placeholder="Note..."
+                  class="input-observation"
+                  [readonly]="readOnly">
+              </td>
+              <td *ngIf="!readOnly">
+                <button class="btn-delete" (click)="supprimerArticle(i)" title="Supprimer">
+                  🗑️
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="getArticlesParCategorie(ongletActif).length === 0">
+              <td colspan="6" class="empty-message">
+                Aucun article / No items recorded.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Bouton sauvegarde -->
+    <div class="actions-footer" *ngIf="!readOnly">
+      <button 
+        class="btn-save" 
+        (click)="sauvegarder()"
+        [disabled]="sauvegardeEnCours">
+        <span *ngIf="!sauvegardeEnCours">💾 Enregistrer le carnet / Save Record</span>
+        <span *ngIf="sauvegardeEnCours">Enregistrement... / Saving...</span>
+      </button>
+    </div>
+  </div>
+</div>

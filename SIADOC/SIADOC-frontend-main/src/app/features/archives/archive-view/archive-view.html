@@ -1,0 +1,240 @@
+<h2>📦 Dossiers Militaires archivés</h2>
+
+<div *ngIf="isArchivePhysique" style="margin-bottom: 20px; text-align: right;">
+  <button class="btn btn-primary" (click)="editerDossier()" style="background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 8px;">
+    <span style="font-size: 1.2em;">➕</span> Ajouter / Modifier des pièces du dossier
+  </button>
+</div>
+
+<div *ngIf="dossier" class="archive-container">
+
+  <!-- ================= IDENTITE ================= -->
+
+  <div class="section">
+    <h3>Identité</h3>
+    <p><b>Nom :</b> {{ dossier.militaire.nom }}</p>
+    <p><b>Prénom :</b> {{ dossier.militaire.prenom }}</p>
+    <p><b>Matricule :</b> {{ dossier.militaire.matriculeMilitaire }}</p>
+  </div>
+
+
+  <!-- ================= ETAT CIVIL ================= -->
+
+  <h3>Etat Civil</h3>
+
+  <div *ngFor="let p of dossier.etatCivil?.cnis">
+    <label>
+      <input type="checkbox" (change)="togglePiece('cni', p.id)">
+      <span (click)="voirPiece('/api/cnis/' + p.id + '/fichier')">
+        📄 {{ p.documentNom }}
+      </span>
+    </label>
+  </div>
+
+  <div *ngFor="let p of dossier.etatCivil?.actesNaissance">
+    <label>
+      <input type="checkbox" (change)="togglePiece('naissance', p.id)">
+      <span (click)="voirPiece('/api/actes-naissance/' + p.id + '/fichier')">
+        📄 {{ p.documentNom }}
+      </span>
+    </label>
+  </div>
+
+  <div *ngFor="let p of dossier.etatCivil?.actesMariage">
+    <label>
+      <input type="checkbox" (change)="togglePiece('mariage', p.id)">
+      <span (click)="voirPiece('/api/actes-mariage/' + p.id + '/fichier')">
+        📄 {{ p.documentNom }}
+      </span>
+    </label>
+  </div>
+
+  <div *ngFor="let p of dossier.etatCivil?.actesDeces">
+    <label>
+      <input type="checkbox" (change)="togglePiece('deces', p.id)">
+      <span (click)="voirPiece('/api/actes-deces/' + p.id + '/fichier')">
+        📄 {{ p.documentNom }}
+      </span>
+    </label>
+  </div>
+
+  <div *ngFor="let p of dossier.etatCivil?.actesDivorce">
+    <label>
+      <input type="checkbox" (change)="togglePiece('divorce', p.id)">
+      <span (click)="voirPiece('/api/actes-divorce/' + p.id + '/fichier')">
+        📄 {{ p.documentNom }}
+      </span>
+    </label>
+  </div>
+
+  <div *ngFor="let p of dossier.etatCivil?.jugementsSuppletifs">
+    <label>
+      <input type="checkbox" (change)="togglePiece('jugement', p.id)">
+      <span (click)="voirPiece('/api/jugements/' + p.id + '/fichier')">
+        📄 {{ p.documentNom }}
+      </span>
+    </label>
+  </div>
+
+
+  <!-- ================= MUTATIONS ================= -->
+
+  <h3>Mutations</h3>
+
+  <div *ngFor="let p of dossier.mutationsModule?.items">
+    <label>
+      <input type="checkbox" (change)="togglePiece('mutation', p.id)">
+      <span (click)="voirPiece('/api/mutations/item/' + p.id + '/document')">
+        📄 {{ p.documentNom }}
+      </span>
+    </label>
+  </div>
+
+
+  <!-- ================= DIPLOMES ================= -->
+
+  <h3>Diplômes</h3>
+
+  <div *ngFor="let d of dossier.diplomeModule?.items">
+    <label>
+      <input type="checkbox" (change)="togglePiece('diplome', d.id)">
+      <span (click)="voirPiece('/api/diplomes/' + d.id + '/fichier')">
+        📄 {{ d.documentNom }}
+      </span>
+    </label>
+  </div>
+
+
+  <!-- ================= STAGES ================= -->
+
+  <h3>Stages</h3>
+
+  <div *ngFor="let s of dossier.stageModule?.items">
+    <label>
+      <input type="checkbox" (change)="togglePiece('stage', s.id)">
+      <span (click)="voirPiece('/api/stages/item/' + s.id + '/document')">
+        📄 {{ s.documentNom }}
+      </span>
+    </label>
+  </div>
+
+
+  <!-- ================= PUNITIONS ================= -->
+
+  <h3>Punitions</h3>
+
+  <div *ngFor="let p of dossier.punitionModule?.items">
+    <label>
+      <input type="checkbox" (change)="togglePiece('punition', p.id)">
+      <span (click)="voirPiece('/api/punitions/item/' + p.id + '/document')">
+        📄 {{ p.documentNom }}
+      </span>
+    </label>
+  </div>
+
+
+  <!-- ================= NOTATIONS ================= -->
+
+  <h3>Notations</h3>
+
+  <div *ngFor="let n of dossier.notationModule?.items">
+    <label>
+      <input type="checkbox" (change)="togglePiece('notation', n.id)">
+      <span (click)="voirPiece('/api/notations/' + n.id + '/fichier')">
+        📄 {{ n.documentNom }}
+      </span>
+    </label>
+  </div>
+
+
+  <!-- ================= RECOMPENSES ================= -->
+
+  <h3>Récompenses</h3>
+
+  <div *ngFor="let r of dossier.recompenseModule?.items">
+    <label>
+      <input type="checkbox" (change)="togglePiece('recompense', r.id)">
+      <span (click)="voirPiece('/api/recompenses/' + r.id + '/fichier')">
+        📄 {{ r.documentNom }}
+      </span>
+    </label>
+  </div>
+
+
+  <!-- ================= MEDICAL ================= -->
+
+  <h3>Médical</h3>
+
+  <div *ngFor="let b of dossier.medicalModule?.blessures">
+    <label>
+      <input type="checkbox" (change)="togglePiece('blessure', b.id)">
+      <span (click)="voirPiece('/api/medical/blessures/' + b.id + '/fichier')">
+        📄 {{ b.documentNom }}
+      </span>
+    </label>
+  </div>
+
+  <div *ngFor="let p of dossier.medicalModule?.pensions">
+    <label>
+      <input type="checkbox" (change)="togglePiece('pension', p.id)">
+      <span (click)="voirPiece('/api/medical/pensions/' + p.id + '/fichier')">
+        📄 {{ p.documentNom }}
+      </span>
+    </label>
+  </div>
+
+
+  <!-- ================= AVANCEMENT ================= -->
+
+  <h3>Avancement</h3>
+
+  <div *ngFor="let a of dossier.avancementModule?.avancements">
+    <label>
+      <input type="checkbox" (change)="togglePiece('avancement', a.id)">
+      <span (click)="voirPiece('/api/avancements/' + a.id + '/fichier')">
+        📄 {{ a.fichierNom }}
+      </span>
+    </label>
+  </div>
+
+
+  <!-- ================= CAMPAGNES ================= -->
+
+  <h3>Campagnes Militaires</h3>
+
+  <div *ngFor="let c of dossier.campagneMilitaireModule?.items">
+    <label>
+      <input type="checkbox" (change)="togglePiece('campagne', c.id)">
+      <span (click)="voirPiece('/api/campagnes/' + c.id + '/fichier')">
+        📄 {{ c.documentNom }}
+      </span>
+    </label>
+  </div>
+
+
+  <!-- ================= EXPORT ================= -->
+
+  <div class="actions">
+
+    <button class="btn-print" (click)="imprimerSelection()">
+      🖨️ Imprimer les pièces sélectionnées
+    </button>
+
+    <button class="btn-export" (click)="exporterPDF()">
+      📄 Exporter PDF
+    </button>
+
+  </div>
+
+</div>
+
+
+<div *ngIf="selectedPieceUrl" class="viewer">
+
+  <iframe
+      [src]="selectedPieceUrl"
+      width="100%"
+      height="650">
+  </iframe>
+
+</div>

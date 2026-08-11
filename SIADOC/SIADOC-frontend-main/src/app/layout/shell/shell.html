@@ -1,0 +1,125 @@
+<div class="app-container">
+
+  <nav class="sidebar">
+
+    <div class="logo">
+      <i class="fa-solid fa-shield-halved"></i>
+      <span>SIADOC</span>
+    </div>
+
+    <!-- MENU PRINCIPAL -->
+    <a routerLink="/dashboard" routerLinkActive="active">
+      <i class="fa-solid fa-chart-line"></i>
+      Tableau de bord / Dashboard
+    </a>
+
+    <a routerLink="/administration/structure" routerLinkActive="active" *ngIf="user?.role === 'DRH'">
+      <i class="fa-solid fa-sitemap"></i>
+      Organigramme / Structure
+    </a>
+
+    <!-- NOTIFICATIONS -->
+    <a routerLink="/notifications"
+      *ngIf="['RMIA', 'BRIGADE', 'BATAILLON', 'COMMANDANT_COMPAGNIE', 'DRH'].includes(user?.role)"
+      class="notification-link" routerLinkActive="active">
+      <i class="fa-solid fa-bell"></i>
+      Notifications
+      <span class="badge" *ngIf="notificationsCount > 0">{{ notificationsCount }}</span>
+    </a>
+
+    <!-- DOSSIER ADMINISTRATIF -->
+    <div class="menu-item" (click)="toggleDossier()">
+      <i class="fa-solid fa-folder-open"></i>
+      <span>Dossier / Administrative File</span>
+      <i class="fa-solid fa-chevron-down arrow" [class.rotate]="dossierOpen"></i>
+    </div>
+
+    <div class="submenu" [class.open]="dossierOpen">
+      <a routerLink="/dossier/creer" routerLinkActive="active">
+        <i class="fa-solid fa-user-plus"></i>
+        Créer / Create
+      </a>
+
+      <a routerLink="/dossier/modifier" routerLinkActive="active">
+        <i class="fa-solid fa-pen-to-square"></i>
+        Renseigner / Update
+      </a>
+    </div>
+
+    <a routerLink="/recherche" routerLinkActive="active">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      Recherche / Search
+    </a>
+
+    <div class="menu-item" (click)="toggleArchive()">
+      <i class="fa-solid fa-box-archive"></i>
+      <span>Archives</span>
+      <i class="fa-solid fa-chevron-down arrow" [class.rotate]="archiveOpen"></i>
+    </div>
+
+    <div class="submenu" [class.open]="archiveOpen">
+      <a routerLink="/archives" routerLinkActive="active">
+        <i class="fa-solid fa-user-shield"></i>
+        Personnel Militaire
+      </a>
+
+      <a routerLink="/archives-civiles" routerLinkActive="active">
+        <i class="fa-solid fa-user-tie"></i>
+        Personnel Civil
+      </a>
+    </div>
+
+    <a routerLink="/exportation" routerLinkActive="active">
+      <i class="fa-solid fa-file-export"></i>
+      Exportation / Export
+    </a>
+    <a routerLink="/cimis" routerLinkActive="active">
+      <i class="fa-solid fa-fingerprint"></i>
+      Biométrie / Biometrics (CIMIS)
+    </a>
+    <a routerLink="/tec" routerLinkActive="active">
+      <i class="fa-solid fa-table-list"></i>
+      TEEC
+    </a>
+
+
+
+
+    <a routerLink="/administration" routerLinkActive="active">
+      <i class="fa-solid fa-users-gear"></i>
+      Utilisateurs
+    </a>
+
+    <a routerLink="/settings" routerLinkActive="active">
+      <i class="fa-solid fa-sliders"></i>
+      Paramètres
+    </a>
+
+    <!-- BAS DU MENU -->
+    <div class="sidebar-bottom">
+      <a routerLink="/profil" routerLinkActive="active">
+        <i class="fa-solid fa-user"></i>
+        Mon profil / My profile
+      </a>
+
+      <a class="logout" (click)="logout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Déconnexion / Logout
+      </a>
+    </div>
+
+  </nav>
+
+  <main class="content">
+    <div class="page-header">
+      <button class="btn-retour" (click)="retourGlobal()">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Retour / Back</span>
+      </button>
+    </div>
+
+    <router-outlet></router-outlet>
+
+  </main>
+
+</div>

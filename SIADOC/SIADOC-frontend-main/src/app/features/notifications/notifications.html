@@ -1,0 +1,48 @@
+<div class="notifications-container">
+  <h2>🔔 Notifications & Dossiers Entrants / Incoming Files</h2>
+
+  <div *ngIf="loading" class="loading">Chargement des notifications... / Loading notifications...</div>
+
+  <div *ngIf="!loading && notifications.length === 0" class="empty-state">
+    <p>Aucun nouveau dossier en attente. / No new files pending.</p>
+  </div>
+
+  <div *ngIf="notifications.length > 0" class="notification-list">
+    <div *ngFor="let n of notifications" class="notification-item">
+      <div class="notif-content">
+        <h3 *ngIf="n.titre"><strong>{{ n.titre }}</strong></h3>
+        <h3 *ngIf="!n.titre && n.militaire"><strong>Dossier / File: </strong>{{ n.militaire.nom }} {{ n.militaire.prenom }}</h3>
+        <p>{{ n.message }}</p>
+        <span class="date"><i class="fa-regular fa-clock"></i> {{ n.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div class="actions">
+        <!-- Action de réception (Transfert) -->
+        <button class="btn-recevoir" (click)="confirmerReception(n)" 
+                *ngIf="n.type === 'TRANSFERT' && (user?.role === Role.COMMANDANT_COMPAGNIE)">
+          <i class="fa-solid fa-check"></i> Confirmer Réception / Confirm Receipt
+        </button>
+
+        <!-- Voir le dossier (pour validation ou info) -->
+        <button class="btn-voir" [routerLink]="['/dossier', n.militaire.id]" 
+                *ngIf="n.militaire.id">
+          <i class="fa-solid fa-eye"></i> Voir / View
+        </button>
+
+        <!-- Actions directes Bataillon -->
+        <ng-container *ngIf="user?.role === Role.BATAILLON && n.type === 'VALIDATION_REQUISE'">
+          <button class="btn-approuver-notif" (click)="approuver(n)">
+            <i class="fa-solid fa-check"></i> Valider / Validate
+          </button>
+          <button class="btn-rejeter-notif" (click)="rejeter(n)">
+            <i class="fa-solid fa-xmark"></i> Rejeter / Reject
+          </button>
+        </ng-container>
+
+        <!-- Bouton OK pour tout le monde (Marquer comme lu) -->
+        <button class="btn-ok" (click)="marquerLue(n)">
+          <i class="fa-solid fa-check-double"></i> OK / Dismiss
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

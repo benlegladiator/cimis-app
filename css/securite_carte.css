@@ -1,0 +1,170 @@
+/* CSS spécifique pour les effets de sécurité des cartes */
+
+/* --- WATERMARK MATRICULE --- */
+.matricule-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 8mm;
+    font-weight: bold;
+    color: rgba(138, 43, 226, 0.15); /* Violet transparent */
+    z-index: 1;
+    pointer-events: none;
+    text-shadow: 0 0 2mm rgba(138, 43, 226, 0.3);
+    transition: all 0.3s ease;
+}
+
+/* Effet de brillance comme billet de banque */
+.matricule-watermark::before {
+    content: '';
+    position: absolute;
+    top: -2mm;
+    left: -2mm;
+    right: -2mm;
+    bottom: -2mm;
+    background: linear-gradient(45deg, 
+        transparent 30%, 
+        rgba(138, 43, 226, 0.1) 50%, 
+        transparent 70%);
+    animation: watermarkShine 4s infinite;
+    pointer-events: none;
+}
+
+/* Animation de brillance holographique */
+@keyframes hologramGlow {
+    0% { 
+        filter: brightness(1.5) contrast(1.2) saturate(1.3) drop-shadow(0 0 2mm rgba(212, 175, 55, 0.5));
+    }
+    100% { 
+        filter: brightness(2.5) contrast(2.0) saturate(2.0) drop-shadow(0 0 5mm rgba(212, 175, 55, 0.8));
+    }
+}
+
+/* Animation de brillance watermark */
+@keyframes watermarkShine {
+    0% { transform: translateX(-100%) translateY(-100%); }
+    50% { transform: translateX(100%) translateY(100%); }
+    100% { transform: translateX(-100%) translateY(-100%); }
+}
+
+/* --- SIGNATURE MICROSCOPIQUE --- */
+.micro-signature {
+    position: absolute;
+    bottom: 2mm;
+    right: 2mm;
+    font-size: 0.3mm; /* Réduit pour être vraiment microscopique */
+    color: black; /* Noir pour plus de visibilité */
+    z-index: 20; /* Au-dessus du fond et autres éléments */
+    pointer-events: none;
+    font-family: 'Times New Roman', serif;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    line-height: 0.5mm;
+    letter-spacing: 0.1mm;
+}
+
+/* Signature dans les bordures */
+.border-signature {
+    position: absolute;
+    top: 0.5mm;
+    left: 0.5mm;
+    right: 0.5mm;
+    bottom: 0.5mm;
+    border: 0.1mm solid rgba(0, 0, 0, 0.1);
+    z-index: 20; /* Au-dessus du fond */
+    pointer-events: none;
+    font-size: 0.3mm; /* Réduit pour être vraiment microscopique */
+    color: black; /* Noir pour plus de visibilité */
+    font-family: 'Times New Roman', serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0.2mm;
+}
+
+.border-signature::before {
+    content: 'DRH cimis-2026, Capitaine Nstama, lieutenant Onana, INGENIEUR NDONGMO TEJIONA BEN-ARTHUR, diegoue et Lontchi'; /* Texte mis à jour */
+    position: absolute;
+    top: -0.2mm;
+    left: 1mm;
+    font-size: 0.3mm; /* Réduit pour être vraiment microscopique */
+    color: black; /* Noir pour plus de visibilité */
+    font-family: 'Times New Roman', serif;
+    white-space: nowrap;
+}
+
+/* --- QR CODE SÉCURISÉ --- */
+.qr-secure {
+    position: relative;
+    border: 0.5mm solid rgba(0, 0, 0, 0.3);
+    border-radius: 1mm;
+    background: white;
+    padding: 1mm;
+}
+
+.qr-secure::before {
+    content: '🔒';
+    position: absolute;
+    top: -3mm;
+    right: -3mm;
+    font-size: 2mm;
+    color: #d4af37;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 50%;
+    width: 3mm;
+    height: 3mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- EFFETS ANTI-COPIE --- */
+.anti-copy-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        repeating-linear-gradient(45deg, transparent, transparent 1mm, rgba(0,0,0,0.05) 1mm, rgba(0,0,0,0.05) 2mm),
+        repeating-linear-gradient(-45deg, transparent, transparent 1mm, rgba(138,43,226,0.03) 1mm, rgba(138,43,226,0.03) 2mm);
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* --- EFFETS INTERACTIFS POUR DÉMO --- */
+.demo-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.demo-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5mm 15mm rgba(0,0,0,0.4);
+}
+
+.security-highlight {
+    animation: securityPulse 2s infinite;
+}
+
+@keyframes securityPulse {
+    0%, 100% { box-shadow: 0 0 5mm rgba(212, 175, 55, 0.5); }
+    50% { box-shadow: 0 0 10mm rgba(212, 175, 55, 0.8); }
+}
+
+/* --- RÉPONSIVE POUR DÉMO --- */
+@media (max-width: 768px) {
+    .matricule-watermark {
+        font-size: 6mm;
+    }
+    
+    .micro-signature {
+        font-size: 0.25mm;
+    }
+    
+    .border-signature::before {
+        font-size: 0.25mm;
+    }
+}

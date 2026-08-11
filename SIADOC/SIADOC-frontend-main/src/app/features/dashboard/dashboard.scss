@@ -1,0 +1,622 @@
+// =============================================================
+// PALETTE MILITAIRE
+// --olive-green  : #4a5e3a  (vert armée de terre)
+// --slate-gray   : #5a6472  (gris uniforme)
+// --military-blue: #1e3a5f  (bleu armée de l'air)
+// --dark-charcoal: #2d3436  (noir/anthracite)
+// --light-olive  : #f2f4ef  (fond vert très pâle)
+// --light-gray   : #f4f5f7  (fond gris clair)
+// =============================================================
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 3px solid transparent;
+  // Dégradé discret : vert olive → gris → bleu militaire
+  //background-image: linear-gradient(white, white), linear-gradient(90deg, #4a5e3a 0%, #5a6472 50%, #1e3a5f 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+
+  .header-title-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    color: #2d3748;
+    margin: 0;
+  }
+
+  .role-badge {
+    color: #5a6472;
+    font-weight: 600;
+    background: #f4f5f7;
+    padding: 0.35rem 0.9rem;
+    border-radius: 20px;
+    border: 1px solid #d0d4da;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+
+    &.DRH      { background: #e8edf2; color: #1e3a5f; border-color: #b0c0d8; }
+    &.RMIA     { background: #edf0eb; color: #4a5e3a; border-color: #b8c9b0; }
+    &.BRIGADE  { background: #eeeff1; color: #5a6472; border-color: #c0c6cf; }
+    &.BATAILLON { background: #e8e9ea; color: #2d3436; border-color: #b0b4b8; }
+  }
+
+  .user-info-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    color: #5a6472;
+
+    .unit-info, .connected-user {
+      font-weight: 500;
+      background: #f4f5f7;
+      padding: 0.35rem 0.9rem;
+      border-radius: 20px;
+      border: 1px solid #d0d4da;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .connected-user {
+      background: #e8edf2;
+      color: #1e3a5f;
+      border-color: #b0c0d8;
+    }
+  }
+}
+
+.stats-cards {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  .card {
+    flex: 1;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+    }
+
+    h3 { margin: 0 0 1rem; font-size: 0.95rem; color: #5a6472; }
+    .value { font-size: 2.5rem; font-weight: 800; color: #2d3436; margin: 0; }
+
+    // Dossiers → vert olive
+    &.main {
+      border-top: 4px solid #4a5e3a;
+      .value { color: #4a5e3a; }
+    }
+    // Archives → bleu militaire
+    &.secondary {
+      border-top: 4px solid #1e3a5f;
+      .value { color: #1e3a5f; }
+    }
+    // Retraités → orange militaire
+    &.warning {
+      border-top: 4px solid #f57c00;
+      .value { color: #f57c00; }
+    }
+  }
+
+  .card-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 0.6;
+  }
+
+  &.alternate {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    
+    .card {
+       padding: 1.2rem;
+       h4 { margin: 0 0 0.5rem 0; color: #5a6472; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px;}
+       p.value { font-size: 1.8rem; }
+       p.value span { font-size: 0.85rem; color: #a0aec0; font-weight: 500; margin-left: 0.3rem; }
+
+       &.army-terre { border-left: 5px solid #2e7d32; }
+       &.army-air { border-left: 5px solid #1976d2; }
+       &.army-marine { border-left: 5px solid #1a202c; }
+       &.army-gn { border-left: 5px solid #808080; }
+    }
+  }
+}
+
+.mini-card {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  transition: transform 0.15s ease;
+
+  &:hover { transform: translateY(-1px); }
+
+  h4 { margin: 0; font-size: 0.85rem; color: #5a6472; }
+  p  { margin: 0; font-size: 1.2rem; font-weight: 700; color: #2d3436; }
+
+  // Hommes → bleu militaire  |  Femmes → gris ardoise
+  &:nth-child(1) { border-left: 4px solid #1e3a5f; }
+  &:nth-child(2) { border-left: 4px solid #5a6472; }
+
+  // Officiers → vert olive  |  Sous-off → gris ardoise  |  Rang → anthracite
+  &.highlight {
+    border-bottom: 3px solid #d0d4da;
+
+    &:nth-child(1) { border-bottom-color: #4a5e3a; }
+    &:nth-child(2) { border-bottom-color: #5a6472; }
+    &:nth-child(3) { border-bottom-color: #2d3436; }
+  }
+}
+
+.charts-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 3rem 0;
+
+  .chart-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+
+    h3 { margin: 0 0 1.5rem; text-align: center; color: #2d3436; }
+    canvas { max-height: 250px; margin: 0 auto; }
+  }
+}
+
+.hierarchy-cards {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  
+  h3 {
+    color: #2d3436;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid transparent;
+    // Dégradé militaire vert → bleu sur la ligne du titre
+    //background-image: linear-gradient(white, white), linear-gradient(90deg, #4a5e3a, #1e3a5f);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    display: inline-block;
+    padding-right: 2rem;
+  }
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+
+  .hierarchy-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-top: 4px solid #4a5e3a;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(74,94,58,0.15);
+      border-top-color: #1e3a5f;
+    }
+
+    h4 { margin: 0 0 1rem 0; color: #2d3436; font-size: 1.1rem; }
+
+    .corps-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      color: white;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+
+      &.terre  { background: #2e7d32; }
+      &.air    { background: #1976d2; }
+      &.marine { background: #1a202c; }
+      &.gn     { background: #808080; }
+    }
+
+    .total-badge {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #2d3436;
+      text-align: right;
+      border-top: 1px dashed #d0d4da;
+      padding-top: 1rem;
+    }
+  }
+}
+
+.table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  margin-top: 1rem;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      padding: 1rem;
+      border-bottom: 1px solid #eaecee;
+      font-size: 0.9rem;
+      color: #2d3436;
+      text-align: left;
+    }
+
+    th {
+      // En-tête : fond gris très léger, texte anthracite
+      background: linear-gradient(135deg, #f4f5f7 0%, #eaecee 100%);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      border-bottom: 2px solid #4a5e3a; // trait vert olive
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    // Centrage des chiffres
+    td:not(:first-child), th:not(:first-child) {
+      text-align: center;
+    }
+
+    // Hover gris très léger
+    tr:hover td {
+      background: #f2f4ef;
+    }
+
+    // Fix pour la continuité des lignes
+    tr {
+      background-color: white;
+    }
+  }
+
+  .empty { padding: 2rem; text-align: center; color: #a0aec0; font-style: italic; }
+}
+
+.drh-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 3rem;
+
+  .widget h3 { margin-bottom: 1rem; color: #2d3436; }
+  
+  .btn-retraite-mini {
+    background: #fff8e1;
+    color: #f57c00;
+    border: 1px solid #ffe082;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    
+    &:hover {
+      background: #f57c00;
+      color: white;
+      transform: scale(1.1);
+    }
+  }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5rem;
+  color: #5a6472;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #d0d4da;
+    border-top: 4px solid #4a5e3a; // spinner vert olive
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.transfers-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  margin: 2rem 0;
+  overflow: hidden;
+  border: 1px solid #eaecee;
+  border-left: 4px solid #5a6472; // accent gris ardoise
+
+  .section-header {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #f4f5f7 0%, #fefefe 100%);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover { 
+      background: linear-gradient(135deg, #eaecee 0%, #fefefe 100%);
+    }
+
+    h3 { 
+      margin: 0; 
+      font-size: 1.1rem; 
+      color: #2d3436; 
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .toggle-icon { 
+      font-size: 0.8rem; 
+      color: #5a6472;
+      transition: transform 0.3s ease;
+      font-weight: bold;
+    }
+  }
+
+  .transfers-content {
+    padding: 0;
+    border-top: 1px solid #d0d4da;
+    animation: slideDown 0.3s ease-out;
+
+    .table-container {
+      margin-top: 0;
+      box-shadow: none;
+      border-radius: 0;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 1rem;
+  background: #f2f4ef; // fond vert olive très pâle
+  border-radius: 8px;
+  border-left: 3px solid #4a5e3a;
+  font-size: 0.9rem;
+
+  .breadcrumb-item {
+    color: #2d3436;
+    font-weight: 500;
+
+    &.clickable {
+      color: #4a5e3a; // vert olive cliquable
+      cursor: pointer;
+      &:hover { text-decoration: underline; }
+    }
+
+    &.active {
+      color: #1e3a5f; // bleu militaire pour l'actif
+      font-weight: 700;
+    }
+  }
+
+  .separator { color: #a0a8b0; }
+
+  .back-btn {
+    margin-left: auto;
+    background: white;
+    border: 1px solid #d0d4da;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #2d3436;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover { background: #eaecee; border-color: #4a5e3a; color: #4a5e3a; }
+  }
+}
+
+.clickable {
+  cursor: pointer !important;
+}
+
+.click-hint {
+  font-size: 0.75rem;
+  color: #4a5e3a; // vert olive
+  font-style: italic;
+  margin-top: 0.5rem;
+  text-align: right;
+  opacity: 0.7;
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+/* ===============================
+   AUTOCOMPLETE STYLES (Global Pattern)
+================================= */
+.filters-container {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+
+  .header h1 {
+    font-size: 1.25rem;
+    color: #1e3a5f;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+  }
+}
+
+.filters-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.manual-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  align-items: flex-end;
+}
+
+.search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  border: 1px solid #d0d4da;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+  background: #ffffff !important; // Blanc pur
+  opacity: 1 !important;
+  
+  &:focus {
+    outline: none;
+    border-color: #1e3a5f;
+    box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+  }
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #d0d4da;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-top: 5px;
+  max-height: 250px;
+  overflow-y: auto;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    padding: 10px 15px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: #f2f4ef; // Vert olive très pâle
+      .comp-name { color: #4a5e3a; }
+    }
+  }
+}
+
+.suggestion-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .comp-name {
+    font-weight: 700;
+    color: #2d3436;
+    font-size: 0.9rem;
+  }
+
+  .hierarchy-path {
+    font-size: 0.75rem;
+    color: #5a6472;
+    font-style: italic;
+  }
+}
+
+.dropdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+}
+
+.btn-reset {
+  background: #5a6472;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 42px;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: #2d3436;
+    transform: translateY(-1px);
+  }
+}
+
+.status-retired {
+  background: #6b46c1; // Violet royal / Pourpre militaire
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}

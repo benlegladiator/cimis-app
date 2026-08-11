@@ -1,0 +1,406 @@
+<div class="cimis-container">
+
+  <!-- ══ HEADER ══ -->
+  <header class="module-header">
+    <div class="header-title">
+      <i class="fa-solid fa-fingerprint"></i>
+      <div>
+        <h1>Données Biométriques CIMIS</h1>
+        <p>Consultez les données biométriques et la carte d'identité militaire reçues de l'application CIMIS.</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="cimis-badge">
+        <i class="fa-solid fa-link"></i>
+        Interface CIMIS ↔ SIADOC
+      </div>
+    </div>
+  </header>
+  
+  <!-- Navigation par onglets -->
+  <nav class="cimis-tabs">
+    <button [class.active]="viewMode === 'search'" (click)="viewMode = 'search'">
+      <i class="fa-solid fa-magnifying-glass"></i> Recherche par Matricule
+    </button>
+    <button [class.active]="viewMode === 'list'" (click)="chargerAnnuaire()">
+      <i class="fa-solid fa-address-book"></i> Explorer l'Annuaire CIMIS
+    </button>
+    <button [class.active]="viewMode === 'gesmil'" (click)="viewMode = 'gesmil'">
+      <i class="fa-solid fa-database"></i> Consultation GESMIL
+    </button>
+  </nav>
+
+  <div class="tab-content" *ngIf="viewMode === 'search'">
+    <div class="search-section">
+      <button class="btn-status" (click)="testConnection()">
+        <i class="fa-solid fa-signal"></i>
+        Vérifier l'état du pont
+      </button>
+      <button class="btn-simulate" (click)="simulateExport()">
+        <i class="fa-solid fa-vial"></i>
+        Simuler une requête CIMIS
+      </button>
+      <div class="cimis-badge">
+        <i class="fa-solid fa-link"></i>
+        Interface CIMIS ↔ SIADOC
+      </div>
+    </div>
+
+    <!-- ══ BARRE DE RECHERCHE ══ -->
+  <div class="glass-card search-section">
+    <h3><i class="fa-solid fa-magnifying-glass"></i> Rechercher par matricule</h3>
+    <p>Entrez le matricule militaire ou le matricule de solde du militaire pour consulter ses données biométriques.</p>
+
+    <div class="search-box">
+      <div class="input-wrapper">
+        <i class="fa-solid fa-id-card input-icon"></i>
+        <input
+          type="text"
+          id="matricule-input"
+          [(ngModel)]="matriculeSearch"
+          placeholder="Ex : MAT-2023-12345"
+          (keyup.enter)="rechercher()"
+          autocomplete="off">
+      </div>
+      <button class="btn-primary" (click)="rechercher()" [disabled]="searchLoading || !matriculeSearch.trim()" id="btn-rechercher">
+        <i class="fa-solid fa-spinner fa-spin" *ngIf="searchLoading"></i>
+        <i class="fa-solid fa-magnifying-glass"  *ngIf="!searchLoading"></i>
+        Rechercher
+      </button>
+      <button class="btn-outline" (click)="reinitialiser()" *ngIf="result || searchError" id="btn-reinitialiser">
+        <i class="fa-solid fa-rotate-left"></i>
+        Réinitialiser
+      </button>
+    </div>
+
+    <!-- Erreur -->
+    <div *ngIf="searchError" class="alert alert-danger fade-in">
+      <i class="fa-solid fa-circle-xmark"></i>
+      {{ searchError }}
+    </div>
+  </div>
+
+  <!-- ══ RÉSULTAT DIRECT CIMIS (SI PAS DE BIOMÉTRIE LOCALE) ══ -->
+  <div *ngIf="directResult" class="results-grid fade-in">
+    <div class="glass-card identity-card full-width">
+      <div class="card-header-strip cimis-direct">
+        <i class="fa-solid fa-cloud-arrow-down"></i>
+        <span>Données en direct de CIMIS</span>
+        <span class="source-tag direct">
+          <i class="fa-solid fa-bolt"></i>
+          LIVE API
+        </span>
+      </div>
+
+      <div class="identity-body-grid">
+        <div class="photo-column" *ngIf="directResult.photo_base64">
+           <img [src]="'data:image/jpeg;base64,' + directResult.photo_base64" class="direct-photo">
+        </div>
+        
+        <div class="info-column">
+          <div class="id-row">
+            <span class="id-label"><i class="fa-solid fa-user"></i> Nom & Prénom</span>
+            <span class="id-value strong">{{ directResult.nom }} {{ directResult.prenom }}</span>
+          </div>
+          <div class="id-row">
+            <span class="id-label"><i class="fa-solid fa-barcode"></i> Matricule</span>
+            <span class="id-value"><code class="tag">{{ directResult.matricule }}</code></span>
+          </div>
+          <div class="id-row">
+            <span class="id-label"><i class="fa-solid fa-medal"></i> Grade</span>
+            <span class="id-value strong">{{ directResult.grade }}</span>
+          </div>
+          <div class="id-row">
+            <span class="id-label"><i class="fa-solid fa-building-shield"></i> Unité</span>
+            <span class="id-value">{{ directResult.unite }}</span>
+          </div>
+          <div class="id-row">
+            <span class="id-label"><i class="fa-solid fa-calendar-day"></i> Statut</span>
+            <span class="id-value badge-statut">{{ directResult.statut || 'ACTIF' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="direct-footer">
+        <i class="fa-solid fa-circle-info"></i>
+        Ces données proviennent directement de l'API CIMIS et ne sont pas encore persistées dans SIADOC.
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- VUE ANNUAIRE CIMIS -->
+  <div class="tab-content list-view" *ngIf="viewMode === 'list'">
+    <div class="filter-bar">
+      <div class="filter-group">
+        <input type="text" [(ngModel)]="filters.search" placeholder="Nom ou prénom..." (keyup.enter)="appliquerFiltres()">
+      </div>
+      <div class="filter-group">
+        <input type="text" [(ngModel)]="filters.grade" placeholder="Grade..." (keyup.enter)="appliquerFiltres()">
+      </div>
+      <div class="filter-group">
+        <input type="text" [(ngModel)]="filters.unite" placeholder="Unité..." (keyup.enter)="appliquerFiltres()">
+      </div>
+      <button class="btn-filter" (click)="appliquerFiltres()">
+        <i class="fa-solid fa-filter"></i> Filtrer
+      </button>
+    </div>
+
+    <div class="loading-overlay" *ngIf="listLoading">
+      <div class="spinner"></div>
+      <p>Récupération des données CIMIS...</p>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div *ngIf="listError" class="alert alert-danger fade-in" style="margin: 20px;">
+      <i class="fa-solid fa-circle-exmark"></i>
+      <strong>Erreur CIMIS :</strong> {{ listError }}
+    </div>
+
+    <div class="cimis-grid" *ngIf="!listLoading">
+      <div class="cimis-card" *ngFor="let mil of cimisList">
+        <div class="card-img">
+          <img *ngIf="mil.photo_base64" [src]="mil.photo_base64" alt="Photo">
+          <div class="img-placeholder" *ngIf="!mil.photo_base64">
+            <i class="fa-solid fa-user"></i>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3>{{ mil.nom }} {{ mil.prenom }}</h3>
+          <div class="card-info">
+            <span><i class="fa-solid fa-id-card"></i> {{ mil.matricule_militaire || mil.matricule }}</span>
+            <span><i class="fa-solid fa-star"></i> {{ mil.grade || 'N/A' }}</span>
+            <span><i class="fa-solid fa-building"></i> {{ mil.unite || 'N/A' }}</span>
+            <span *ngIf="mil.groupe_sanguin"><i class="fa-solid fa-droplet"></i> Sang : {{ mil.groupe_sanguin }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-results" *ngIf="!listLoading && cimisList.length === 0">
+      <i class="fa-solid fa-folder-open"></i>
+      <p>Aucun militaire trouvé dans l'annuaire CIMIS avec ces filtres.</p>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="pagination && pagination.pages > 1">
+      <button [disabled]="filters.page === 1" (click)="changerPage(filters.page - 1)">Précédent</button>
+      <span>Page {{ pagination.page }} sur {{ pagination.pages }}</span>
+      <button [disabled]="filters.page === pagination.pages" (click)="changerPage(filters.page + 1)">Suivant</button>
+    </div>
+  </div>
+
+  <!-- VUE GESMIL -->
+  <div class="tab-content" *ngIf="viewMode === 'gesmil'">
+    <div class="glass-card search-section">
+      <h3><i class="fa-solid fa-magnifying-glass"></i> Consulter GESMIL</h3>
+      <p>Interrogation directe du système GESMIL pour obtenir le fichier de situation.</p>
+
+      <div class="search-box">
+        <div class="input-wrapper">
+          <i class="fa-solid fa-id-card input-icon"></i>
+          <input type="text" [(ngModel)]="gesmilSearch" placeholder="Entrez le matricule..." (keyup.enter)="rechercherGesmil()">
+        </div>
+        <button class="btn-primary" (click)="rechercherGesmil()" [disabled]="gesmilLoading">
+          <i class="fa-solid fa-spinner fa-spin" *ngIf="gesmilLoading"></i>
+          Rechercher sur GESMIL
+        </button>
+      </div>
+
+      <div *ngIf="gesmilError" class="alert alert-danger fade-in">
+        <i class="fa-solid fa-circle-xmark"></i>
+        {{ gesmilError }}
+      </div>
+    </div>
+
+    <div *ngIf="gesmilResult" class="results-grid fade-in">
+      <div class="glass-card full-width">
+        <div class="card-header-strip gesmil-header">
+          <i class="fa-solid fa-file-invoice"></i>
+          <span>Fichier de Situation GESMIL</span>
+          <span class="source-tag gesmil">API GESMIL</span>
+        </div>
+        <div class="json-viewer">
+          <pre>{{ gesmilResult | json }}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RÉSULTAT ══ -->
+  <div *ngIf="result && viewMode === 'search'" class="results-grid fade-in">
+
+    <!-- ── Carte identité du militaire ── -->
+    <div class="glass-card identity-card">
+      <div class="card-header-strip">
+        <i class="fa-solid fa-id-badge"></i>
+        <span>Identité du militaire</span>
+        <span class="source-tag">
+          <i class="fa-solid fa-satellite-dish"></i>
+          {{ result.sourceApplication }}
+        </span>
+      </div>
+
+      <div class="identity-body">
+        <div class="id-row">
+          <span class="id-label"><i class="fa-solid fa-user"></i> Nom & Prénom</span>
+          <span class="id-value strong">{{ result.nomMilitaire }} {{ result.prenomMilitaire }}</span>
+        </div>
+        <div class="id-row">
+          <span class="id-label"><i class="fa-solid fa-barcode"></i> Matricule</span>
+          <span class="id-value"><code class="tag">{{ result.matricule }}</code></span>
+        </div>
+        <div class="id-row" *ngIf="result.numeroCIM">
+          <span class="id-label"><i class="fa-solid fa-address-card"></i> N° CIM</span>
+          <span class="id-value strong cim-number">{{ result.numeroCIM }}</span>
+        </div>
+        <div class="id-row no-cim" *ngIf="!result.numeroCIM">
+          <span class="id-label"><i class="fa-solid fa-address-card"></i> N° CIM</span>
+          <span class="id-value muted"><i class="fa-solid fa-clock"></i> En attente CIMIS</span>
+        </div>
+        <div class="id-row">
+          <span class="id-label"><i class="fa-solid fa-calendar-check"></i> Reçu le</span>
+          <span class="id-value">{{ formatDate(result.dateReception) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── QR Code ── -->
+    <div class="glass-card qr-card">
+      <div class="card-header-strip">
+        <i class="fa-solid fa-qrcode"></i>
+        <span>QR Code</span>
+      </div>
+
+      <div class="qr-body">
+        <div *ngIf="result.qrCodeImage; else noQr" class="qr-image-wrapper">
+          <img [src]="toImageSrc(result.qrCodeImage, 'image/png')" alt="QR Code du militaire" class="qr-img">
+        </div>
+        <ng-template #noQr>
+          <div class="no-data-placeholder">
+            <i class="fa-solid fa-qrcode"></i>
+            <span>QR code non disponible</span>
+          </div>
+        </ng-template>
+
+        <div *ngIf="result.qrCodeContenu" class="qr-content">
+          <label><i class="fa-solid fa-link"></i> Contenu encodé</label>
+          <code class="qr-text">{{ result.qrCodeContenu }}</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Photo biométrique visage ── -->
+    <div class="glass-card photo-card">
+      <div class="card-header-strip">
+        <i class="fa-solid fa-camera"></i>
+        <span>Photo biométrique</span>
+      </div>
+
+      <div class="photo-body">
+        <div *ngIf="result.photoVisage; else noPhoto" class="photo-wrapper">
+          <img [src]="toImageSrc(result.photoVisage, result.photoVisageType)"
+               alt="Photo biométrique du visage"
+               class="biometric-photo">
+          <span class="photo-type-badge">{{ result.photoVisageType || 'image/jpeg' }}</span>
+        </div>
+        <ng-template #noPhoto>
+          <div class="no-data-placeholder tall">
+            <i class="fa-solid fa-user-slash"></i>
+            <span>Photo non disponible</span>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- ── Empreintes digitales (pleine largeur) ── -->
+    <div class="glass-card empreintes-card full-width">
+      <div class="card-header-strip">
+        <i class="fa-solid fa-hand-dots"></i>
+        <span>Empreintes digitales</span>
+        <span class="security-tag"><i class="fa-solid fa-lock"></i> Données sensibles</span>
+      </div>
+
+      <div class="empreintes-grid">
+
+        <!-- Empreinte 1 -->
+        <div class="empreinte-item">
+          <div class="empreinte-header">
+            <i class="fa-solid fa-hand-pointer"></i>
+            <strong>Index gauche</strong>
+            <span class="type-pill" *ngIf="result.empreinteDoigt1Type">{{ result.empreinteDoigt1Type }}</span>
+          </div>
+
+          <div *ngIf="result.empreinteDoigt1; else noEmp1">
+            <div class="empreinte-hidden" *ngIf="!showEmpreinte1">
+              <div class="blur-overlay" (click)="showEmpreinte1 = true">
+                <i class="fa-solid fa-eye"></i>
+                <span>Cliquez pour révéler</span>
+              </div>
+              <img [src]="toImageSrc(result.empreinteDoigt1, result.empreinteDoigt1Type)"
+                   class="emp-img blurred" alt="Empreinte index gauche">
+            </div>
+            <div *ngIf="showEmpreinte1" class="empreinte-visible fade-in">
+              <img [src]="toImageSrc(result.empreinteDoigt1, result.empreinteDoigt1Type)"
+                   class="emp-img" alt="Empreinte index gauche">
+              <button class="btn-mask" (click)="showEmpreinte1 = false">
+                <i class="fa-solid fa-eye-slash"></i> Masquer
+              </button>
+            </div>
+          </div>
+          <ng-template #noEmp1>
+            <div class="no-data-placeholder">
+              <i class="fa-solid fa-hand-dots"></i>
+              <span>Non disponible</span>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Empreinte 2 -->
+        <div class="empreinte-item">
+          <div class="empreinte-header">
+            <i class="fa-solid fa-hand-pointer"></i>
+            <strong>Index droit</strong>
+            <span class="type-pill" *ngIf="result.empreinteDoigt2Type">{{ result.empreinteDoigt2Type }}</span>
+          </div>
+
+          <div *ngIf="result.empreinteDoigt2; else noEmp2">
+            <div class="empreinte-hidden" *ngIf="!showEmpreinte2">
+              <div class="blur-overlay" (click)="showEmpreinte2 = true">
+                <i class="fa-solid fa-eye"></i>
+                <span>Cliquez pour révéler</span>
+              </div>
+              <img [src]="toImageSrc(result.empreinteDoigt2, result.empreinteDoigt2Type)"
+                   class="emp-img blurred" alt="Empreinte index droit">
+            </div>
+            <div *ngIf="showEmpreinte2" class="empreinte-visible fade-in">
+              <img [src]="toImageSrc(result.empreinteDoigt2, result.empreinteDoigt2Type)"
+                   class="emp-img" alt="Empreinte index droit">
+              <button class="btn-mask" (click)="showEmpreinte2 = false">
+                <i class="fa-solid fa-eye-slash"></i> Masquer
+              </button>
+            </div>
+          </div>
+          <ng-template #noEmp2>
+            <div class="no-data-placeholder">
+              <i class="fa-solid fa-hand-dots"></i>
+              <span>Non disponible</span>
+            </div>
+          </ng-template>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ ÉTAT VIDE ══ -->
+  <div *ngIf="!result && !searchLoading && !searchError" class="empty-state fade-in">
+    <div class="empty-icon-wrap">
+      <i class="fa-solid fa-fingerprint"></i>
+    </div>
+    <h3>Aucune recherche effectuée</h3>
+    <p>Entrez un matricule pour consulter les données biométriques reçues de CIMIS.</p>
+  </div>
+
+</div>

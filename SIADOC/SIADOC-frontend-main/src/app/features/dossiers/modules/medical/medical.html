@@ -1,0 +1,290 @@
+<div class="medical-container">
+
+  <div class="header-section">
+    <h2 class="titre-page">🏥 Dossier Médical / Medical Records</h2>
+    
+    <div class="action-buttons" *ngIf="!readOnly">
+      <button class="btn-primary" (click)="afficherFormBlessure=true">
+        ➕ Blessure / Injury
+      </button>
+      <button class="btn-primary" (click)="afficherFormPension=true">
+        ➕ Pension d'Invalidité / Disability Pension
+      </button>
+      <button class="btn-primary" (click)="afficherFormArret=true">
+        ➕ Arrêt de Travail / Sick Leave
+      </button>
+      <button class="btn-primary" (click)="afficherFormDocument=true">
+        ➕ Documents Médicaux / Medical Documents
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= FORM BLESSURE ================= -->
+  <div *ngIf="afficherFormBlessure && !readOnly" class="form-card">
+    <h3>Déclaration de Blessure / Injury Declaration</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nature / Nature</label>
+        <input type="text" placeholder="Ex: Fracture jambe" [(ngModel)]="blessure.nature">
+      </div>
+      <div class="form-group">
+        <label>Lieu / Location</label>
+        <input type="text" placeholder="Ex: Terrain" [(ngModel)]="blessure.lieu">
+      </div>
+      <div class="form-group">
+        <label>Autorité / Authority</label>
+        <input type="text" placeholder="Ex: Médecin Chef" [(ngModel)]="blessure.autorite">
+      </div>
+      <div class="form-group">
+        <label>Date / Date</label>
+        <input type="date" [(ngModel)]="blessure.dateEffet">
+      </div>
+      <div class="form-group full-width">
+        <label>Document (PDF / Image)</label>
+        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
+      </div>
+    </div>
+    <div class="form-actions" style="margin-top: 20px;">
+      <button class="btn-success" (click)="enregistrerBlessure()">💾 Enregistrer / Save</button>
+      <button class="btn-close" (click)="afficherFormBlessure=false">Annuler / Cancel</button>
+    </div>
+  </div>
+
+  <!-- ================= FORM DOCUMENT MEDICAL ================= -->
+  <div *ngIf="afficherFormDocument && !readOnly" class="form-card">
+    <h3>Document Médical / Medical Document</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Titre / Title</label>
+        <input type="text" placeholder="Ex: Certificat d'aptitude" [(ngModel)]="documentMedical.titre">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" placeholder="Ex: Visite annuelle" [(ngModel)]="documentMedical.description">
+      </div>
+      <div class="form-group">
+        <label>Date / Date</label>
+        <input type="date" [(ngModel)]="documentMedical.dateDocument">
+      </div>
+      <div class="form-group full-width">
+        <label>Document (PDF / Image)</label>
+        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
+      </div>
+    </div>
+    <div class="form-actions" style="margin-top: 20px;">
+      <button class="btn-success" (click)="enregistrerDocument()">💾 Enregistrer / Save</button>
+      <button class="btn-close" (click)="afficherFormDocument=false">Annuler / Cancel</button>
+    </div>
+  </div>
+
+  <!-- ================= FORM ARRET ================= -->
+  <div *ngIf="afficherFormArret && !readOnly" class="form-card">
+    <h3>Arrêt de Travail / Sick Leave</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Motif / Reason</label>
+        <input type="text" placeholder="Ex: Convalescence" [(ngModel)]="arret.motif">
+      </div>
+      <div class="form-group">
+        <label>Date début / Start Date</label>
+        <input type="date" [(ngModel)]="arret.dateDebut">
+      </div>
+      <div class="form-group">
+        <label>Date fin / End Date</label>
+        <input type="date" [(ngModel)]="arret.dateFin">
+      </div>
+      <div class="form-group full-width">
+        <label>Document (PDF / Image)</label>
+        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
+      </div>
+    </div>
+    <div class="form-actions" style="margin-top: 20px;">
+      <button class="btn-success" (click)="enregistrerArret()">💾 Enregistrer / Save</button>
+      <button class="btn-close" (click)="afficherFormArret=false">Annuler / Cancel</button>
+    </div>
+  </div>
+
+  <!-- ================= FORM PENSION ================= -->
+  <div *ngIf="afficherFormPension && !readOnly" class="form-card">
+    <h3>Pension d'Invalidité / Disability Pension</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Type invalidité / Disability Type</label>
+        <input type="text" placeholder="Ex: Blessure guerre" [(ngModel)]="pension.typeInvalidite">
+      </div>
+      <div class="form-group">
+        <label>Date Prise Effet / Effective Date</label>
+        <input type="date" [(ngModel)]="pension.datePriseEffet">
+      </div>
+      <div class="form-group">
+        <label>Référence / Reference</label>
+        <input type="text" placeholder="Ex: Décret N°..." [(ngModel)]="pension.reference">
+      </div>
+      <div class="form-group">
+        <label>Taux / Rate (%)</label>
+        <input type="number" [(ngModel)]="pension.taux" min="0" max="100">
+      </div>
+      <div class="form-group full-width">
+        <label>Document (PDF / Image)</label>
+        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
+      </div>
+    </div>
+    <div class="form-actions" style="margin-top: 20px;">
+      <button class="btn-success" (click)="enregistrerPension()">💾 Enregistrer / Save</button>
+      <button class="btn-close" (click)="afficherFormPension=false">Annuler / Cancel</button>
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- ================= LISTES ================= -->
+  <div class="table-container">
+    
+    <!-- Blessures -->
+    <div class="section-block">
+      <h3>🩹 Blessure(s) / Injury(ies)</h3>
+      <table class="military-table">
+        <thead>
+          <tr>
+            <th>Nature / Nature</th>
+            <th>Lieu / Location</th>
+            <th>Autorité / Authority</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let b of blessures" (click)="voirBlessure(b)" style="cursor:pointer;">
+            <td><strong>{{b.nature}}</strong></td>
+            <td>{{b.lieu}}</td>
+            <td>{{b.autorite}}</td>
+            <td>{{b.dateEffet | date:'dd/MM/yyyy'}}</td>
+          </tr>
+          <tr *ngIf="blessures.length === 0">
+            <td colspan="4" class="empty-cell">Aucune blessure enregistrée / No injuries recorded.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pensions -->
+    <div class="section-block" style="margin-top: 30px;">
+      <h3>💰 Pension(s) d'Invalidité / Disability Pension(s)</h3>
+      <table class="military-table">
+        <thead>
+          <tr>
+            <th>Type invalidité / Disability Type</th>
+            <th>Référence / Reference</th>
+            <th>Taux / Rate</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of pensions" (click)="voirPension(p)" style="cursor:pointer;">
+            <td><strong>{{p.typeInvalidite}}</strong></td>
+            <td>{{p.reference}}</td>
+            <td>{{p.taux}}%</td>
+            <td>{{p.datePriseEffet | date:'dd/MM/yyyy'}}</td>
+          </tr>
+          <tr *ngIf="pensions.length === 0">
+            <td colspan="4" class="empty-cell">Aucune pension enregistrée / No pensions recorded.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Arrêts de travail -->
+    <div class="section-block" style="margin-top: 30px;">
+      <h3>🛌 Arrêt(s) de travail / Sick Leave(s)</h3>
+      <table class="military-table">
+        <thead>
+          <tr>
+            <th>Motif / Reason</th>
+            <th>Date début / Start</th>
+            <th>Date fin / End</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of arrets" (click)="voirArret(a)" style="cursor:pointer;">
+            <td><strong>{{a.motif}}</strong></td>
+            <td>{{a.dateDebut | date:'dd/MM/yyyy'}}</td>
+            <td>{{a.dateFin | date:'dd/MM/yyyy'}}</td>
+          </tr>
+          <tr *ngIf="arrets.length === 0">
+            <td colspan="3" class="empty-cell">Aucun arrêt enregistré / No sick leaves recorded.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Documents médicaux -->
+    <div class="section-block" style="margin-top: 30px;">
+      <h3>📄 Document(s) médicaux / Medical Document(s)</h3>
+      <table class="military-table">
+        <thead>
+          <tr>
+            <th>Titre / Title</th>
+            <th>Description</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of documents" (click)="voirDocument(d)" style="cursor:pointer;">
+            <td><strong>{{d.titre}}</strong></td>
+            <td>{{d.description}}</td>
+            <td>{{d.dateDocument | date:'dd/MM/yyyy'}}</td>
+          </tr>
+          <tr *ngIf="documents.length === 0">
+            <td colspan="3" class="empty-cell">Aucun document enregistré / No documents recorded.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    </div>
+
+    <!-- ================= PREVIEW ================= -->
+    <div *ngIf="selection" class="preview-box">
+      <div class="preview-header">
+        <h3>📑 Détails / Details</h3>
+        <button class="btn-close-preview" (click)="selection=null">✖ Fermer / Close</button>
+      </div>
+
+      <!-- BLESSURE -->
+      <div *ngIf="selection.type === 'BLESSURE'" class="preview-grid">
+        <div><b>Nature :</b> {{selection.nature}}</div>
+        <div><b>Lieu / Location :</b> {{selection.lieu}}</div>
+        <div><b>Autorité / Authority :</b> {{selection.autorite}}</div>
+        <div><b>Date :</b> {{selection.dateEffet | date:'dd/MM/yyyy'}}</div>
+      </div>
+
+      <!-- PENSION -->
+      <div *ngIf="selection.type === 'PENSION'" class="preview-grid">
+        <div><b>Type :</b> {{selection.typeInvalidite}}</div>
+        <div><b>Date :</b> {{selection.datePriseEffet | date:'dd/MM/yyyy'}}</div>
+        <div><b>Référence / Ref :</b> {{selection.reference}}</div>
+        <div><b>Taux / Rate :</b> {{selection.taux}} %</div>
+      </div>
+
+      <!-- ARRET -->
+      <div *ngIf="selection.type === 'ARRET'" class="preview-grid">
+        <div><b>Motif / Reason :</b> {{selection.motif}}</div>
+        <div><b>Date début / Start :</b> {{selection.dateDebut | date:'dd/MM/yyyy'}}</div>
+        <div><b>Date fin / End :</b> {{selection.dateFin | date:'dd/MM/yyyy'}}</div>
+      </div>
+
+      <!-- DOCUMENT -->
+      <div *ngIf="selection.type === 'DOCUMENT'" class="preview-grid">
+        <div><b>Titre / Title :</b> {{selection.titre}}</div>
+        <div><b>Description :</b> {{selection.description}}</div>
+        <div><b>Date :</b> {{selection.dateDocument | date:'dd/MM/yyyy'}}</div>
+      </div>
+
+      <div class="doc-viewer-container">
+        <!-- IMAGE -->
+        <img *ngIf="selection.isImage" [src]="selection.safeUrl" style="max-width: 100%; border-radius: 8px;">
+
+        <!-- PDF -->
+        <iframe *ngIf="!selection.isImage && selection.safeUrl" [src]="selection.safeUrl" width="100%" height="600px" style="border: none; background: white;"></iframe>
+      </div>
+    </div>
+</div>

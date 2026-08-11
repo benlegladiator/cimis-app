@@ -1,0 +1,63 @@
+<div class="drh-nav-container">
+  
+  <!-- Header Area -->
+  <header class="drh-header">
+    <div class="header-left">
+      <h1>Structure Organisationnelle</h1>
+      <p>Gestion hiérarchique des dossiers administratifs</p>
+    </div>
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher une unité...">
+    </div>
+  </header>
+
+  <!-- Navigation Breadcrumbs -->
+  <nav class="drh-breadcrumbs">
+    <div class="breadcrumb-item" *ngFor="let step of history; let i = index" (click)="goBackTo(i)">
+      <i class="fa-solid" [class]="step.icon" *ngIf="i === 0"></i>
+      <span>{{ step.label }}</span>
+      <i class="fa-solid fa-chevron-right separator" *ngIf="i < history.length - 1"></i>
+    </div>
+  </nav>
+
+  <!-- Unit Grid -->
+  <main class="unit-grid">
+    <div class="unit-card" 
+         *ngFor="let unit of getFilteredUnits()" 
+         (click)="navigateTo(unit)"
+         [class.has-children]="unit.children && unit.children.length > 0">
+      
+      <div class="card-bg-decoration"></div>
+      
+      <div class="card-icon">
+        <i class="fa-solid" [class]="unit.icon"></i>
+      </div>
+
+      <div class="card-info">
+        <h3>{{ unit.label }}</h3>
+        <p>{{ getDisplayDescription(unit) }}</p>
+      </div>
+
+      <div class="card-stats" *ngIf="unit.children && unit.children.length > 0">
+        <span class="badge">{{ unit.children.length }} {{ getBadgeLabel(unit) }}</span>
+      </div>
+      <div class="card-stats leaf-stats" *ngIf="!unit.children || unit.children.length === 0">
+        <span class="badge dossier-badge"><i class="fa-solid fa-users"></i> {{ getDossierCount(unit) }} dossiers</span>
+      </div>
+
+
+      <div class="card-footer">
+        <span *ngIf="unit.children && unit.children.length > 0"><i class="fa-solid fa-arrow-right"></i></span>
+        <span *ngIf="!unit.children || unit.children.length === 0"></span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="getFilteredUnits().length === 0">
+    <i class="fa-solid fa-folder-open"></i>
+    <p>Aucune unité trouvée pour "{{ searchTerm }}" dans l'ensemble de l'organigramme.</p>
+  </div>
+
+</div>

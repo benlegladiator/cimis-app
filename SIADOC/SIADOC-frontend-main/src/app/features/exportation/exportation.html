@@ -1,0 +1,310 @@
+<div class="export-container">
+
+  <header class="module-header">
+    <h1><i class="fa-solid fa-file-export"></i> Centre d'Exportation & Intégration GESMIL</h1>
+    <p>Gérez les échanges de données avec GESMIL et les autres systèmes tiers.</p>
+  </header>
+
+  <!-- TABS NAV -->
+  <div class="tabs-nav">
+    <button [class.active]="activeTab === 'export'" (click)="setTab('export')">
+      <i class="fa-solid fa-download"></i> Export Manuel
+    </button>
+    <button [class.active]="activeTab === 'import'" (click)="setTab('import')">
+      <i class="fa-solid fa-upload"></i> Import GESMIL
+      <span class="badge-count" *ngIf="nonAffectes.length > 0">{{nonAffectes.length}}</span>
+    </button>
+    <button [class.active]="activeTab === 'correspondances'" (click)="setTab('correspondances')">
+      <i class="fa-solid fa-diagram-project"></i> Dictionnaire des Unités
+    </button>
+    <button [class.active]="activeTab === 'api'" (click)="setTab('api')">
+      <i class="fa-solid fa-code"></i> Securité API
+    </button>
+  </div>
+
+  <div class="tab-content">
+
+    <!-- ══════════ TAB : EXPORT ══════════ -->
+    <div *ngIf="activeTab === 'export'" class="tab-pane fade-in">
+      <div class="glass-card">
+        <h3><i class="fa-solid fa-magnifying-glass"></i> Exporter un Dossier Complet</h3>
+        <p>Recherchez un militaire par son matricule pour extraire ses données.</p>
+
+        <div class="search-box">
+          <input type="text" [(ngModel)]="matriculeSearch"
+                 placeholder="Entrez le matricule militaire..."
+                 (keyup.enter)="searchDossier()">
+          <button class="btn-primary" (click)="searchDossier()" [disabled]="exportLoading">
+            <i class="fa-solid fa-spinner fa-spin" *ngIf="exportLoading"></i>
+            <i class="fa-solid fa-magnifying-glass" *ngIf="!exportLoading"></i>
+            Rechercher
+          </button>
+        </div>
+
+        <div *ngIf="exportError" class="alert alert-danger">
+          <i class="fa-solid fa-circle-xmark"></i> {{exportError}}
+        </div>
+
+        <div *ngIf="exportResult" class="result-details fade-in">
+          <div class="preview-header">
+            <div class="info">
+              <h4>{{exportResult.nom}} {{exportResult.prenom}}</h4>
+              <span>Matricule Militaire : <strong>{{exportResult.matriculeMilitaire}}</strong></span>
+            </div>
+            <button class="btn-success" (click)="downloadJson()">
+              <i class="fa-solid fa-file-arrow-down"></i> Télécharger JSON
+            </button>
+          </div>
+          <pre class="json-preview">{{exportResult | json}}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ TAB : IMPORT ══════════ -->
+    <div *ngIf="activeTab === 'import'" class="tab-pane fade-in">
+
+      <!-- Section upload -->
+      <div class="glass-card">
+        <h3><i class="fa-solid fa-cloud-arrow-up"></i> Importer des Données GESMIL</h3>
+        <p>Déposez ici le fichier JSON fourni par l'autre application pour mettre à jour la base de données.</p>
+
+        <div class="upload-zone" [class.has-file]="importFile">
+          <input type="file" (change)="onFileSelected($event)" accept=".json" id="fileInput" hidden>
+          <label for="fileInput" class="upload-label">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span *ngIf="!importFile">Cliquez pour choisir le fichier JSON</span>
+            <span *ngIf="importFile"><strong>{{importFile.name}}</strong></span>
+          </label>
+        </div>
+
+        <div *ngIf="importPreview" class="preview-box fade-in">
+          <div class="summary">
+            <i class="fa-solid fa-list-check"></i>
+            <strong>{{importPreview.length}} militaire(s) détecté(s)</strong>
+            <p>Le système va créer les nouveaux dossiers et mettre à jour les existants.</p>
+          </div>
+          <button class="btn-primary full-width" (click)="processImport()" [disabled]="importLoading">
+            <i class="fa-solid fa-spinner fa-spin" *ngIf="importLoading"></i>
+            <i class="fa-solid fa-check-circle" *ngIf="!importLoading"></i>
+            Lancer l'Intégration
+          </button>
+        </div>
+
+        <div *ngIf="importError" class="alert alert-danger mt-1">
+          <i class="fa-solid fa-circle-xmark"></i> {{importError}}
+        </div>
+
+        <!-- Résumé de l'import -->
+        <div *ngIf="importResult" class="import-result fade-in">
+          <ng-container *ngIf="importResult.total !== undefined; else singleResult">
+            <h4>Détails de l'importation</h4>
+            <div class="result-grid">
+              <div class="result-stat main">
+                <span class="val">{{importResult.total}}</span>
+                <span class="lbl">Total dans le fichier</span>
+              </div>
+              <div class="result-stat success">
+                <span class="val">{{importResult.success}}</span>
+                <span class="lbl">Réussis</span>
+              </div>
+              <div class="result-stat warn">
+                <span class="val">{{importResult.echecs}}</span>
+                <span class="lbl">Échecs</span>
+              </div>
+            </div>
+            <ul class="error-list" *ngIf="importResult.details?.length > 0">
+              <li *ngFor="let d of importResult.details"><i class="fa-solid fa-triangle-exclamation"></i> {{d}}</li>
+            </ul>
+          </ng-container>
+          <ng-template #singleResult>
+            <div class="alert alert-success">
+              <i class="fa-solid fa-circle-check"></i>
+              <strong>{{importResult.statut}} :</strong>
+              {{importResult.nom}} {{importResult.prenom}} (Matricule: {{importResult.matricule}})
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Section pool non affectés -->
+      <div class="glass-card mt-2" *ngIf="nonAffectes.length > 0">
+        <h3><i class="fa-solid fa-user-clock"></i> Militaires en attente d'affectation ({{nonAffectes.length}})</h3>
+        <p class="text-hint">Ces militaires ont été importés mais SIADOC ne sait pas encore dans quelle compagnie les ranger. Sélectionnez les militaires et la compagnie de destination.</p>
+        
+        <!-- Barre d'action groupée -->
+        <div class="bulk-action-bar fade-in" *ngIf="selectedMilitaires.size > 0">
+          <div class="selection-count">
+            <i class="fa-solid fa-check-double"></i> {{selectedMilitaires.size}} militaire(s) sélectionné(s)
+          </div>
+          <div class="assign-form">
+            <div class="autocomplete-container">
+              <input type="text" [(ngModel)]="compagnieSearchText" 
+                     placeholder="Choisir la Compagnie..." 
+                     (focus)="showCompagnieDropdown = true"
+                     (keyup)="bulkCompagnieId = ''">
+              
+              <ul class="autocomplete-dropdown fade-in" *ngIf="showCompagnieDropdown && filteredCompagnies.length > 0">
+                <li *ngFor="let c of filteredCompagnies" (click)="selectCompagnie(c, 'bulk')">
+                  <span class="c-nom">{{c.nom}}</span>
+                  <span class="c-abr" *ngIf="c.abreviation">({{c.abreviation}})</span>
+                </li>
+              </ul>
+              <div class="dropdown-overlay" *ngIf="showCompagnieDropdown" (click)="showCompagnieDropdown = false"></div>
+            </div>
+
+            <button class="btn-primary" (click)="assignSelection()" [disabled]="!bulkCompagnieId">
+              <i class="fa-solid fa-link"></i> Affecter
+            </button>
+          </div>
+        </div>
+
+        <table class="key-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;"></th>
+              <th>Matricule</th>
+              <th>Nom & Prénom</th>
+              <th>Compagnie mentionnée (GESMIL)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of nonAffectes" [class.row-selected]="isSelected(m.id)">
+              <td>
+                <input type="checkbox" [checked]="isSelected(m.id)" (change)="toggleSelection(m.id)">
+              </td>
+              <td><span class="tag">{{m.matriculeMilitaire || m.matriculeSolde || '—'}}</span></td>
+              <td><strong>{{m.nom}} {{m.prenom}}</strong></td>
+              <td class="small">{{m.dossier?.carriere?.nomCompagnie || 'Non spécifiée'}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="alert alert-info mt-1">
+          <i class="fa-solid fa-info-circle"></i> Vous pouvez aussi configurer des règles automatiques dans l'onglet <strong>"Dictionnaire des Compagnies"</strong>.
+        </div>
+      </div>
+
+      <div class="glass-card mt-2 empty-state" *ngIf="nonAffectes.length === 0 && !nonAffectesLoading">
+        <i class="fa-solid fa-circle-check" style="color: #4a5e3a; font-size: 2rem;"></i>
+        <p>Tous les militaires importés sont bien affectés.</p>
+      </div>
+
+    </div>
+
+    <!-- ══════════ TAB : CORRESPONDANCES ══════════ -->
+    <div *ngIf="activeTab === 'correspondances'" class="tab-pane fade-in">
+      <div class="glass-card">
+        <div class="header-with-help">
+          <h3><i class="fa-solid fa-diagram-project"></i> Dictionnaire des Unités (GESMIL ➔ SIADOC)</h3>
+        </div>
+        <p>Utilisez ce tableau pour dire à SIADOC comment traduire les noms d'unités qui viennent de GESMIL.</p>
+        
+        <div class="api-docs info-light">
+          <p><i class="fa-solid fa-lightbulb"></i> <strong>Exemple :</strong> Si GESMIL appelle une unité <code>CIE_BATT_1</code> et que vous voulez que ces militaires aillent dans la <code>1ère Compagnie</code> de SIADOC, créez la ligne correspondante ci-dessous.</p>
+        </div>
+
+        <div class="mapping-form">
+          <div class="form-group">
+            <label>Nom de l'unité chez GESMIL</label>
+            <input type="text" [(ngModel)]="newCodeGesmil" placeholder="Ex: CIE-01">
+          </div>
+          <div class="form-group">
+            <label>Compagnie dans SIADOC</label>
+            <div class="autocomplete-container dark">
+              <input type="text" [(ngModel)]="compagnieSearchText" 
+                     placeholder="Saisissez pour rechercher..." 
+                     (focus)="showCompagnieDropdown = true"
+                     (keyup)="newCompagnieId = ''">
+              
+              <ul class="autocomplete-dropdown fade-in" *ngIf="showCompagnieDropdown && filteredCompagnies.length > 0">
+                <li *ngFor="let c of filteredCompagnies" (click)="selectCompagnie(c, 'new')">
+                  <span class="c-nom">{{c.nom}}</span>
+                  <span class="c-abr" *ngIf="c.abreviation">({{c.abreviation}})</span>
+                </li>
+              </ul>
+              <div class="dropdown-overlay" *ngIf="showCompagnieDropdown" (click)="showCompagnieDropdown = false"></div>
+            </div>
+          </div>
+          <button class="btn-primary" (click)="addMapping()" [disabled]="!newCodeGesmil || !newCompagnieId">
+            <i class="fa-solid fa-plus"></i> Lier l'unité
+          </button>
+        </div>
+
+        <table class="key-table" *ngIf="mappings.length > 0">
+          <thead>
+            <tr>
+              <th>Nom de l'unité (GESMIL)</th>
+              <th>Destination dans SIADOC</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of mappings">
+              <td><code>{{m.codeGesmil}}</code></td>
+              <td><strong>{{m.compagnie?.nom}}</strong></td>
+              <td>
+                <button class="btn-danger-outline" (click)="deleteMapping(m.id)" title="Supprimer ce lien">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="empty-state" *ngIf="mappings.length === 0">
+          <i class="fa-solid fa-table"></i>
+          <p>Aucun lien créé. Ajoutez des liens pour automatiser le rangement des militaires importés.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ TAB : API ══════════ -->
+    <div *ngIf="activeTab === 'api'" class="tab-pane fade-in">
+      <div class="glass-card">
+        <h3><i class="fa-solid fa-key"></i> Sécurisation des accès</h3>
+        <p>Autorisez l'autre application à se connecter à SIADOC en lui générant une clé d'accès.</p>
+
+        <div class="key-form">
+          <input type="text" [(ngModel)]="newAppName" placeholder="Nom de l'appli (ex: GESMIL)">
+          <button class="btn-primary" (click)="generateKey()" [disabled]="!newAppName">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Générer la clé
+          </button>
+        </div>
+
+        <table class="key-table" *ngIf="apiKeys.length > 0">
+          <thead>
+            <tr>
+              <th>Application autorisée</th>
+              <th>Clé de sécurité</th>
+              <th>Dernier accès</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let key of apiKeys">
+              <td><strong>{{key.appName}}</strong></td>
+              <td>
+                <span class="key-masked">••••••••••••••••</span>
+                <button class="btn-icon" (click)="copyToClipboard(key.keyValue)" title="Copier la clé">
+                  <i class="fa-solid fa-copy"></i>
+                </button>
+              </td>
+              <td class="small">{{key.lastUsedAt ? (key.lastUsedAt | date:'dd/MM/yyyy HH:mm') : 'Jamais'}}</td>
+              <td>
+                <button class="btn-danger-outline" (click)="deleteKey(key.id)" title="Révoquer l'accès">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="empty-state" *ngIf="apiKeys.length === 0">
+          <i class="fa-solid fa-key"></i>
+          <p>Aucune application n'est autorisée pour le moment.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

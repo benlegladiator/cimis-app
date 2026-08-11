@@ -1,0 +1,43 @@
+<div class="login-wrapper">
+
+  <div class="overlay"></div>
+
+  <div class="login-container">
+
+    <!-- COTE GAUCHE -->
+    <div class="login-left">
+      <div class="brand">
+        <img src="/SIADOC.png" class="logo" alt="Logo">
+        <h1>SIADOC</h1>
+        <p>Système Informatisé  d'Archivage<br> des Dossiers de Campagne</p>
+      </div>
+    </div>
+
+    <!-- COTE DROIT -->
+    <div class="login-right">
+
+      <form (ngSubmit)="login()">
+
+        <h2>Connexion</h2>
+
+        <div class="input-group">
+          <label>Identifiant</label>
+          <input type="text" [(ngModel)]="username" name="username" required>
+        </div>
+
+        <div class="input-group">
+          <label>Mot de passe</label>
+          <input type="password" [(ngModel)]="password" name="password" required>
+        </div>
+
+        <button type="submit" class="btn-login">
+          ACCÉDER AU SYSTÈME
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>

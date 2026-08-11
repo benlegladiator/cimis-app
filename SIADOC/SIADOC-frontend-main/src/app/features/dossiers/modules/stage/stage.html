@@ -1,0 +1,86 @@
+<div class="stage-container">
+
+  <!-- HEADER -->
+  <div class="header-section">
+    <h2 class="titre-page">🎓 STAGES & FORMATIONS / INTERNSHIPS & TRAINING</h2>
+    <button *ngIf="!readOnly" class="btn-primary" (click)="afficherForm = !afficherForm">
+      {{ afficherForm ? '❌ Annuler / Cancel' : '➕ Ajouter un stage / Add Internship' }}
+    </button>
+  </div>
+
+  <!-- FORM -->
+  <div *ngIf="afficherForm && !readOnly" class="form-card">
+    <h3>Nouveau Stage / New Internship</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Désignation / Designation</label>
+        <input [(ngModel)]="stageForm.designation" placeholder="Ex: CIA">
+      </div>
+      <div class="form-group">
+        <label>Diplôme obtenu / Degree obtained</label>
+        <input [(ngModel)]="stageForm.diplome" placeholder="Ex: Brevet">
+      </div>
+      <div class="form-group">
+        <label>Ville / City</label>
+        <input [(ngModel)]="stageForm.ville" placeholder="Ex: Yaoundé">
+      </div>
+      <div class="form-group">
+        <label>Pays / Country</label>
+        <input [(ngModel)]="stageForm.pays" placeholder="Ex: Cameroun">
+      </div>
+      <div class="form-group">
+        <label>Date d'obtention / Date obtained</label>
+        <input type="date" [(ngModel)]="stageForm.dateObtention">
+      </div>
+      <div class="form-group full-width">
+        <label>Document (PDF/Image)</label>
+        <input type="file" (change)="onFileSelected($event)">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-success" (click)="enregistrer()">💾 Enregistrer / Save</button>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-container">
+    <table class="military-table">
+      <thead>
+        <tr>
+          <th>Désignation / Designation</th>
+          <th>Lieu / Location</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="stages.length === 0">
+          <td colspan="3" class="empty-cell">Aucun stage enregistré / No internship recorded.</td>
+        </tr>
+        <tr *ngFor="let s of stages" (click)="voirStage(s)" style="cursor:pointer;" [class.active-row]="stageSelectionne?.id === s.id">
+          <td><strong>{{ s.designation }}</strong><br><small>{{ s.diplome }}</small></td>
+          <td>{{ s.ville }} ({{ s.pays }})</td>
+          <td>{{ s.dateObtention | date:'dd/MM/yyyy' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- PREVIEW -->
+    <div *ngIf="stageSelectionne" class="preview-box">
+      <h3>📑 Détails du stage / Internship Details</h3>
+      <div class="preview-grid">
+        <div><b>Désignation / Designation :</b> {{ stageSelectionne.designation }}</div>
+        <div><b>Diplôme / Degree :</b> {{ stageSelectionne.diplome }}</div>
+        <div><b>Lieu / Location :</b> {{ stageSelectionne.ville }} ({{ stageSelectionne.pays }})</div>
+        <div><b>Date :</b> {{ stageSelectionne.dateObtention | date:'dd/MM/yyyy' }}</div>
+      </div>
+
+      <div class="doc-viewer-container">
+        <div style="margin-bottom: 15px; display: flex; justify-content: flex-end;">
+          <a [href]="getRawUrl(stageSelectionne)" target="_blank" class="btn-open-new">📂 Ouvrir dans un nouvel onglet / Open in new tab</a>
+        </div>
+        <iframe [src]="stageSelectionne.safeUrl" width="100%" height="600px" style="border: none; background: white;"></iframe>
+      </div>
+    </div>
+  </div>
+
+</div>

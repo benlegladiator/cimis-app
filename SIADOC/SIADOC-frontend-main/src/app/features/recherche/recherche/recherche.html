@@ -1,0 +1,335 @@
+<h2>🔎 Recherche</h2>
+
+<!-- ================= MODULES ================= -->
+
+<div class="modules">
+
+  <button (click)="selectModule('militaire')">
+    Militaire
+  </button>
+  <button (click)="selectModule('etatCivil')">
+    Etat Civil
+  </button>
+  <button (click)="selectModule('recompense')">
+    Récompense
+  </button>
+  <button (click)="selectModule('punition')">
+    Punition
+  </button>
+  <button (click)="selectModule('diplome')">
+    Diplôme
+  </button>
+
+</div>
+
+<!-- ================= FORM RECOMPENSE ================= -->
+
+<div *ngIf="module === 'recompense'" class="search-form">
+
+  <input
+    type="text"
+    placeholder="Nom"
+    [(ngModel)]="filtre.nom"
+  />
+
+  <input
+    type="text"
+    placeholder="Prenom"
+    [(ngModel)]="filtre.prenom"
+  />
+
+  <input
+    type="text"
+    placeholder="Grade"
+    [(ngModel)]="filtre.grade"
+  />
+
+  <input
+    type="text"
+    placeholder="Arme"
+    [(ngModel)]="filtre.arme"
+  />
+
+  <input
+    type="text"
+    placeholder="Designation récompense"
+    [(ngModel)]="filtre.designation"
+  />
+
+  <input
+    type="text"
+    placeholder="Texte"
+    [(ngModel)]="filtre.texte"
+  />
+
+  <input
+    type="number"
+    placeholder="Année"
+    [(ngModel)]="filtre.annee"
+  />
+
+</div>
+
+
+<!-- ================= PIECES ================= -->
+
+<div *ngIf="module === 'etatCivil'" class="piece-select">
+
+  <label>Pièce</label>
+
+  <select [(ngModel)]="piece">
+
+    <option value="naissance">Acte de naissance</option>
+    <option value="mariage">Acte de mariage</option>
+    <option value="deces">Acte de décès</option>
+    <option value="divorce">Acte de divorce</option>
+    <option value="jugement">Jugement supplétif</option>
+    <option value="cni">Carte Nationale d'Identité</option>
+
+  </select>
+
+</div>
+
+<!-- ================= FORM CNI ================= -->
+
+<div *ngIf="module === 'etatCivil' && piece === 'cni'" class="search-form">
+
+  <input
+    type="text"
+    placeholder="Nom"
+    [(ngModel)]="filtre.nom"
+  />
+
+  <input
+    type="text"
+    placeholder="Prenom"
+    [(ngModel)]="filtre.prenom"
+  />
+
+  <input
+    type="text"
+    placeholder="Numéro CNI"
+    [(ngModel)]="filtre.numero"
+  />
+
+</div>
+
+
+<!-- ================= FORM MARIAGE ================= -->
+
+<div *ngIf="module === 'etatCivil' && piece === 'mariage'" class="search-form">
+
+  <input
+    type="text"
+    placeholder="Nom"
+    [(ngModel)]="filtre.nom"
+  />
+
+  <input
+    type="text"
+    placeholder="Prenom"
+    [(ngModel)]="filtre.prenom"
+  />
+
+  <input
+    type="text"
+    placeholder="Lieu mariage"
+    [(ngModel)]="filtre.lieu"
+  />
+
+  <input
+    type="text"
+    placeholder="Nom du conjoint"
+    [(ngModel)]="filtre.nomConjoint"
+  />
+
+  <input
+    type="number"
+    placeholder="Année mariage"
+    [(ngModel)]="filtre.annee"
+  />
+
+</div>
+
+
+
+<!-- ================= FORM RECHERCHE ================= -->
+
+<div *ngIf="module === 'etatCivil'" class="search-form">
+
+  <input
+    type="text"
+    placeholder="Nom"
+    [(ngModel)]="filtre.nom"
+  />
+
+  <input
+    type="text"
+    placeholder="Prenom"
+    [(ngModel)]="filtre.prenom"
+  />
+
+  <input
+    type="text"
+    placeholder="Lieu établissement"
+    [(ngModel)]="filtre.lieu"
+  />
+
+  <input
+    type="number"
+    placeholder="Année"
+    [(ngModel)]="filtre.annee"
+  />
+
+</div>
+
+<!-- ================= FORM DIPLOME ================= -->
+
+<div *ngIf="module === 'diplome'" class="search-form">
+
+  <input
+    type="text"
+    placeholder="Nom"
+    [(ngModel)]="filtre.nom"
+  />
+
+  <input
+    type="text"
+    placeholder="Prenom"
+    [(ngModel)]="filtre.prenom"
+  />
+
+  <input
+    type="text"
+    placeholder="Designation diplôme"
+    [(ngModel)]="filtre.designation"
+  />
+
+  <input
+    type="text"
+    placeholder="Ecole"
+    [(ngModel)]="filtre.ecole"
+  />
+
+  <input
+    type="number"
+    placeholder="Année"
+    [(ngModel)]="filtre.annee"
+  />
+
+</div>
+
+<!-- ================= FORM PUNITION ================= -->
+
+<div *ngIf="module === 'punition'" class="search-form">
+
+  <input
+    type="text"
+    placeholder="Nom"
+    [(ngModel)]="filtre.nom"
+  />
+
+  <input
+    type="text"
+    placeholder="Prenom"
+    [(ngModel)]="filtre.prenom"
+  />
+
+  <input
+    type="text"
+    placeholder="Designation punition"
+    [(ngModel)]="filtre.designation"
+  />
+
+  <input
+    type="text"
+    placeholder="Texte"
+    [(ngModel)]="filtre.texte"
+  />
+
+  <input
+    type="number"
+    placeholder="Année"
+    [(ngModel)]="filtre.annee"
+  />
+
+</div>
+
+<!-- ================= BOUTON ================= -->
+<button class="btn-search" (click)="rechercher()">
+  Rechercher
+</button>
+
+
+<!-- ================= RESULTATS ================= -->
+
+<div class="resultats">
+
+  <div class="card" *ngFor="let r of resultats">
+
+    <h3>{{ r.nom }} {{ r.prenom }}</h3>
+
+    <p>Grade : {{ r.grade }}</p>
+    <p>Arme : {{ r.arme }}</p>
+
+    <!-- RESULTAT NAISSANCE -->
+    <div *ngIf="piece === 'naissance'">
+
+      <p>Lieu : {{ r.lieuEtablissement }}</p>
+      <p>Date : {{ r.dateEtablissement }}</p>
+
+    </div>
+
+    <!-- RESULTAT MARIAGE -->
+    <div *ngIf="piece === 'mariage'">
+
+      <p>Conjoint : {{ r.nomConjoint }}</p>
+      <p>Lieu mariage : {{ r.lieuMariage }}</p>
+      <p>Date mariage : {{ r.dateMariage }}</p>
+
+    </div>
+
+    <!-- RESULTAT RECOMPENSE -->
+
+    <div *ngIf="module === 'recompense'">
+
+      <p>Récompense : {{ r.designation }}</p>
+      <p>Texte : {{ r.texte }}</p>
+      <p>Date : {{ r.dateEffet }}</p>
+
+    </div>
+    <!-- RESULTAT CNI -->
+    <div *ngIf="piece === 'cni'">
+
+      <p>Numéro CNI : {{ r.numero }}</p>
+      <p>Date expiration : {{ r.dateExpiration }}</p>
+
+    </div>
+
+    <!-- RESULTAT PUNITION -->
+
+    <div *ngIf="module === 'punition'">
+
+      <p>Punition : {{ r.designation }}</p>
+
+      <p>Texte : {{ r.texte }}</p>
+
+      <p>Date : {{ r.dateEffet }}</p>
+
+    </div>
+
+    <!-- RESULTAT DIPLOME -->
+
+    <div *ngIf="module === 'diplome'">
+
+      <p>Diplôme : {{ r.designation }}</p>
+
+      <p>Ecole : {{ r.ecole }}</p>
+
+      <p>Date : {{ r.dateObtention }}</p>
+
+    </div>
+
+  </div>
+
+</div>

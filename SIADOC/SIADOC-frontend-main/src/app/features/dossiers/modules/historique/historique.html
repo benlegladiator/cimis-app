@@ -1,0 +1,28 @@
+<div class="historique-container">
+  <h2><i class="fa-solid fa-clock-rotate-left"></i> Historique du Dossier / File History</h2>
+  
+  <div *ngIf="loading">Chargement de l'historique... / Loading history...</div>
+
+  <table *ngIf="!loading && logs.length > 0" class="military-table">
+    <thead>
+      <tr>
+        <th>Date(s) & Heure(s) / Date & Time</th>
+        <th>Action(s)</th>
+        <th>Acteur(s) / Actor(s)</th>
+        <th>Détail(s) / Detail(s)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let log of logs">
+        <td>{{ log.dateAction | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td><span class="badge-action">{{ log.action }}</span></td>
+        <td>{{ log.acteur ? (log.acteur.nom + ' ' + log.acteur.prenom) : 'Système/Automatisé' }}</td>
+        <td>{{ log.details || '-' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="empty-state" *ngIf="!loading && logs.length === 0">
+    Aucun historique enregistré pour ce dossier / No history recorded for this file.
+  </div>
+</div>

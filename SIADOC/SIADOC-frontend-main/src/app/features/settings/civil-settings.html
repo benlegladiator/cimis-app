@@ -1,0 +1,65 @@
+<div class="settings-page">
+  <div class="breadcrumb">
+    <a routerLink="/settings">Paramètres</a> / Personnel Civil
+  </div>
+
+  <div class="header-section">
+    <h1>💼 Paramètres du Personnel Civil</h1>
+    <button class="btn-primary" (click)="ouvrirModal()">
+      <i class="fa-solid fa-plus"></i> Ajouter un paramètre
+    </button>
+  </div>
+
+  <div class="settings-layout">
+    <div class="section-card shadow-sm" *ngFor="let t of types">
+      <div class="section-header">
+        <h2>{{ t.label }}</h2>
+      </div>
+      <div class="list-container">
+        <div class="setting-item" *ngFor="let s of getSettingsByType(t.id)">
+          <span>{{ s.label }}</span>
+          <div class="actions">
+            <button (click)="ouvrirModal(s)" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+            <button (click)="supprimer(s.id)" title="Supprimer" class="btn-del"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+        <div *ngIf="getSettingsByType(t.id).length === 0" class="empty-state">
+          Aucun élément défini.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" *ngIf="showModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>{{ isEditing ? 'Modifier' : 'Ajouter' }} Paramètre</h2>
+        <button class="btn-close-x" (click)="fermerModal()">✖</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Type de paramètre</label>
+          <select [(ngModel)]="currentSetting.type">
+            <option *ngFor="let t of types" [value]="t.id">{{ t.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Libellé / Valeur</label>
+          <input type="text" [(ngModel)]="currentSetting.label" placeholder="Ex: Secrétaire, Acte de naissance...">
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="fermerModal()">
+          <i class="fa-solid fa-xmark"></i> Fermer
+        </button>
+        <button class="btn-save" (click)="enregistrer()" [disabled]="!currentSetting.label">
+          <i class="fa-solid fa-check"></i> Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

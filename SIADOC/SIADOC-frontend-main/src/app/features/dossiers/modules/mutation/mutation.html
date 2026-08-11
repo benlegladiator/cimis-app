@@ -1,0 +1,177 @@
+<div class="mutation-container">
+  
+  <div class="header-section">
+    <h2 class="titre-page">📍 Affectation(s) & Fonction(s) / Assignments & Positions</h2>
+    <button class="btn-primary" (click)="ajouterEvenement()" *ngIf="!readOnly">
+      ➕ Ajouter / Add
+    </button>
+  </div>
+
+  <!-- ========================= -->
+  <!-- FORMULAIRE -->
+  <!-- ========================= -->
+
+  <div *ngIf="afficherFormulaire" class="form-card">
+    <h3>Nouvelle affectation / New Assignment</h3>
+
+    <div class="form-grid">
+      <!-- TYPE -->
+      <div class="form-group">
+        <label>Type / Type *</label>
+        <select [(ngModel)]="evenementForm.type">
+          <option value="AFFECTATION">Affectation / Assignment</option>
+          <option value="FONCTION">Fonction / Position</option>
+        </select>
+      </div>
+
+      <!-- DATE -->
+      <div class="form-group">
+        <label>Date du texte / Text Date</label>
+        <input type="date" [(ngModel)]="evenementForm.dateTexte">
+      </div>
+
+      <!-- REFERENCE -->
+      <div class="form-group">
+        <label>Numéro du texte / Text Number</label>
+        <input type="text" [(ngModel)]="evenementForm.numeroTexte">
+      </div>
+
+      <div class="form-group">
+        <label>Autorité signataire / Signing Authority</label>
+        <input type="text" [(ngModel)]="evenementForm.autoriteSignataire" placeholder="Ex: MINDEF / CEMAT / Chef Corps">
+      </div>
+
+      <!-- EMPLOI (ancienne / nouvelle unité) -->
+      <ng-container *ngIf="evenementForm.type === 'AFFECTATION'">
+        <div class="form-group">
+          <label>Emploi / Fonction / Job Title</label>
+          <input type="text" [(ngModel)]="evenementForm.emploi" placeholder="Ex: Chef de Section">
+        </div>
+
+        <div class="form-group">
+          <label>RMIA *</label>
+          <select [(ngModel)]="selectedRMIA" name="rmia" (change)="onRMIAChange()">
+            <option value="">Sélectionnez / Select RMIA</option>
+            <option *ngFor="let r of allRMIA" [value]="r.id">{{r.nom}}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Brigade *</label>
+          <select [(ngModel)]="selectedBrigade" name="brigade" (change)="onBrigadeChange()" [disabled]="!selectedRMIA">
+            <option value="">Sélectionnez / Select Brigade</option>
+            <option *ngFor="let b of filteredBrigades" [value]="b.id">{{b.nom}}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Bataillon *</label>
+          <select [(ngModel)]="selectedBataillon" name="bataillon" (change)="onBataillonChange()" [disabled]="!selectedBrigade">
+            <option value="">Sélectionnez / Select Bataillon</option>
+            <option *ngFor="let bat of filteredBataillons" [value]="bat.id">{{bat.nom}}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Compagnie d'affectation / Assignment Company *</label>
+          <select [(ngModel)]="evenementForm.compagnieId" name="compagnieId" (change)="onCompagnieChange()" [disabled]="!selectedBataillon">
+            <option value="">Sélectionnez / Select Compagnie</option>
+            <option *ngFor="let c of filteredCompagnies" [value]="c.id">{{c.nom}}</option>
+          </select>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="evenementForm.type === 'FONCTION'">
+        <div class="form-group">
+          <label>Fonction occupée / Position held</label>
+          <input type="text" [(ngModel)]="evenementForm.emploi" placeholder="Ex: Adjoint Compagnie">
+        </div>
+      </ng-container>
+
+      <!-- DOCUMENT -->
+      <div class="form-group full-width">
+        <label>Document (PDF / Image)</label>
+        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-success" (click)="enregistrerEvenement()">
+        💾 Enregistrer / Save
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= AFFECTATIONS / FONCTIONS ================== -->
+  <div class="section-block">
+    <h3>Affectations / Assignments <span class="total-badge">{{ affectations.length }}</span></h3>
+    <div class="table-container">
+      <table class="mutation-table">
+        <thead>
+          <tr>
+            <th>N° / No.</th>
+            <th>Emploi / Job</th>
+            <th>Date</th>
+            <th>Autorité / Authority</th>
+            <th>Document</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of affectations" (click)="voirEvenement(a)">
+            <td>{{ a.numeroPiece }}</td>
+            <td><span class="badge badge-affectation">Affectation</span> {{ a.emploi }}</td>
+            <td>{{ a.dateTexte | date:'dd/MM/yyyy' }}</td>
+            <td>{{ a.autoriteSignataire }}</td>
+            <td><span class="doc-link">Voir / View</span></td>
+          </tr>
+          <tr *ngIf="affectations.length === 0">
+            <td colspan="5" style="text-align:center; padding: 20px; color: #64748b;">Aucune affectation / No assignments recorded</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Fonctions / Positions <span class="total-badge">{{ fonctions.length }}</span></h3>
+    <div class="table-container">
+      <table class="mutation-table">
+        <thead>
+          <tr>
+            <th>N° / No.</th>
+            <th>Fonction / Position</th>
+            <th>Date</th>
+            <th>Autorité / Authority</th>
+            <th>Document</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let f of fonctions" (click)="voirEvenement(f)">
+            <td>{{ f.numeroPiece }}</td>
+            <td><span class="badge badge-fonction">Fonction</span> {{ f.emploi }}</td>
+            <td>{{ f.dateTexte | date:'dd/MM/yyyy' }}</td>
+            <td>{{ f.autoriteSignataire }}</td>
+            <td><span class="doc-link">Voir / View</span></td>
+          </tr>
+          <tr *ngIf="fonctions.length === 0">
+            <td colspan="5" style="text-align:center; padding: 20px; color: #64748b;">Aucune fonction / No positions recorded</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PREVIEW BOX -->
+  <div *ngIf="evenementSelectionne" class="preview-box">
+    <button class="btn-close-preview" (click)="fermerPreview()">✖ Fermer / Close</button>
+    <h3>Détails / Details</h3>
+    <div class="preview-grid">
+      <div><b>N° pièce / Doc No. :</b> {{ evenementSelectionne.numeroPiece }}</div>
+      <div><b>Autorité / Authority :</b> {{ evenementSelectionne.autoriteSignataire }}</div>
+      <div><b>Date :</b> {{ evenementSelectionne.dateTexte }}</div>
+      <div><b>Emploi / Job :</b> {{ evenementSelectionne.emploi }}</div>
+    </div>
+    <div class="doc-viewer-container">
+      <iframe [src]="evenementSelectionne.safeUrl" width="100%" height="600px" style="border: none; background: white;"></iframe>
+    </div>
+  </div>
+
+</div>

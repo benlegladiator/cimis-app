@@ -1,0 +1,163 @@
+<?php
+// En-têtes HTTP de sécurité (Web Hardening)
+header("X-Frame-Options: DENY");
+header("X-Content-Type-Options: nosniff");
+header("X-XSS-Protection: 1; mode=block");
+header("Referrer-Policy: strict-origin-when-cross-origin");
+header("Content-Security-Policy: default-src 'self' https://cdnjs.cloudflare.com/ https://fonts.googleapis.com/ https://fonts.gstatic.com/; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://fonts.googleapis.com/; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com/; frame-ancestors 'none';");
+
+// Configuration de la base de données (détection dynamique Render vs Local XAMPP)
+define('DB_DRIVER', getenv('DB_DRIVER') ?: 'mysql');
+define('DB_HOST',   getenv('DB_HOST')   ?: 'localhost');
+define('DB_PORT',   getenv('DB_PORT')   ?: '3306');
+define('DB_NAME',   getenv('DB_NAME')   ?: 'cimis');
+define('DB_USER',   getenv('DB_USER')   ?: 'root');
+define('DB_PASS',   getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
+
+// Codes secrets de l'application
+define('ACCESS_CODE',    getenv('ACCESS_CODE')    ?: 'CIMIS2.02026');
+define('RESET_CODE',     getenv('RESET_CODE')     ?: 'RESETRESET');
+define('SIADOC_API_KEY', getenv('SIADOC_API_KEY') ?: 'siadoc-2026-cimis-integration');
+define('SIADOC_API_URL', getenv('SIADOC_API_URL') ?: 'https://siadoc.onrender.com');
+
+// Connexion à la base de données via PDO
+try {
+    $dsn = DB_DRIVER . ":host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+    $pdo = new PDO($dsn, DB_USER, DB_PASS);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch(PDOException $e) {
+    die("Erreur de connexion à la base de données: " . $e->getMessage());
+}
+
+// Configuration sécurisée des cookies de session et démarrage
+if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.use_only_cookies', 1);
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+        ini_set('session.cookie_secure', 1);
+    }
+    session_start();
+}
+
+// Détection et tentative d'activation automatique de l'extension GD
+if (!extension_loaded('gd') && !isset($_SESSION['gd_auto_enabled'])) {
+    $php_ini_paths = [
+        'C:\\xampp\\php\\php.ini',
+        ini_get('cfg_file_path')
+    ];
+    
+    foreach ($php_ini_paths as $php_ini_path) {
+        if ($php_ini_path && file_exists($php_ini_path) && is_writable($php_ini_path)) {
+            $content = file_get_contents($php_ini_path);
+            $pattern = '/;\s*extension\s*=\s*gd/';
+            if (preg_match($pattern, $content)) {
+                $new_content = preg_replace($pattern, 'extension=gd', $content);
+                if (file_put_contents($php_ini_path, $new_content) !== false) {
+                    $_SESSION['gd_auto_enabled'] = true;
+                    error_log("GD extension automatically enabled in php.ini: " . $php_ini_path);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+// Protection contre le vol de session (Session Hijacking)
+if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) {
+    $current_ip = $_SERVER['REMOTE_ADDR'] ?? '';
+    $current_ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    
+    if (!isset($_SESSION['secure_ip']) || !isset($_SESSION['secure_ua'])) {
+        $_SESSION['secure_ip'] = $current_ip;
+        $_SESSION['secure_ua'] = $current_ua;
+    } elseif ($_SESSION['secure_ip'] !== $current_ip || $_SESSION['secure_ua'] !== $current_ua) {
+        // Discordance détectée -> destruction de session
+        session_unset();
+        session_destroy();
+        header('Location: ../index.php');
+        exit();
+    }
+}
+
+// Gestion de la déconnexion automatique après 30 minutes d'inactivité
+if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) {
+    $timeout_duration = 1800; // 30 minutes en secondes
+    
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $timeout_duration) {
+        // Destruction de la session expirée
+        session_unset();
+        session_destroy();
+        
+        // Nouvelle session temporaire pour stocker le message d'erreur
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $_SESSION['error'] = "Votre session a expiré après 30 minutes d'inactivité. Veuillez vous reconnecter.";
+        
+        // Détermination dynamique du chemin de redirection vers le login
+        $redirect_url = 'login.php';
+        if (file_exists('Frontend/login.php')) {
+            $redirect_url = 'Frontend/login.php';
+        } elseif (file_exists('../Frontend/login.php')) {
+            $redirect_url = '../Frontend/login.php';
+        }
+        header('Location: ' . $redirect_url);
+        exit();
+    }
+    // Mettre à jour l'heure de dernière activité
+    $_SESSION['last_activity'] = time();
+}
+
+// Filtrage récursif global anti-XSS sur toutes les entrées utilisateurs
+function sanitizeGlobals(&$array) {
+    foreach ($array as $key => &$value) {
+        if (is_array($value)) {
+            sanitizeGlobals($value);
+        } else {
+            // Supprimer les balises script et nettoyer le HTML
+            $value = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $value);
+            $value = strip_tags($value);
+        }
+    }
+}
+sanitizeGlobals($_GET);
+sanitizeGlobals($_POST);
+sanitizeGlobals($_COOKIE);
+
+// Génération du token anti-CSRF s'il est absent
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Fonctions utiles
+function cleanInput($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
+function isLoggedIn() {
+    return isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true;
+}
+
+function requireLogin() {
+    if (!isLoggedIn()) {
+        header('Location: ../index.php');
+        exit();
+    }
+}
+
+function getUserRole() {
+    return isset($_SESSION['role']) ? $_SESSION['role'] : null;
+}
+
+function isSupervisor() {
+    return getUserRole() === 'SUPERVISOR';
+}
+
+function isOfficier() {
+    return getUserRole() === 'OFFICIER';
+}
+?>

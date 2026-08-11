@@ -1,0 +1,133 @@
+.login-wrapper {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-image: url('/assets/bg-militaire.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  position: relative;
+  overflow: hidden;
+
+  animation: slowZoom 25s ease-in-out infinite alternate;
+}
+
+@keyframes zoomBg {
+  0% { background-size: 100%; }
+  100% { background-size: 110%; }
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(50, 47, 47, 0.6);
+  backdrop-filter: blur(5px);
+}
+
+.login-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  animation: slideRight 1s ease forwards;
+  animation: slideLeft 1s ease forwards;
+  gap: 20px;
+}
+
+.login-left {
+  flex: 1;
+  color: #e4c77f;
+  padding: 60px;
+  animation: slideLeft 1s ease;
+  background: rgba(6, 62, 5, 0.463);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+}
+
+.login-left img {
+  max-width: 100px;
+  width: 50%;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+
+.login-right {
+  flex: 1;
+  background: rgba(6, 62, 5, 0.463);
+  backdrop-filter: blur(10px);
+  padding: 60px;
+  border-radius: 20px;
+  color: white;
+  animation: slideRight 1s ease;
+}
+
+
+
+.input-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group input {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(90deg, #c9a227, #e4c77f);
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-login:hover {
+  transform: scale(1.05);
+}
+
+/* ===========================
+   ANIMATIONS
+=========================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(-50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideRight {
+  from { transform: translateX(50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes floatLogo {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+@keyframes slowZoom {
+  from {
+    background-size: 100%;
+  }
+  to {
+    background-size: 110%;
+  }
+}

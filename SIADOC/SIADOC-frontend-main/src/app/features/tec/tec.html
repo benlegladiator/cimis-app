@@ -1,0 +1,112 @@
+<div class="teec-container">
+  
+  <!-- BARRE D'ACTIONS (CACHÉE À L'IMPRESSION) -->
+  <div class="actions-bar no-print">
+    <div class="selector">
+      <label for="compagnie">Sélectionner l'Unité : </label>
+      <select id="compagnie" [(ngModel)]="selectedCompagnieId" (change)="chargerTeec()">
+        <option value="">-- Toutes les unités --</option>
+        <option *ngFor="let c of compagnies" [value]="c.id">{{ c.nom }}</option>
+      </select>
+    </div>
+    
+    <button class="btn-print" (click)="imprimer()" [disabled]="teecRows.length === 0">
+      <i class="fas fa-print"></i> Imprimer le TEEC
+    </button>
+    <button class="btn-export" (click)="exporterWord()" [disabled]="teecRows.length === 0">
+      <i class="fas fa-file-word"></i> Exporter en Word
+    </button>
+  </div>
+
+  <!-- ZONE DE RAPPORT (TEEC) -->
+  <div class="teec-report" id="teecReport">
+    
+
+
+    <div class="report-title">
+      <h1>TABLEAU DES EFFECTIFS, DES EMPLOIS ET DES COMPÉTENCES DES FORCES DE DÉFENSE (TEEC)</h1>
+      <p class="subtitle">Fixant le cadre d'orientation professionnelle des personnels militaires des Forces de Défense</p>
+      <div class="meta-info">
+        <p>Désignation de la structure/EMC/Formations : <b>{{ getNomCompagnieSelectionnee() }}</b></p>
+        <p>Localisation : <b>{{ getLocalisationSelectionnee() }}</b></p>
+        <p>Date du recueil des données : <b>{{ getDateRecueilFormatee() }}</b></p>
+      </div>
+    </div>
+
+    <!-- TABLEAU TEEC -->
+    <div class="table-scroll-container">
+      <table class="teec-table">
+        <thead>
+          <tr>
+            <th rowspan="2">N°</th>
+            <th rowspan="2">EMPLOI/POSTE</th>
+            <th rowspan="2">NOM DES RESPONSABLES ET DES PERSONNELS ASSIGNES</th>
+            <th rowspan="2">GRADE</th>
+            <th colspan="2">QUALIFICATION ET COMPETENCE</th>
+            <th rowspan="2">OBSERVATIONS SUBSIDIAIRES SUR L'EMPLOI</th>
+            <th rowspan="2">DATE D'ENTREE EN SERVICE</th>
+            <th rowspan="2">DATE DE PRISE DE FONCTION</th>
+            <th colspan="3">CATEGORIES</th>
+            <th rowspan="2">OBS</th>
+          </tr>
+          <tr>
+            <th>MILITAIRE</th>
+            <th>CIVIL</th>
+            <th>X</th>
+            <th>Y</th>
+            <th>Z</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          <ng-container *ngFor="let row of teecRows; let i = index">
+
+            <!-- LIGNE SÉPARATRICE : nom de la compagnie, affichée uniquement en vue multi-unités -->
+            <tr *ngIf="isNewCompagnie(i)" class="compagnie-separator">
+              <td colspan="13">{{ row.nomCompagnie }}</td>
+            </tr>
+
+            <!-- LIGNE DE DONNÉES -->
+            <tr>
+              <td>{{ row.numero }}</td>
+              <td class="text-left">{{ row.emploiPoste }}</td>
+              <td class="text-left"><b>{{ row.nomPrenom }}</b></td>
+              <td>{{ row.grade }}</td>
+              <td>{{ row.qualifMilitaire }}</td>
+              <td>{{ row.qualifCivile }}</td>
+              <td class="text-left">{{ row.observationEmploi }}</td>
+              <td>{{ row.dateEntreeService | date:'dd/MM/yyyy' }}</td>
+              <td>{{ row.datePriseFonction | date:'dd/MM/yyyy' }}</td>
+
+              <!-- X, Y, Z -->
+              <td class="cat-cell">{{ row.categorieX ? 'X' : '' }}</td>
+              <td class="cat-cell">{{ row.categorieY ? 'Y' : '' }}</td>
+              <td class="cat-cell">{{ row.categorieZ ? 'Z' : '' }}</td>
+
+              <td>{{ row.aptitude }}</td>
+            </tr>
+
+          </ng-container>
+
+          <tr *ngIf="teecRows.length === 0 && !loading">
+            <td colspan="13" class="empty-msg">Aucune donnée disponible pour cette unité.</td>
+          </tr>
+          
+          <tr *ngIf="loading">
+            <td colspan="13" class="loading-msg">Chargement des données...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PIED DE PAGE -->
+    <div class="report-footer">
+      <div class="signature">
+        <p>Le Chef de Corps,</p>
+        <br><br><br>
+        <p><b>........................................................</b></p>
+      </div>
+    </div>
+
+  </div>
+</div>

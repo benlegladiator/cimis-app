@@ -1,0 +1,234 @@
+[
+  {
+    "id": "cab-sed",
+    "label": "CAB SED",
+    "description": "Direction",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ct1",
+        "label": "CT1",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": []
+      },
+      {
+        "id": "ct2",
+        "label": "CT2",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": []
+      },
+      {
+        "id": "ct3",
+        "label": "CT3",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "dag",
+    "label": "DAG",
+    "description": "Direction",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "scda",
+        "label": "SCDA",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": []
+      },
+      {
+        "id": "sce-com",
+        "label": "SCE COM",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": []
+      },
+      {
+        "id": "sce-gen",
+        "label": "SCE GEN",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": []
+      },
+      {
+        "id": "sce-prot",
+        "label": "SCE PROT",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": []
+      },
+      {
+        "id": "secu-sed",
+        "label": "SECU SED",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "dcal",
+    "label": "DCAL",
+    "description": "Direction",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "daafd",
+        "label": "DAAFD",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": [
+          {
+            "id": "saf",
+            "label": "SAF",
+            "description": "Unité",
+            "icon": "fa-shield"
+          },
+          {
+            "id": "sdi",
+            "label": "SDI",
+            "description": "Unité",
+            "icon": "fa-shield"
+          }
+        ]
+      },
+      {
+        "id": "dtl",
+        "label": "DTL",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": [
+          {
+            "id": "bid",
+            "label": "BID",
+            "description": "Unité",
+            "icon": "fa-shield"
+          },
+          {
+            "id": "sce-sante",
+            "label": "SCE SANTE",
+            "description": "Unité",
+            "icon": "fa-shield"
+          },
+          {
+            "id": "sl",
+            "label": "SL",
+            "description": "Unité",
+            "icon": "fa-shield"
+          },
+          {
+            "id": "st",
+            "label": "ST",
+            "description": "Unité",
+            "icon": "fa-shield"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dcc",
+    "label": "DCC",
+    "description": "Direction",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "pcops",
+        "label": "PCOPS",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": []
+      },
+      {
+        "id": "sce-trans",
+        "label": "SCE TRANS",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": []
+      },
+      {
+        "id": "des",
+        "label": "DES",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": [
+          {
+            "id": "sce-inst",
+            "label": "SCE INST",
+            "description": "Unité",
+            "icon": "fa-shield"
+          },
+          {
+            "id": "sce-rens",
+            "label": "SCE RENS",
+            "description": "Unité",
+            "icon": "fa-shield"
+          },
+          {
+            "id": "scrj",
+            "label": "SCRJ",
+            "description": "Unité",
+            "icon": "fa-shield"
+          },
+          {
+            "id": "sdac",
+            "label": "SDAC",
+            "description": "Unité",
+            "icon": "fa-shield"
+          },
+          {
+            "id": "ses",
+            "label": "SES",
+            "description": "Unité",
+            "icon": "fa-shield"
+          }
+        ]
+      },
+      {
+        "id": "dp",
+        "label": "DP",
+        "description": "Service",
+        "icon": "fa-file-lines",
+        "children": [
+          {
+            "id": "sch",
+            "label": "SCH",
+            "description": "Unité",
+            "icon": "fa-shield"
+          },
+          {
+            "id": "sdc",
+            "label": "SDC",
+            "description": "Unité",
+            "icon": "fa-shield"
+          },
+          {
+            "id": "sgpp",
+            "label": "SGPP",
+            "description": "Unité",
+            "icon": "fa-shield"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gei-sed",
+    "label": "GEI SED",
+    "description": "Direction",
+    "icon": "fa-building-shield",
+    "children": []
+  },
+  {
+    "id": "iggn",
+    "label": "IGGN",
+    "description": "Direction",
+    "icon": "fa-building-shield",
+    "children": []
+  }
+]

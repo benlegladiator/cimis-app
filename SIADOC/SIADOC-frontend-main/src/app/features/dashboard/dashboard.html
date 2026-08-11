@@ -1,0 +1,329 @@
+<div class="dashboard-header">
+  <div class="header-title-container">
+    <h2>📊 Tableau de bord / Dashboard</h2>
+    <span *ngIf="user" class="role-badge" [ngClass]="user.role">{{ getFormattedRole() }}</span>
+  </div>
+  <div *ngIf="user" class="user-info-bar" style="margin-left: auto; display: flex; gap: 1rem; align-items: center;">
+    <div class="unit-info" *ngIf="user.region || user.brigade || user.bataillon || user.compagnie">
+      📍 {{ user.region?.nom || user.brigade?.nom || user.bataillon?.nom || user.compagnie?.nom }}
+    </div>
+
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading-state">
+  <div class="spinner"></div>
+  Chargement des données... / Loading data...
+</div>
+
+<div *ngIf="!loading && stats" class="dashboard-content">
+
+  <!-- ================= CARDS ================= -->
+  <div class="stats-cards">
+    <div class="card main">
+      <h3>📁 Dossiers / Files</h3>
+      <p class="value">{{ stats.totalDossiers }}</p>
+    </div>
+
+    <div class="card secondary">
+      <h3>📦 Dossier(s) Archivé(s) / Archived Files</h3>
+      <p class="value">{{ stats.totalArchives ?? 0 }}</p>
+    </div>
+
+
+
+    <div class="card-group">
+      <div class="mini-card">
+        <h4>👨 Homme(s) / Male(s)</h4>
+        <p>{{ hommes }}</p>
+      </div>
+      <div class="mini-card">
+        <h4>👩 Femme(s) / Female(s)</h4>
+        <p>{{ femmes }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-cards">
+    <div class="mini-card highlight">
+      <h4>🎖 Officier(s) / Officer(s)</h4>
+      <p>{{ officiers }}</p>
+    </div>
+    <div class="mini-card highlight">
+      <h4>🪖 Sous-officier(s) / Sub-Officer(s)</h4>
+      <p>{{ sousOfficiers }}</p>
+    </div>
+    <div class="mini-card highlight">
+      <h4>🎒 Militaire(s) de Rang / Enlisted</h4>
+      <p>{{ militairesRang }}</p>
+    </div>
+  </div>
+
+  <!-- ================= CHARTS ================= -->
+  <div class="charts-container">
+    <div class="chart-box" *ngIf="armeData && armeData.length > 0" style="min-height: 480px; display: flex; flex-direction: column; align-items: center;">
+      <h3>Répartition des Dossiers Administratifs par Armée / Distribution by Branch</h3>
+      <div style="position: relative; width: 100%; max-width: 450px; margin: 0 auto;">
+        <canvas id="armeChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FILTERS SECTION ================= -->
+  <div *ngIf="user?.role === Role.DRH || isEtatMajor()" class="filters-container" style="margin-top: 2rem; margin-bottom: 2rem;">
+    <div class="header">
+      <h1>🔍 Carte de Recherche / Search Map (SIADOC)</h1>
+    </div>
+    <div class="filters-bar">
+      <div class="manual-filters">
+        <div class="filter-item" style="flex: 1;">
+          <label>RMIA / Region:</label>
+          <select [(ngModel)]="selectedRMIA" (change)="onRMIAFilterChange()" class="search-input">
+            <option value="">Toutes les Régions / All Regions</option>
+            <option *ngFor="let r of allRMIA" [value]="r.id">{{r.nom}}</option>
+          </select>
+        </div>
+        <div class="filter-item" style="flex: 1;">
+          <label>Grande Formation / Major Formation:</label>
+          <select [(ngModel)]="selectedBrigade" (change)="onBrigadeFilterChange()" [disabled]="!selectedRMIA"
+            class="search-input">
+            <option value="">Toutes les Grandes Formations / All Major Formations</option>
+            <option *ngFor="let b of filteredBrigades" [value]="b.id">{{b.nom}}</option>
+          </select>
+        </div>
+        <div class="filter-item" style="flex: 1;">
+          <label>Formation:</label>
+          <select [(ngModel)]="selectedBataillon" (change)="onBataillonFilterChange()" [disabled]="!selectedBrigade"
+            class="search-input">
+            <option value="">Toutes les Formations / All Formations</option>
+            <option *ngFor="let bat of filteredBataillons" [value]="bat.id">{{bat.nom}}</option>
+          </select>
+        </div>
+        <div class="filter-actions" *ngIf="currentLevel !== 'GLOBAL' || selectedRMIA">
+          <button class="btn-reset" (click)="resetToRMIA()">RàZ / Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= BREADCRUMBS ================= -->
+  <div class="breadcrumbs" *ngIf="currentLevel !== 'GLOBAL' || (user?.role === Role.DRH && selectedRMIA)">
+    <span class="breadcrumb-item clickable" (click)='resetToRMIA()'>
+      {{ user?.role === Role.RMIA ? (user.region?.nom || 'RMIA') : (selectedRMIA ? 'RMIA' : 'GLOBAL') }}
+    </span>
+    
+    <ng-container *ngIf="selectedBrigadeName || (user?.role === Role.BRIGADE && currentLevel !== 'GLOBAL')">
+      <span class="separator">/</span>
+      <span class="breadcrumb-item"
+        [ngClass]="{'clickable': currentLevel === 'BATAILLON', 'active': currentLevel !== 'BATAILLON'}"
+        (click)="currentLevel === 'BATAILLON' ? resetToBrigade() : null">
+        {{ selectedBrigadeName || user?.brigade?.nom }}
+      </span>
+    </ng-container>
+
+    <ng-container *ngIf="selectedBataillonName">
+      <span class="separator">/</span>
+      <span class="breadcrumb-item active">{{ selectedBataillonName }}</span>
+    </ng-container>
+
+    <button class="back-btn" (click)="goBack()">⬅ Retour / Back</button>
+  </div>
+
+  <!-- ================= HIERARCHY / RESULTS SECTION ================= -->
+  <div class="hierarchy-section">
+
+    <!-- LEVEL 0: RMIA -->
+    <div class="hierarchy-cards"
+      *ngIf="(user?.role === Role.DRH || isEtatMajor()) && currentLevel === 'GLOBAL' && !selectedRMIA">
+      <h3>🌍 Régions Militaires / Military Regions (RMIA)</h3>
+      <div class="cards-grid" *ngIf="detailsRMIA.length > 0; else noRMIA">
+        <div class="hierarchy-card clickable" *ngFor="let r of detailsRMIA" (click)="selectRMIA(r.id, r.nom)">
+          <h4>{{ r.nom }}</h4>
+          <div class="corps-stats">
+            <span class="badge gn" *ngIf="(user?.role === Role.DRH || user?.role === Role.RMIA) && r.Gendarmerie">{{ r.Gendarmerie }} GN</span>
+            <span class="badge terre"
+              *ngIf="(user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.ETAT_MAJOR_TERRE) && r.Terre">{{ r.Terre }} AT</span>
+            <span class="badge air" *ngIf="(user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.ETAT_MAJOR_AIR) && r.Air">{{ r.Air }} AA</span>
+            <span class="badge marine"
+              *ngIf="(user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.ETAT_MAJOR_MARINE) && r.Marine">{{ r.Marine }} AM</span>
+          </div>
+          <div class="total-badge">Total Effectif / Strength: {{ r.total }}</div>
+          <div class="click-hint">Voir les Brigades / View Brigades 🔍</div>
+        </div>
+      </div>
+      <ng-template #noRMIA><p class="empty">Chargement... / Loading...</p></ng-template>
+    </div>
+
+    <!-- LEVEL 1: BRIGADES -->
+    <div class="hierarchy-cards"
+      *ngIf="(user?.role === Role.RMIA || (selectedRMIA && (user?.role === Role.DRH || isEtatMajor()))) && currentLevel === 'GLOBAL'">
+      <h3>🏢 Grandes Formations / Major Formations ({{ selectedUnitName }})</h3>
+      <div class="cards-grid" *ngIf="detailsBrigade.length > 0; else noBrigades">
+        <div class="hierarchy-card clickable" *ngFor="let b of detailsBrigade" (click)="selectBrigade(b.id, b.nom)">
+          <h4>{{ b.nom }}</h4>
+          <div class="corps-stats">
+            <span class="badge gn" *ngIf="(user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE) && b.Gendarmerie">{{ b.Gendarmerie }} GN</span>
+            <span class="badge terre"
+              *ngIf="(user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE || user?.role === Role.ETAT_MAJOR_TERRE) && b.Terre">{{ b.Terre }} AT</span>
+            <span class="badge air" *ngIf="(user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE || user?.role === Role.ETAT_MAJOR_AIR) && b.Air">{{ b.Air }} AA</span>
+            <span class="badge marine"
+              *ngIf="(user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE || user?.role === Role.ETAT_MAJOR_MARINE) && b.Marine">{{ b.Marine }} AM</span>
+          </div>
+          <div class="total-badge">Total Effectif / Strength: {{ b.total }}</div>
+          <div class="click-hint">Voir les Bataillons / View Battalions 🔍</div>
+        </div>
+      </div>
+      <ng-template #noBrigades><p class="empty">Aucune brigade / No brigades found.</p></ng-template>
+    </div>
+
+    <!-- TABLE VIEW (Compagnies pour Bataillon ou résultats de recherche) -->
+    <div class="hierarchy-section"
+      *ngIf="(selectedRMIA && selectedBrigade && selectedBataillon) || (user?.role === Role.BRIGADE && currentLevel === 'GLOBAL') || (user?.role === Role.BATAILLON && currentLevel === 'GLOBAL') || (user?.role !== Role.DRH && !isEtatMajor() && currentLevel !== 'GLOBAL')">
+      <div class="hierarchy-cards" style="margin-top: 0; padding-top: 0;">
+        <h3>📋 Résultats / Results : {{ selectedBataillonName || selectedUnitName }}</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Unités / Units</th>
+                <th *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">GN</th>
+                <th *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">Terre / Army</th>
+                <th *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">Air / Air Force</th>
+                <th *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">Marine / Navy</th>
+                <th *ngIf="isEtatMajor()">OFFICIERS / OFFICERS</th>
+                <th *ngIf="isEtatMajor()">SOUS-OFF / SUB-OFF</th>
+                <th *ngIf="isEtatMajor()">MDR / ENLISTED</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- RMIA -->
+              <ng-container *ngIf="currentLevel === 'GLOBAL' && (user?.role === Role.DRH || isEtatMajor()) && !selectedRMIA">
+                <tr *ngFor="let r of detailsRMIA" class="clickable-row" (click)="selectRMIA(r.id, r.nom)">
+                  <td>{{ r.nom }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ r.Gendarmerie }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ r.Terre }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ r.Air }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ r.Marine }}</td>
+                  <td *ngIf="isEtatMajor()" class="text-center">{{ r.Officiers }}</td>
+                  <td *ngIf="isEtatMajor()" class="text-center">{{ r.SousOfficiers }}</td>
+                  <td *ngIf="isEtatMajor()" class="text-center">{{ r.MilitairesRang }}</td>
+                  <td><strong>{{ r.total }}</strong></td>
+                </tr>
+              </ng-container>
+              <!-- Brigades -->
+              <ng-container *ngIf="currentLevel === 'GLOBAL' && (selectedRMIA || user?.role === Role.RMIA)">
+                <tr *ngFor="let b of detailsBrigade" class="clickable-row" (click)="selectBrigade(b.id, b.nom)">
+                  <td>{{ b.nom }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ b.Gendarmerie }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ b.Terre }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ b.Air }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ b.Marine }}</td>
+                  <td *ngIf="isEtatMajor()" class="text-center">{{ b.Officiers }}</td>
+                  <td *ngIf="isEtatMajor()" class="text-center">{{ b.SousOfficiers }}</td>
+                  <td *ngIf="isEtatMajor()" class="text-center">{{ b.MilitairesRang }}</td>
+                  <td><strong>{{ b.total }}</strong></td>
+                </tr>
+              </ng-container>
+              <!-- Bataillons -->
+              <ng-container *ngIf="currentLevel === 'BRIGADE' || (user?.role === Role.BRIGADE && currentLevel === 'GLOBAL') || (isEtatMajor() && currentLevel === 'GLOBAL' && selectedBrigade)">
+                <tr *ngFor="let bat of detailsBataillon" class="clickable-row" (click)="selectBataillon(bat.id, bat.nom)">
+                  <td>{{ bat.nom }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ bat.Gendarmerie }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ bat.Terre }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ bat.Air }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ bat.Marine }}</td>
+                  <td *ngIf="isEtatMajor()" class="text-center">{{ bat.Officiers }}</td>
+                  <td *ngIf="isEtatMajor()" class="text-center">{{ bat.SousOfficiers }}</td>
+                  <td *ngIf="isEtatMajor()" class="text-center">{{ bat.MilitairesRang }}</td>
+                  <td><strong>{{ bat.total }}</strong></td>
+                </tr>
+              </ng-container>
+              <!-- Compagnies -->
+              <ng-container *ngIf="currentLevel === 'BATAILLON' || user?.role === Role.BATAILLON">
+                <tr *ngFor="let c of detailsCompagnie">
+                  <td>{{ c.nom }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ c.Gendarmerie }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ c.Terre }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ c.Air }}</td>
+                  <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ c.Marine }}</td>
+                  <td *ngIf="isEtatMajor()" class="text-center">{{ c.Officiers }}</td>
+                  <td *ngIf="isEtatMajor()" class="text-center">{{ c.SousOfficiers }}</td>
+                  <td *ngIf="isEtatMajor()" class="text-center">{{ c.MilitairesRang }}</td>
+                  <td><strong>{{ c.total }}</strong></td>
+                </tr>
+              </ng-container>
+            </tbody>
+            <tfoot>
+              <tr style="background-color: #f1f5f9; font-weight: bold;">
+                <td style="text-align: right; padding-right: 15px;">TOTAUX / TOTALS</td>
+                <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ getGlobalSum('Gendarmerie') }}</td>
+                <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ getGlobalSum('Terre') }}</td>
+                <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ getGlobalSum('Air') }}</td>
+                <td *ngIf="user?.role === Role.DRH || user?.role === Role.RMIA || user?.role === Role.BRIGADE">{{ getGlobalSum('Marine') }}</td>
+                <td *ngIf="isEtatMajor()" class="text-center">{{ getGlobalSum('Officiers') }}</td>
+                <td *ngIf="isEtatMajor()" class="text-center">{{ getGlobalSum('SousOfficiers') }}</td>
+                <td *ngIf="isEtatMajor()" class="text-center">{{ getGlobalSum('MilitairesRang') }}</td>
+                <td>{{ getGlobalSum('total') }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TRANSFERS ================= -->
+    <div class="transfers-section" *ngIf="recentTransfers.length > 0">
+      <div class="section-header clickable" (click)="showTransfers = !showTransfers">
+        <h3>🔄 Dossiers Transférés / Transferred Files (30j)</h3>
+        <span class="toggle-icon">{{ showTransfers ? '▲' : '▼' }}</span>
+      </div>
+      <div class="transfers-content" *ngIf="showTransfers">
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Matricule / ID</th><th>Nom & Prénom / Name</th><th>Provenance / From</th><th>Destination / To</th><th>Date</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let t of recentTransfers"><td>{{t[0]}}</td><td>{{t[1]}} {{t[2]}}</td><td>{{t[5]}}</td><td>{{t[3]}}</td><td>{{t[4]|date:'dd/MM/yyyy'}}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= WIDGETS SEPARATED ================= -->
+    <div *ngIf="user?.role === Role.DRH || isEtatMajor()" class="drh-section" style="margin-top: 4rem;">
+      <div class="widget">
+        <h3>🆕 Nouvelles Intégrations / New Integrations (30j)</h3>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Matricule / ID</th><th>Nom complet / Full Name</th><th>Date Service</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let m of nouvellesIntegrations"><td>{{ m.matriculeMilitaire }}</td><td>{{ m.nom }} {{ m.prenom }}</td><td>{{ m.dateService | date:'dd/MM/yyyy' }}</td></tr>
+            </tbody>
+          </table>
+          <p *ngIf="!nouvellesIntegrations.length" class="empty">Aucune intégration / No recent integrations.</p>
+        </div>
+      </div>
+      <div class="widget">
+        <h3>⏳ Départs imminents / Imminent Departures</h3>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Matricule</th><th>Nom & Prénom</th><th>Grade</th><th>Âge</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let m of retraitesProches">
+                <td>{{ m.matriculeMilitaire }}</td>
+                <td>{{ m.nom }} {{ m.prenom }}</td>
+                <td>{{ m.grade }}</td>
+                <td>{{ calculateAge(m.dateNaissance) }} ans</td>
+              </tr>
+            </tbody>
+          </table>
+          <p *ngIf="!retraitesProches.length" class="empty">Aucun départ / No imminent departures.</p>
+        </div>
+      </div>
+
+
+    </div>
+
+  </div>
+</div>

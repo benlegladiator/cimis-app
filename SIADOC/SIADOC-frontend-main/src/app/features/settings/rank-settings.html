@@ -1,0 +1,86 @@
+<div class="settings-page">
+  <div class="breadcrumb">
+    <a routerLink="/settings">Paramètres</a> / Grades
+  </div>
+
+  <div class="header-section">
+    <h1>🎖️ Référentiel des Grades</h1>
+    <button class="btn-primary" (click)="ouvrirModal()">
+      <i class="fa-solid fa-plus"></i> Nouveau Grade
+    </button>
+  </div>
+
+  <div class="ranks-dashboard">
+    <div class="armee-section shadow-sm" *ngFor="let a of armees">
+      <div class="armee-header">
+        <h2>{{ a.label }}</h2>
+      </div>
+      
+      <div class="categories-grid">
+        <div class="cat-column" *ngFor="let cat of categories">
+          <h3>{{ cat.label }}</h3>
+          <div class="grades-list">
+            <div class="grade-item" *ngFor="let g of getGradesFiltres(a.id, cat.id)">
+              <span class="ordre">#{{ g.ordre }}</span>
+              <span class="label">{{ g.label }}</span>
+              <div class="actions">
+                <button (click)="ouvrirModal(g)" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+                <button (click)="supprimer(g.id)" title="Supprimer" class="btn-del"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            <div *ngIf="getGradesFiltres(a.id, cat.id).length === 0" class="empty-list">
+              Aucun grade.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE GESTION -->
+  <div class="modal-overlay" *ngIf="showModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>{{ isEditing ? 'Modifier' : 'Nouveau' }} Grade</h2>
+        <button class="btn-close-x" (click)="fermerModal()">✖</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Libellé du Grade</label>
+          <input type="text" [(ngModel)]="currentGrade.label" placeholder="Ex: Colonel, Adjudant-Chef...">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Armée / Corps</label>
+            <select [(ngModel)]="currentGrade.armee">
+              <option *ngFor="let a of armees" [value]="a.id">{{ a.label }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Catégorie</label>
+            <select [(ngModel)]="currentGrade.categorie">
+              <option *ngFor="let c of categories" [value]="c.id">{{ c.label }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Ordre Hiérarchique (Plus petit = Plus haut)</label>
+          <input type="number" [(ngModel)]="currentGrade.ordre">
+          <small>Ex: Général=100, Colonel=104...</small>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="fermerModal()">
+          <i class="fa-solid fa-xmark"></i> Fermer
+        </button>
+        <button class="btn-save" (click)="enregistrer()" [disabled]="!currentGrade.label">
+          <i class="fa-solid fa-check"></i> {{ isEditing ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

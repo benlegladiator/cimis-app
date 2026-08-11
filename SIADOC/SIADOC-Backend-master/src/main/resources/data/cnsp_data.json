@@ -1,0 +1,150 @@
+[
+  {
+    "id": "10-gsp",
+    "label": "10°GSP",
+    "description": "Groupement",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ccs",
+        "label": "CCS",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "101-ci",
+        "label": "101°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "102-ci",
+        "label": "102°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "103-ci",
+        "label": "103°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      }
+    ]
+  },
+  {
+    "id": "20-gsp",
+    "label": "20°GSP",
+    "description": "Groupement",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ccs",
+        "label": "CCS",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "201-ci",
+        "label": "201°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "202-ci",
+        "label": "202°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "203-ci",
+        "label": "203°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "204-ci",
+        "label": "204°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "205-ci",
+        "label": "205°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "206-ci",
+        "label": "206°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      }
+    ]
+  },
+  {
+    "id": "30-gsp",
+    "label": "30°GSP",
+    "description": "Groupement",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ccs",
+        "label": "CCS",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "301-ci",
+        "label": "301°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "302-ci",
+        "label": "302°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      }
+    ]
+  },
+  {
+    "id": "40-gsp",
+    "label": "40°GSP",
+    "description": "Groupement",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ccs",
+        "label": "CCS",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "401-ci",
+        "label": "401°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      }
+    ]
+  },
+  {
+    "id": "50-gsp",
+    "label": "50°GSP",
+    "description": "Groupement",
+    "icon": "fa-building-shield",
+    "children": [
+      {
+        "id": "ccs",
+        "label": "CCS",
+        "description": "Unité",
+        "icon": "fa-shield"
+      },
+      {
+        "id": "501-ci",
+        "label": "501°CI",
+        "description": "Unité",
+        "icon": "fa-shield"
+      }
+    ]
+  }
+]

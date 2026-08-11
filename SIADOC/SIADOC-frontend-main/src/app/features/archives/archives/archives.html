@@ -1,0 +1,204 @@
+<div class="header-archives">
+  <h2>📦 Archives militaires</h2>
+  <button class="btn-add-archive" (click)="ajouterArchive()">
+    {{ showForm ? '❌ Annuler' : '➕ Ajouter une archive ' }}
+  </button>
+</div>
+
+<!-- ================= FORMULAIRE AJOUT ================= -->
+<div class="form-card" *ngIf="showForm">
+    <h3>📝 Nouvelle archive physique </h3>
+    <div class="form-grid">
+        <div class="field">
+            <label>Nom *</label>
+            <input type="text" [(ngModel)]="newArchive.nom" placeholder="Ex: NDONGO">
+        </div>
+        <div class="field">
+            <label>Prénom *</label>
+            <input type="text" [(ngModel)]="newArchive.prenom" placeholder="Ex: Jean">
+        </div>
+        <div class="field">
+            <label>Matricule *</label>
+            <input type="text" [(ngModel)]="newArchive.matricule" placeholder="">
+        </div>
+        <div class="field">
+            <label>Armée *</label>
+            <select [(ngModel)]="newArchive.armee">
+              <option value="">-- Choisir une armée --</option>
+              <option value="Gendarmerie">Gendarmerie</option>
+              <option value="Armée de Terre">Armée de Terre</option>
+              <option value="Armée de l'Air">Armée de l'Air</option>
+              <option value="Marine Nationale">Marine Nationale</option>
+            </select>
+        </div>
+        <div class="field">
+          <label>Grade *</label>
+          <select [(ngModel)]="newArchive.grade">
+            <option value="">-- Choisir un grade --</option>
+            <option *ngFor="let g of gradesDisponibles" [value]="g">{{ g }}</option>
+          </select>
+        </div>
+        <div class="field">
+            <label>Année de contingent</label>
+            <input type="number" [(ngModel)]="newArchive.anneeContingent"
+                   placeholder="Ex: 1975" min="1940" max="2026">
+        </div>
+        <div class="field">
+            <label>Numéro de Case</label>
+            <input type="text" [(ngModel)]="newArchive.numeroCase" placeholder="Ex: C-125">
+        </div>
+    </div>
+    <div class="form-actions">
+        <button class="btn-primary" (click)="saveArchive()" [disabled]="savingArchive">
+          {{ savingArchive ? '⏳ Enregistrement...' : '💾 Enregistrer et ouvrir le dossier' }}
+        </button>
+    </div>
+</div>
+
+<!-- ================= SECTION RECHERCHE ================= -->
+<div class="section-block" *ngIf="!showForm">
+  <div class="section-header">
+    <h3>🔍 Recherche dans les archives</h3>
+  </div>
+  <div class="search-card">
+    <label class="search-label">Rechercher un dossier archivé (actif ou décédé)</label>
+    <div class="search-grid">
+      <input
+          type="text"
+          placeholder="Entrez un nom, prénom ou matricule..."
+          [formControl]="searchControl"
+      />
+      <button class="btn-primary" (click)="rechercher()">
+        Rechercher
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Recherche en cours...</div>
+
+  <div class="resultats" *ngIf="!loading && resultats.length > 0">
+    <div
+      class="result-card"
+      [class.physical]="r.physique"
+      *ngFor="let r of resultats"
+      (click)="ouvrir(r)">
+      <div class="identite">
+        <div class="name-row">
+          <strong>{{ r.nom }} {{ r.prenom }}</strong>
+          <span class="badge" *ngIf="r.physique">Archive Physique</span>
+        </div>
+        <small>Matricule : {{ r.matricule }}</small>
+        <small *ngIf="r.grade" class="grade-info"> | Grade : <strong>{{ r.grade }}</strong></small>
+        <small *ngIf="r.numeroCase" class="case-info"> | Case : <strong>{{ r.numeroCase }}</strong></small>
+      </div>
+      <div class="action">
+        {{ r.physique ? '📑 Voir dossier' : '📂 Voir dossier numérique' }}
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && resultats.length === 0 && searchControl.value" class="empty">
+    Aucun résultat pour cette recherche.
+  </div>
+</div>
+
+<!-- ================= SECTION ARCHIVES PHYSIQUES ================= -->
+<div class="section-block" *ngIf="!showForm">
+  <div class="section-header">
+    <h3>⚰️ Archives des militaires</h3>
+    <span class="badge-count">TOTAL : {{ archivesPhysiques.length }}</span>
+  </div>
+
+  <div *ngIf="loadingPhysiques" class="loading">Chargement des archives...</div>
+
+  <div *ngIf="!loadingPhysiques && archivesPhysiques.length === 0" class="empty-section">
+    Aucune archive physique enregistrée.
+  </div>
+
+  <!-- ===== LISTE DES ARMEES (Niveau 1) ===== -->
+  <div class="cases-container" *ngIf="!loadingPhysiques && armeesList.length > 0">
+    <div class="case-card" *ngFor="let a of armeesList" [class]="getArmeeClass(a)">
+
+      <!-- En-tête de l'Armée -->
+      <div class="case-header" (click)="toggleArmee(a)">
+        <div class="case-title">
+          <span class="folder-icon">{{ armeeOuverte === a ? '📂' : '📁' }}</span>
+          <strong>{{ a }}</strong>
+          <span class="badge-count">{{ getCount(a) }} dossier(s)</span>
+        </div>
+        <div class="case-toggle">
+          {{ armeeOuverte === a ? '▲' : '▼' }}
+        </div>
+      </div>
+
+      <!-- Contenu de l'Armée : liste des Contingents (Niveau 2) -->
+      <div class="case-content" *ngIf="armeeOuverte === a">
+
+        <div *ngIf="getCount(a) === 0" class="empty-section">
+          Aucune archive pour cette armée.
+        </div>
+
+        <!-- Boucle sur les contingents -->
+        <div class="contingent-block" *ngFor="let cont of contingentsList[a]">
+          <div class="contingent-header" (click)="toggleCont(a, cont)">
+            <div class="contingent-title">
+              <span class="cont-icon">{{ contOuvert[a] === cont ? '📂' : '📁' }}</span>
+              <span>Contingent &nbsp;<strong>{{ cont }}</strong></span>
+              <span class="badge-count">{{ getCount(a, cont) }} dossier(s)</span>
+            </div>
+            <div class="contingent-toggle">
+              {{ contOuvert[a] === cont ? '▲' : '▼' }}
+            </div>
+          </div>
+
+          <!-- Contenu du Contingent : liste des Corps/Catégories (Niveau 3) -->
+          <div class="cat-content" *ngIf="contOuvert[a] === cont">
+            
+            <div class="cat-block" *ngFor="let cat of categoriesList">
+              
+              <!-- En-tête du Corps (Catégorie) -->
+              <div class="cat-header" *ngIf="getCount(a, cont, cat) > 0" (click)="toggleCat(a, cont, cat)">
+                <div class="cat-title">
+                  <span class="cat-icon">
+                    {{ catOuverte[a][cont] === cat ? '🗂️' : '📂' }}
+                  </span>
+                  <span class="cat-label">
+                    <strong>{{ formatCategorieLabel(cat) }}</strong>
+                  </span>
+                  <span class="cont-badge">{{ getCount(a, cont, cat) }} dossier(s)</span>
+                </div>
+                <div class="cat-toggle">
+                  {{ catOuverte[a][cont] === cat ? '▲' : '▼' }}
+                </div>
+              </div>
+
+              <!-- Liste des militaires (Niveau 4) -->
+              <div class="contingent-content resultats" *ngIf="catOuverte[a][cont] === cat">
+                <div class="result-card physical"
+                     *ngFor="let r of archivesGroupes[a][cont][cat]"
+                     (click)="ouvrir(r)">
+                  <div class="identite">
+                    <div class="name-row">
+                      <strong>{{ r.nom }} {{ r.prenom }}</strong>
+                      <span class="badge">Archive Physique</span>
+                    </div>
+                    <div class="meta-row">
+                      <small>Matricule : {{ r.matricule }}</small>
+                      <small *ngIf="r.grade" class="grade-info"> | Grade : <strong>{{ r.grade }}</strong></small>
+                      <small *ngIf="r.numeroCase" class="case-info"> | Case : <strong>{{ r.numeroCase }}</strong></small>
+                      <small *ngIf="r.anneeContingent" class="cont-year"> | Contingent : <strong>{{ r.anneeContingent }}</strong></small>
+                    </div>
+                  </div>
+                  <div class="action">📑 Voir dossier</div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

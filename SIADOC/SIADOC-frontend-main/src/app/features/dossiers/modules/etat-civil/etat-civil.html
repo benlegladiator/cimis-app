@@ -1,0 +1,221 @@
+<div class="etat-civil-container">
+
+  <!-- HEADER -->
+  <div class="header-section">
+    <h2 class="titre-page">👤 ÉTAT CIVIL & PIÈCES / CIVIL STATUS & DOCUMENTS</h2>
+  </div>
+
+  <!-- ================= INFORMATIONS PERSONNELLES ================= -->
+  <div class="section-block">
+    <div class="section-header">
+      <h3>Informations personnelles / Personal Information</h3>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nom / Name</label>
+        <input type="text" [(ngModel)]="infoPerso.nom" readonly class="auto-field">
+      </div>
+
+      <div class="form-group">
+        <label>Prénom / First Name</label>
+        <input type="text" [(ngModel)]="infoPerso.prenom" readonly class="auto-field">
+      </div>
+
+      <div class="form-group">
+        <label>Sexe / Gender</label>
+        <select [(ngModel)]="infoPerso.sexe" disabled class="auto-field">
+          <option value="">-- Sélectionner / Select --</option>
+          <option value="MASCULIN">Masculin / Male</option>
+          <option value="FEMININ">Féminin / Female</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Numéro CNI / ID Card Number</label>
+        <input type="text" [(ngModel)]="infoPerso.numeroCNI" [readonly]="readOnly">
+      </div>
+
+      <div class="form-group">
+        <label>Situation matrimoniale / Marital Status</label>
+        <select [(ngModel)]="infoPerso.situationMatrimoniale" [disabled]="readOnly">
+          <option value="">-- Sélectionner / Select --</option>
+          <option value="CELIBATAIRE">Célibataire / Single</option>
+          <option value="MARIE">Marié(e) / Married</option>
+          <option value="DIVORCE">Divorcé(e) / Divorced</option>
+          <option value="VEUF">Veuf/Veuve / Widowed</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Régime matrimonial / Matrimonial Regime</label>
+        <select [(ngModel)]="infoPerso.regime" [disabled]="readOnly">
+          <option value="">-- Sélectionner / Select --</option>
+          <option value="COMMUNAUTE_BIENS">Communauté de biens / Joint Property</option>
+          <option value="SEPARATION_BIENS">Séparation de biens / Separate Property</option>
+          <option value="AUTRE">Autre / Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre conjoint(s) / Spouse(s)</label>
+        <input type="number" [(ngModel)]="infoPerso.nombreConjoints" [readonly]="readOnly">
+      </div>
+
+      <div class="form-group">
+        <label>Nombre enfant(s) / Child(ren)</label>
+        <input type="number" [(ngModel)]="infoPerso.nombreEnfants" [readonly]="readOnly">
+      </div>
+
+      <div class="form-group">
+        <label>Téléphone / Phone</label>
+        <input type="text" [(ngModel)]="infoPerso.telephone" [readonly]="readOnly">
+      </div>
+
+      <div class="form-group">
+        <label>PPCA Nom / Emergency Contact Name</label>
+        <input type="text" [(ngModel)]="infoPerso.ppcaNom" [readonly]="readOnly">
+      </div>
+
+      <div class="form-group">
+        <label>PPCA Téléphone / Contact Phone</label>
+        <input type="text" [(ngModel)]="infoPerso.ppcaTelephone" [readonly]="readOnly">
+      </div>
+
+      <div class="form-group">
+        <label>PPCA Lien / Relationship</label>
+        <input type="text" [(ngModel)]="infoPerso.ppcaLien" [readonly]="readOnly">
+      </div>
+
+      <div class="form-group">
+        <label>Région d'origine / Region of Origin</label>
+        <input type="text" [(ngModel)]="infoPerso.regionOrigine" placeholder="Ex: Extrême-Nord" [readonly]="readOnly">
+      </div>
+
+      <div class="form-group">
+        <label>Langue(s) parlée(s) / Languages spoken</label>
+        <input type="text" [(ngModel)]="infoPerso.languesParlees" placeholder="Ex: Français, English" [readonly]="readOnly">
+      </div>
+
+      <div class="form-group full-width">
+        <label>Adresse complète / Full Address</label>
+        <textarea rows="3" [(ngModel)]="infoPerso.adresseComplete" [readonly]="readOnly"></textarea>
+      </div>
+    </div>
+
+    <div class="form-actions" *ngIf="!readOnly">
+      <button type="button" class="btn-success" (click)="enregistrerInformations()">
+        💾 Enregistrer / Save Information
+      </button>
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- ================= PIÈCES D'ÉTAT CIVIL ================= -->
+  <div class="section-block">
+    <div class="section-header">
+      <h3>Pièces d'état civil / Civil Status Documents</h3>
+      <button type="button" class="btn-primary" (click)="afficherFormulaire = !afficherFormulaire" *ngIf="!readOnly">
+        {{ afficherFormulaire ? '❌ Annuler / Cancel' : '➕ Ajouter / Add Document' }}
+      </button>
+    </div>
+
+    <!-- FORMULAIRE PIÈCE -->
+    <div *ngIf="afficherFormulaire" class="form-card sub-form">
+      <h3>Ajouter une nouvelle pièce / Add new document</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Type de pièce / Document Type *</label>
+          <select [(ngModel)]="typePiece">
+            <option value="">-- Sélectionner / Select --</option>
+            <option value="CNI">CNI</option>
+            <option value="ACTE_NAISSANCE">Acte de naissance / Birth Certificate</option>
+            <option value="ACTE_MARIAGE">Acte de mariage / Marriage Certificate</option>
+            <option value="ACTE_DECES">Acte de décès / Death Certificate</option>
+            <option value="ACTE_DIVORCE">Acte de divorce / Divorce Certificate</option>
+            <option value="JUGEMENT_SUPPLETIF">Jugement supplétif / Supplementary Judgment</option>
+          </select>
+        </div>
+
+        <!-- CNI -->
+        <ng-container *ngIf="typePiece === 'CNI'">
+          <div class="form-group"><label>Numéro / Number</label><input type="text" [(ngModel)]="cni.numero"></div>
+          <div class="form-group"><label>Date délivrance / Issue Date</label><input type="date" [(ngModel)]="cni.dateDelivrance"></div>
+          <div class="form-group"><label>Date expiration / Expiry Date</label><input type="date" [(ngModel)]="cni.dateExpiration"></div>
+          <div class="form-group"><label>Lieu délivrance / Location</label><input type="text" [(ngModel)]="cni.lieu"></div>
+        </ng-container>
+
+        <!-- ACTE NAISSANCE -->
+        <ng-container *ngIf="typePiece === 'ACTE_NAISSANCE'">
+          <div class="form-group"><label>Numéro acte / Act Number</label><input type="text" [(ngModel)]="naissance.numeroActe"></div>
+          <div class="form-group"><label>Date établissement / Date</label><input type="date" [(ngModel)]="naissance.dateEtablissement"></div>
+          <div class="form-group"><label>Lieu établissement / Location</label><input type="text" [(ngModel)]="naissance.lieu"></div>
+        </ng-container>
+
+        <!-- ACTE MARIAGE -->
+        <ng-container *ngIf="typePiece === 'ACTE_MARIAGE'">
+          <div class="form-group"><label>Numéro acte / Act Number</label><input type="text" [(ngModel)]="mariage.numeroActe"></div>
+          <div class="form-group"><label>Nom conjoint / Spouse Name</label><input type="text" [(ngModel)]="mariage.nomConjoint"></div>
+          <div class="form-group"><label>Date mariage / Date</label><input type="date" [(ngModel)]="mariage.dateMariage"></div>
+          <div class="form-group"><label>Lieu mariage / Location</label><input type="text" [(ngModel)]="mariage.lieuMariage"></div>
+        </ng-container>
+
+        <!-- AUTRES PIECES -->
+        <ng-container *ngIf="typePiece === 'ACTE_DECES' || typePiece === 'ACTE_DIVORCE' || typePiece === 'JUGEMENT_SUPPLETIF'">
+           <div class="form-group"><label>Numéro / Number</label><input type="text" [(ngModel)]="jugement.numeroJugement"></div>
+           <div class="form-group"><label>Date</label><input type="date" [(ngModel)]="jugement.dateJugement"></div>
+           <div class="form-group"><label>Lieu / Tribunal / Location</label><input type="text" [(ngModel)]="jugement.tribunal"></div>
+        </ng-container>
+
+        <div class="form-group full-width" *ngIf="typePiece">
+          <label>Document PDF *</label>
+          <input type="file" (change)="onFileSelected($event)" accept=".pdf">
+        </div>
+      </div>
+
+      <div class="form-actions" *ngIf="typePiece">
+        <button class="btn-success" (click)="enregistrerPiece()">💾 Enregistrer / Save Document</button>
+      </div>
+    </div>
+
+    <!-- TABLE DES PIÈCES -->
+    <div class="table-container">
+      <table class="military-table">
+        <thead>
+          <tr>
+            <th>Type / Type</th>
+            <th>Numéro / Référence / Number</th>
+            <th>Détails / Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="pieces.length === 0">
+            <td colspan="3" class="empty-cell">Aucune pièce / No documents recorded.</td>
+          </tr>
+          <tr *ngFor="let p of pieces" (click)="voirPiece(p)" style="cursor:pointer;" [class.active-row]="pieceSelectionnee?.id === p.id">
+            <td><strong>{{ p.type }}</strong></td>
+            <td>{{ p.numeroActe || p.numero || p.numeroJugement }}</td>
+            <td><span class="file-badge">📄 Prêt / Ready</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PREVIEW PIÈCE -->
+    <div *ngIf="pieceSelectionnee" class="preview-box">
+      <h3>📑 Prévisualisation / Preview</h3>
+      
+      <div class="doc-viewer-container">
+        <div style="margin-bottom: 15px; display: flex; justify-content: flex-end;">
+          <a *ngIf="pieceSelectionnee.safeUrl" [href]="pieceSelectionnee.safeUrl" target="_blank" class="btn-open-new">
+             📂 Ouvrir / Open in new tab
+          </a>
+        </div>
+        <iframe [src]="pieceSelectionnee.safeUrl" width="100%" height="600px" style="border: none; background: white;"></iframe>
+      </div>
+    </div>
+
+  </div>
+
+</div>

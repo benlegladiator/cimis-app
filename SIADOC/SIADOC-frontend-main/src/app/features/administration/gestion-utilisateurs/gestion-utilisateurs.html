@@ -1,0 +1,85 @@
+<div class="admin-container">
+
+  <div class="header-actions">
+    <h2>⚙️ Gestion des utilisateurs / User Management</h2>
+    <button class="btn-import" (click)="importHierarchy()">
+      📤 Importer Hiérarchie Excel / Import Excel Hierarchy
+    </button>
+  </div>
+
+  <div class="card">
+
+    <h3>Créer un utilisateur / Create User</h3>
+
+    <div class="form-grid">
+
+      <input type="text" placeholder="Username" [(ngModel)]="form.username">
+
+      <input type="password" placeholder="Mot de passe / Password" [(ngModel)]="form.password">
+
+      <select [(ngModel)]="form.role">
+        <option value="">-- Rôle / Role --</option>
+        <option *ngFor="let r of roles" [value]="r">
+          {{ r }}
+        </option>
+      </select>
+
+      <!-- Selection de l'unité selon le rôle (Cascading) -->
+      <div class="hierarchy-filters" *ngIf="['RMIA', 'BRIGADE', 'BATAILLON', 'COMMANDANT_COMPAGNIE'].includes(form.role)">
+        
+        <select [(ngModel)]="form.regionId" (change)="onRegionChange()">
+          <option value="">-- RMIA --</option>
+          <option *ngFor="let r of regions" [value]="r.id">{{ r.nom }}</option>
+        </select>
+
+        <select *ngIf="['BRIGADE', 'BATAILLON', 'COMMANDANT_COMPAGNIE'].includes(form.role)" 
+                [(ngModel)]="form.brigadeId" (change)="onBrigadeChange()" [disabled]="!form.regionId">
+          <option value="">-- Brigade --</option>
+          <option *ngFor="let b of filteredBrigades" [value]="b.id">{{ b.nom }}</option>
+        </select>
+
+        <select *ngIf="['BATAILLON', 'COMMANDANT_COMPAGNIE'].includes(form.role)" 
+                [(ngModel)]="form.bataillonId" (change)="onBataillonChange()" [disabled]="!form.brigadeId">
+          <option value="">-- Bataillon / Battalion --</option>
+          <option *ngFor="let bat of filteredBataillons" [value]="bat.id">{{ bat.nom }}</option>
+        </select>
+
+        <select *ngIf="form.role === 'COMMANDANT_COMPAGNIE'" 
+                [(ngModel)]="form.compagnieId" [disabled]="!form.bataillonId">
+          <option value="">-- Compagnie / Company --</option>
+          <option *ngFor="let c of filteredCompagnies" [value]="c.labelAffichage || c.nom">{{ c.labelAffichage || c.nom }}</option>
+        </select>
+      </div>
+
+      <select *ngIf="form.role === 'COMMANDANT'" [(ngModel)]="form.secteurId">
+        <option value="">-- Secteur militaire / Military Sector --</option>
+        <option *ngFor="let s of secteurs" [value]="s.id">{{ s.nom }}</option>
+      </select>
+
+    </div>
+
+    <button class="btn-success" (click)="creerUtilisateur()">
+      ➕ Créer / Create
+    </button>
+
+  </div>
+
+  <hr>
+
+  <div class="list-header">
+    <h3>Liste des utilisateurs / User List</h3>
+    <input type="text" class="search-input" placeholder="🔍 Rechercher un utilisateur / Search user..." [(ngModel)]="searchTerm">
+  </div>
+
+  <div class="user-card" *ngFor="let u of filteredUtilisateurs">
+    <div class="user-info">
+      <strong>{{ u.username }}</strong>
+      <span class="role-badge" [ngClass]="u.role">{{ u.role }}</span>
+    </div>
+    <div class="user-unit" *ngIf="u.compagnie || u.bataillon || u.brigade || u.region || u.secteur">
+      📍 {{ u.compagnie?.labelAffichage || u.compagnie?.nom || u.bataillon?.nom || u.brigade?.nom || u.region?.nom || u.secteur?.nom }}
+    </div>
+    <button class="btn-delete" (click)="supprimerUtilisateur(u.id)">🗑️</button>
+  </div>
+
+</div>

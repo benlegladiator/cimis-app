@@ -1,0 +1,127 @@
+<div class="notation-container">
+
+  <!-- HEADER -->
+  <div class="header-section">
+    <h2 class="titre-page">📓 NOTATIONS & APPRÉCIATIONS / RATINGS & EVALUATIONS</h2>
+
+    <button *ngIf="!readOnly" class="btn-primary" (click)="afficherForm = !afficherForm">
+      {{ afficherForm ? '❌ Annuler / Cancel' : '➕ Ajouter une notation / Add Rating' }}
+    </button>
+  </div>
+
+  <!-- FORM -->
+  <div *ngIf="afficherForm && !readOnly" class="form-card">
+
+    <h3>Nouvelle notation / New Rating</h3>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Période du / Period From</label>
+        <input type="date" [(ngModel)]="notation.periodeDu">
+      </div>
+
+      <div class="form-group">
+        <label> Au / To</label>
+        <input type="date" [(ngModel)]="notation.periodeAu">
+      </div>
+
+      <div class="form-group full-width">
+        <label>Appréciation générale / General Evaluation</label>
+        <textarea [(ngModel)]="notation.appreciationGenerale" rows="4" placeholder="Saisir l'appréciation / Enter evaluation..."></textarea>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Document PDF / PDF Document</label>
+        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
+      </div>
+
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-success" (click)="enregistrer()">
+        💾 Enregistrer la notation / Save Rating
+      </button>
+    </div>
+
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-container">
+
+    <table class="military-table">
+
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Période du / From</th>
+          <th>Période au / To</th>
+          <th>Appréciation / Evaluation</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngIf="notations.length === 0">
+          <td colspan="4" class="empty-cell">
+            Aucune notation enregistrée / No ratings recorded.
+          </td>
+        </tr>
+
+        <tr *ngFor="let item of notations; let i = index"
+          (click)="voirNotation(item)"
+          style="cursor:pointer;">
+
+          <td>{{ i + 1 }}</td>
+
+          <td>{{ item.periodeDu | date:'dd/MM/yyyy' }}</td>
+
+          <td>{{ item.periodeAu | date:'dd/MM/yyyy' }}</td>
+
+          <td>{{ item.appreciationGenerale | slice:0:100 }}{{ item.appreciationGenerale?.length > 100 ? '...' : '' }}</td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+    <!-- ================= DETAILS ================= -->
+    <div *ngIf="notationSelectionnee" class="preview-box">
+
+      <h3>📑 Détails de la notation / Rating Details</h3>
+
+      <div class="preview-grid">
+        <div><b>Période du / From :</b> {{ notationSelectionnee.periodeDu | date:'dd/MM/yyyy' }}</div>
+        <div><b>Période au / To :</b> {{ notationSelectionnee.periodeAu | date:'dd/MM/yyyy' }}</div>
+        <div class="full"><b>Appréciation / Evaluation :</b> {{ notationSelectionnee.appreciationGenerale }}</div>
+      </div>
+
+      <!-- DOCUMENT VIEWER -->
+      <div class="doc-viewer-container">
+        <div *ngIf="!notationSelectionnee.id" class="no-doc-alert">
+           ⚠️ Informations document indisponibles / Document information unavailable
+        </div>
+
+        <div *ngIf="notationSelectionnee.id" style="width: 100%;">
+          <div style="margin-bottom: 15px; display: flex; justify-content: flex-end;">
+            <a [href]="getRawUrl(notationSelectionnee)" target="_blank" class="btn-open-new">
+               📂 Ouvrir dans un nouvel onglet / Open in new tab
+            </a>
+          </div>
+
+          <iframe
+            *ngIf="notationSelectionnee.safeUrl"
+            [src]="notationSelectionnee.safeUrl"
+            width="100%"
+            height="600px"
+            style="border: none; background: white;">
+          </iframe>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

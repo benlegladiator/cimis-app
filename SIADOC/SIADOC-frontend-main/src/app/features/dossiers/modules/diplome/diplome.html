@@ -1,0 +1,93 @@
+<div class="diplome-container">
+  <div class="header-section">
+    <h2 class="titre-page">🎓 Diplôme(s) militaire(s) / Military Diploma(s)</h2>
+
+    <button *ngIf="!readOnly" class="btn-primary" (click)="afficherForm = !afficherForm">
+      {{ afficherForm ? '❌ Annuler / Cancel' : '➕ Ajouter un diplôme / Add Diploma' }}
+    </button>
+  </div>
+
+  <!-- ================= FORM ================= -->
+  <div *ngIf="afficherForm && !readOnly" class="form-card">
+    <h3>Nouveau diplôme / New Diploma</h3>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Désignation du diplôme / Diploma Designation</label>
+        <input [(ngModel)]="diplomeForm.designation" placeholder="Ex: CIA, CAT2...">
+      </div>
+
+      <div class="form-group">
+        <label>École / Établissement / School / Establishment</label>
+        <input [(ngModel)]="diplomeForm.ecole" placeholder="Ex: EMIA, ENS...">
+      </div>
+
+      <div class="form-group">
+        <label>Date obtention / Date Obtained</label>
+        <input type="date" [(ngModel)]="diplomeForm.dateObtention">
+      </div>
+
+      <div class="form-group full-width">
+        <label>Document (PDF / Image)</label>
+        <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-success" (click)="enregistrer()">
+        💾 Enregistrer / Save
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= LISTE ================= -->
+  <div class="table-container">
+    <table class="military-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Désignation / Diploma</th>
+          <th>École / School</th>
+          <th>Date obtention / Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of diplomes; let i = index" (click)="voirDiplome(d)" style="cursor:pointer;">
+          <td>{{ i + 1 }}</td>
+          <td><strong>{{ d.designation }}</strong></td>
+          <td>{{ d.ecole }}</td>
+          <td>{{ d.dateObtention | date:'dd/MM/yyyy' }}</td>
+        </tr>
+        <tr *ngIf="diplomes.length === 0">
+          <td colspan="4" class="empty-cell">
+            Aucun diplôme enregistré / No diploma recorded.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ================= PREVIEW ================= -->
+    <div *ngIf="diplomeSelectionne" class="preview-box">
+      <div class="preview-header">
+        <h3>📑 Détails / Details</h3>
+        <button class="btn-close-preview" (click)="fermerPreview()">✖ Fermer / Close</button>
+      </div>
+
+      <div class="preview-grid">
+        <div><b>Désignation / Designation :</b> {{ diplomeSelectionne.designation }}</div>
+        <div><b>École / School :</b> {{ diplomeSelectionne.ecole }}</div>
+        <div><b>Date obtention / Date :</b> {{ diplomeSelectionne.dateObtention | date:'dd/MM/yyyy' }}</div>
+      </div>
+
+      <div class="doc-viewer-container">
+        <iframe
+          *ngIf="diplomeSelectionne.safeUrl"
+          [src]="diplomeSelectionne.safeUrl"
+          width="100%"
+          height="600px"
+          style="border: none; background: white;">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</div>

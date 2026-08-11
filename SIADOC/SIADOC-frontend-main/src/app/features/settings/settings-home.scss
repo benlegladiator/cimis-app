@@ -1,0 +1,119 @@
+.settings-container {
+  padding: 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: radial-gradient(circle at top right, rgba(206, 17, 38, 0.03), transparent),
+              radial-gradient(circle at bottom left, rgba(0, 122, 94, 0.03), transparent);
+
+  .header {
+    margin-bottom: 4rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 2rem;
+    h1 { 
+      color: #1b3022; 
+      font-size: 2.8rem; 
+      margin: 0; 
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+    p { 
+      color: #4a5568; 
+      font-size: 1.2rem; 
+      margin-top: 0.75rem; 
+      font-weight: 500;
+      opacity: 0.8;
+    }
+  }
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2.5rem;
+}
+
+.settings-card {
+  background: white;
+  border-radius: 24px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 6px; height: 100%;
+    background: linear-gradient(to bottom, #007A5E, #CE1126, #FCD116);
+    opacity: 0.7;
+    transition: width 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 30px 60px -12px rgba(27, 48, 34, 0.15), 0 18px 36px -18px rgba(0, 0, 0, 0.1);
+    border-color: #007A5E;
+    
+    &::before { width: 10px; }
+    
+    .icon-box {
+      background: #1b3022;
+      color: #FCD116;
+      transform: rotate(5deg) scale(1.1);
+    }
+    .card-footer { color: #CE1126; }
+  }
+
+  .icon-box {
+    width: 70px;
+    height: 70px;
+    background: #f8fafc;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    color: #1b3022;
+    transition: all 0.3s;
+    border: 1px solid #f1f5f9;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .card-body {
+    h3 { 
+      margin: 0; 
+      color: #1a202c; 
+      font-size: 1.6rem; 
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+    p { 
+      margin: 0.75rem 0 0; 
+      color: #4a5568; 
+      font-size: 1rem; 
+      line-height: 1.6; 
+      font-weight: 500;
+    }
+  }
+
+  .card-footer {
+    margin-top: auto;
+    font-weight: 800;
+    color: #007A5E;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: color 0.3s;
+  }
+}

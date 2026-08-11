@@ -1,0 +1,69 @@
+<h2>⚖️ Punitions & Sanctions</h2>
+
+<button class="btn-primary" (click)="ajouter()">
+  ➕ Ajouter une sanction
+</button>
+
+<!-- FORM -->
+<div *ngIf="afficherFormulaire" class="card">
+
+  <input placeholder="Désignation"
+         [(ngModel)]="form.designation">
+
+  <input placeholder="Texte décision"
+         [(ngModel)]="form.texte">
+
+  <input type="date"
+         [(ngModel)]="form.dateEffet">
+
+  <input type="file"
+         (change)="onFileSelected($event)">
+
+  <button class="btn-success"
+          (click)="enregistrer()">
+    💾 Enregistrer
+  </button>
+
+</div>
+
+<hr>
+
+<!-- LISTE -->
+<div class="list">
+
+  <div class="item"
+       *ngFor="let p of punitions"
+       (click)="voir(p)">
+
+    <div>
+      <strong>{{ p.designation }}</strong>
+      <small>{{ p.dateEffet }}</small>
+    </div>
+
+    <span>{{ p.document }}</span>
+
+    <button (click)="supprimer(p.id); $event.stopPropagation()">
+      🗑
+    </button>
+
+  </div>
+
+</div>
+
+<!-- PREVIEW -->
+<div *ngIf="selection" class="preview">
+
+  <h3>Détails</h3>
+
+  <p><b>Désignation :</b> {{ selection.designation }}</p>
+  <p><b>Texte :</b> {{ selection.texte }}</p>
+  <p><b>Date :</b> {{ selection.dateEffet }}</p>
+
+  <iframe
+    *ngIf="selection.safeUrl"
+    [src]="selection.safeUrl"
+    width="100%"
+    height="500px">
+  </iframe>
+
+</div>

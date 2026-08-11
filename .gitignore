@@ -1,0 +1,5 @@
+/logs/*.log
+/scratch/
+*.tmp
+.DS_Store
+Thumbs.db

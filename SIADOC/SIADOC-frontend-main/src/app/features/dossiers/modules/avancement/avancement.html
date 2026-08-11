@@ -1,0 +1,177 @@
+<div class="avancement-container">
+
+  <!-- HEADER -->
+  <div class="header-section">
+    <h2 class="titre-page">📈 AVANCEMENT (Grades & Échelons) / PROMOTION (Ranks & Steps)</h2>
+
+    <button *ngIf="!readOnly" class="btn-primary" (click)="toggleMiniForm()">
+      ➕ Ajouter / Add Promotion
+    </button>
+  </div>
+
+  <!-- MINI FORM -->
+  <div *ngIf="showMiniForm() && !readOnly" class="form-card">
+
+    <h3>Nouveau / New Promotion</h3>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Type d'opération / Operation Type</label>
+        <select [(ngModel)]="nouvelAvancement.typeAvancement">
+          <option value="AVANCEMENT">Avancement de Grade / Rank Promotion</option>
+          <option value="PROLONGATION_SERVICE">Prolongation de service / Service Extension</option>
+        </select>
+      </div>
+
+      <div class="form-group" *ngIf="nouvelAvancement.typeAvancement === 'AVANCEMENT'">
+        <label>Nouveau Grade / New Rank</label>
+        <select [(ngModel)]="nouvelAvancement.avancement">
+          <option value="">-- Choisir / Select Rank --</option>
+          <optgroup *ngFor="let cat of categoriesDisponibles" [label]="cat.label">
+            <option *ngFor="let g of cat.grades" [value]="g">{{ g }}</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="form-group" *ngIf="nouvelAvancement.typeAvancement === 'PROLONGATION_SERVICE'">
+        <label>Durée (Années) / Duration (Years)</label>
+        <input type="number"
+               [(ngModel)]="nouvelAvancement.dureeAnnees"
+               min="1" max="5">
+      </div>
+
+      <div class="form-group">
+        <label>N° du texte / Text Number</label>
+        <input type="text"
+               [(ngModel)]="nouvelAvancement.numeroTexte">
+      </div>
+
+      <div class="form-group">
+        <label>Signataire / Signatory</label>
+        <input type="text"
+               [(ngModel)]="nouvelAvancement.signataire">
+      </div>
+
+      <div class="form-group">
+        <label>Date d'effet / Effective Date</label>
+        <input type="date"
+               [(ngModel)]="nouvelAvancement.dateEffet">
+      </div>
+
+      <div class="form-group full-width">
+        <label>Document (PDF / Image)</label>
+        <input type="file"
+               (change)="onFileSelected($event)"
+               accept=".pdf,.jpg,.jpeg,.png">
+      </div>
+
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-secondary" (click)="annulerAjout()">
+        Annuler / Cancel
+      </button>
+
+      <button class="btn-success"
+              (click)="enregistrerAvancement()">
+        💾 Enregistrer / Save
+      </button>
+    </div>
+
+  </div>
+
+  <!-- FILTRE -->
+  <div class="filter-bar">
+    <input type="text"
+           [(ngModel)]="filtreTexte"
+           placeholder="Rechercher / Search Rank or Signatory..."
+           class="filter-input">
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-container">
+
+    <table class="military-table">
+
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Grade / Rank</th>
+          <th>N° Texte / Text No.</th>
+          <th>Signataire / Signatory</th>
+          <th>Date d'effet / Date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngIf="avancementsFiltres.length === 0">
+          <td colspan="5" class="empty-cell">
+            Aucun avancement / No promotions recorded.
+          </td>
+        </tr>
+
+        <tr *ngFor="let item of avancementsFiltres; let i = index"
+          (click)="voirAvancement(item)"
+          [class.recent]="i === 0"
+          style="cursor:pointer;">
+
+          <td>{{ i + 1 }}</td>
+
+          <td><strong>{{ item.avancement }}</strong></td>
+
+          <td>{{ item.numeroTexte }}</td>
+
+          <td>{{ item.signataire }}</td>
+
+          <td>{{ item.dateEffet | date:'dd/MM/yyyy' }}</td>
+
+          
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+    <!-- ================= DETAILS ================= -->
+    <div *ngIf="avancementSelectionne" class="preview-box">
+
+      <h3>📑 Détails / Details</h3>
+
+      <div class="preview-grid">
+        <div><b>Grade / Rank :</b> {{ avancementSelectionne.avancement }}</div>
+        <div><b>N° Texte / Text No. :</b> {{ avancementSelectionne.numeroTexte }}</div>
+        <div><b>Signataire / Signatory :</b> {{ avancementSelectionne.signataire }}</div>
+        <div><b>Date d'effet / Date :</b> {{ avancementSelectionne.dateEffet | date:'dd/MM/yyyy' }}</div>
+      </div>
+
+      <!-- DOCUMENT VIEWER -->
+      <div class="doc-viewer-container">
+        <div *ngIf="!avancementSelectionne.id" class="no-doc-alert">
+           ⚠️ Document indisponible / Document unavailable
+        </div>
+
+        <div *ngIf="avancementSelectionne.id" style="width: 100%;">
+          <div style="margin-bottom: 15px; display: flex; justify-content: flex-end;">
+            <a [href]="getRawUrl(avancementSelectionne)" target="_blank" class="btn-open-new">
+               📂 Ouvrir / Open in new tab
+            </a>
+          </div>
+
+          <iframe
+            *ngIf="avancementSelectionne.safeUrl"
+            [src]="avancementSelectionne.safeUrl"
+            width="100%"
+            height="600px"
+            style="border: none; background: white;">
+          </iframe>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
