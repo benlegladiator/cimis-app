@@ -264,24 +264,12 @@ function logOperation(string $operation, string $details, string $status = 'SUCC
 function logSyncDetail(int $candidat_id, string $matricule_militaire, string $type, string $status, string $details = null): void {
     global $pdo;
     try {
-        // CrÃ©er la table si elle n'existe pas
-        $pdo->exec("
-            CREATE TABLE IF NOT EXISTS siadoc_sync_details (
-                id                  INT AUTO_INCREMENT PRIMARY KEY,
-                candidat_id         INT NULL,
-                matricule_militaire VARCHAR(50),
-                operation_type      VARCHAR(50),
-                operation_status    VARCHAR(20),
-                details             TEXT,
-                operation_date      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_matricule (matricule_militaire),
-                INDEX idx_date (operation_date)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-        ");
-        $pdo->prepare("
+        $stmt = $pdo->prepare("
             INSERT INTO siadoc_sync_details (candidat_id, matricule_militaire, operation_type, operation_status, details, operation_date)
             VALUES (?, ?, ?, ?, ?, NOW())
-        ")->execute([$candidat_id, $matricule_militaire, $type, $status, $details]);
+        ");
+        $stmt->execute([$candidat_id, $matricule_militaire, $type, $status, $details]);
+        $stmt->closeCursor();
     } catch (Exception $e) { /* silencieux */ }
 }
 
