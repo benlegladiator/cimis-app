@@ -139,7 +139,6 @@ define('SQL_COLONNES_CARTE', "
     c.code_qr,
     c.empreinte_data,
     c.source_system,
-    c.type_personnel,
     c.statut_militaire,
     c.categorie_civil,
     c.suspendus,
