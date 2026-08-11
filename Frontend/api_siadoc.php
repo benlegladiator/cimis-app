@@ -33,7 +33,9 @@ if (!($_SERVER['REQUEST_METHOD'] === 'GET' && !isset($_GET['action']))) {
 }
 
 // Configuration SIADOC - Selon documentation officielle
-define('SIADOC_API_URL', 'https://siadoc.onrender.com');
+if (!defined('SIADOC_API_URL')) {
+    define('SIADOC_API_URL', 'https://siadoc.onrender.com');
+}
 if (!defined('SIADOC_API_KEY')) {
     define('SIADOC_API_KEY', 'siadoc-2026-cimis-integration'); // Clé officielle CIMIS
 }
@@ -1354,10 +1356,9 @@ if ($request_method === 'GET' && !isset($_GET['action'])) {
                 to { transform: translateX(100%); opacity: 0; }
             }
         `;
-}
-?>
+        document.head.appendChild(style);
 
-            function getMilitaire() {
+        function getMilitaire() {
                 const matricule = document.getElementById('matriculeInput').value;
                 if (!matricule) {
                     alert('Veuillez entrer un matricule');
