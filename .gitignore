@@ -1,5 +1,6 @@
 /logs/*.log
 /scratch/
+SIADOC/
 *.tmp
 .DS_Store
 Thumbs.db
