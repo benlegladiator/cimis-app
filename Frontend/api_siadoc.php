@@ -42,26 +42,23 @@ function sendErrorResponse($message, $http_code = 400) {
     exit();
 }
 
-// Routeur AJAX interne
+// Routeur AJAX interne (Flux SIADOC -> CIMIS)
 if (isset($_GET['action'])) {
     $action = $_GET['action'];
     
     switch ($action) {
         case 'get_militaire':
             $matricule = $_GET['matricule'] ?? null;
-            if (!$matricule) sendErrorResponse('Matricule requis');
+            if (!$matricule) sendErrorResponse('Matricule SIADOC requis');
             
             try {
-                // Tenter d'abord la BDD locale
-                $stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule = ? OR matricule_militaire = ?");
-                $stmt->execute([$matricule, $matricule]);
-                $candidat = $stmt->fetch(PDO::FETCH_ASSOC);
-                $stmt->closeCursor();
-
-                if ($candidat) {
-                    sendSuccessResponse([$candidat], 'Militaire trouvé dans la base CIMIS');
+                // Interroger le serveur SIADOC officiel
+                $siadoc_res = callSIADOCAPI('/api/export/militaire/info', ['matricule' => $matricule]);
+                
+                if ($siadoc_res['http_code'] === 200 && !empty($siadoc_res['data'])) {
+                    sendSuccessResponse([$siadoc_res['data']], 'Militaire trouvé dans SIADOC');
                 } else {
-                    // Tenter de simuler/récupérer depuis SIADOC
+                    // Échantillon SIADOC si le matricule n'existe pas encore chez SIADOC
                     sendSuccessResponse([
                         [
                             'matricule_militaire' => strtoupper($matricule),
@@ -72,10 +69,10 @@ if (isset($_GET['action'])) {
                             'date_naissance' => '1980-05-15',
                             'source_system' => 'SIADOC'
                         ]
-                    ], 'Militaire récupéré depuis SIADOC');
+                    ], 'Simulé depuis le serveur SIADOC');
                 }
             } catch (Exception $e) {
-                sendErrorResponse($e->getMessage());
+                sendErrorResponse('Erreur de connexion SIADOC: ' . $e->getMessage());
             }
             break;
 
@@ -85,26 +82,22 @@ if (isset($_GET['action'])) {
             $unite = $_GET['unite'] ?? null;
 
             try {
-                $sql = "SELECT * FROM candidat WHERE supprimer = 1";
-                $params = [];
+                // Interroger le serveur SIADOC officiel
+                $siadoc_res = callSIADOCAPI('/api/export/militaire/info/all');
+                $list = [];
 
-                if ($grade) {
-                    $sql .= " AND LOWER(grade) = LOWER(?)";
-                    $params[] = $grade;
+                if ($siadoc_res['http_code'] === 200 && is_array($siadoc_res['data']) && !empty($siadoc_res['data'])) {
+                    $list = $siadoc_res['data'];
+                    if ($grade) {
+                        $list = array_filter($list, fn($m) => strtolower($m['grade'] ?? '') === strtolower($grade));
+                    }
+                    if ($unite) {
+                        $list = array_filter($list, fn($m) => strtolower($m['unite'] ?? $m['corps'] ?? '') === strtolower($unite));
+                    }
                 }
-                if ($unite) {
-                    $sql .= " AND LOWER(unite) = LOWER(?)";
-                    $params[] = $unite;
-                }
-                $sql .= " LIMIT 50";
-
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute($params);
-                $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                $stmt->closeCursor();
 
                 if (empty($list)) {
-                    // Échantillon dynamique si BDD vide pour le filtre
+                    // Candidats de démonstration SIADOC
                     $list = [
                         [
                             'matricule_militaire' => 'SIA-2026-001',
@@ -121,13 +114,21 @@ if (isset($_GET['action'])) {
                             'grade' => $grade ?: 'Amiral',
                             'unite' => $unite ?: 'MARINE NATIONALE',
                             'source_system' => 'SIADOC'
+                        ],
+                        [
+                            'matricule_militaire' => 'SIA-2026-003',
+                            'nom' => 'EBAA',
+                            'prenom' => 'François',
+                            'grade' => $grade ?: 'Général de Division',
+                            'unite' => $unite ?: 'GENDARMERIE NATIONALE',
+                            'source_system' => 'SIADOC'
                         ]
                     ];
                 }
 
-                sendSuccessResponse($list, count($list) . ' militaire(s) trouvé(s)');
+                sendSuccessResponse(array_values($list), count($list) . ' militaire(s) SIADOC disponible(s)');
             } catch (Exception $e) {
-                sendErrorResponse($e->getMessage());
+                sendErrorResponse('Erreur de connexion SIADOC: ' . $e->getMessage());
             }
             break;
 
@@ -515,17 +516,24 @@ if (isset($_GET['action'])) {
                         document.getElementById('msgSuccess').textContent = (data.message || (list.length + ' militaire(s) trouvé(s)'));
                         bSuccess.style.display = 'flex';
 
-                        // Remplir le tableau
-                        tbody.innerHTML = list.map(m => `
-                            <tr>
-                                <td style="font-weight: 600; color: #34d399;">${m.matricule_militaire || m.matricule || 'N/A'}</td>
-                                <td>${m.nom || ''} ${m.prenom || ''}</td>
-                                <td>${m.grade || 'Non spécifié'}</td>
-                                <td>${m.unite || 'Non spécifié'}</td>
-                                <td><span class="badge">${m.source_system || 'SIADOC'}</span></td>
-                                <td><i class="fas fa-check-circle" style="color: #34d399;"></i> Actif</td>
-                            </tr>
-                        `).join('');
+                        // Remplir le tableau avec bouton d'importation vers CIMIS
+                        tbody.innerHTML = list.map(m => {
+                            const mat = m.matricule_militaire || m.matricule || 'N/A';
+                            return `
+                                <tr>
+                                    <td style="font-weight: 600; color: #34d399;">${mat}</td>
+                                    <td>${m.nom || ''} ${m.prenom || ''}</td>
+                                    <td>${m.grade || 'Non spécifié'}</td>
+                                    <td>${m.unite || m.corps || 'Non spécifié'}</td>
+                                    <td><span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">${m.source_system || 'SIADOC'}</span></td>
+                                    <td>
+                                        <button class="btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="importerUnMilitaire('${mat}')">
+                                            <i class="fas fa-cloud-arrow-down"></i> Importer dans CIMIS
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('');
 
                         actionsArea.style.display = 'block';
                     } else {
@@ -585,6 +593,10 @@ if (isset($_GET['action'])) {
                     }
                 })
                 .catch(() => {});
+        }
+
+        function importerUnMilitaire(mat) {
+            window.location.href = '../backend/siadoc_import.php?action=importer_militaires&limit=1&matricule=' + encodeURIComponent(mat) + '&api_key=siadoc-2026-cimis-integration';
         }
 
         function lancerImportationLots() {
