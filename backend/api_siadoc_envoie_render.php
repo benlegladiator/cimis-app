@@ -17,8 +17,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Configuration PostgreSQL pour Render
-require_once 'config_render_postgresql.php';
+// Configuration (config.php dynamique avec fallback config_render_postgresql.php)
+if (file_exists(__DIR__ . '/config.php')) {
+    require_once __DIR__ . '/config.php';
+} elseif (file_exists(__DIR__ . '/config_render_postgresql.php')) {
+    require_once __DIR__ . '/config_render_postgresql.php';
+}
+
+if (!defined('SIADOC_API_KEY')) {
+    define('SIADOC_API_KEY', 'siadoc-2026-cimis-integration');
+}
+
+// Fonction de vérification stricte de la Clé API
+function verifyApiKey() {
+    $headers = function_exists('getallheaders') ? getallheaders() : [];
+    $headers_lower = array_change_key_case($headers, CASE_LOWER);
+
+    $api_key = $headers_lower['x-api-key']
+        ?? $headers_lower['authorization']
+        ?? $_SERVER['HTTP_X_API_KEY']
+        ?? $_GET['api_key']
+        ?? $_POST['api_key']
+        ?? null;
+
+    if ($api_key && str_starts_with($api_key, 'Bearer ')) {
+        $api_key = substr($api_key, 7);
+    }
+
+    if (!$api_key || $api_key !== SIADOC_API_KEY) {
+        http_response_code(401);
+        echo json_encode([
+            'success' => false,
+            'error'   => 'Clé API invalide ou manquante',
+            'code'    => 'INVALID_API_KEY',
+            'timestamp' => date('c')
+        ]);
+        exit();
+    }
+}
 
 // Fonction pour encoder une image en base64
 function encodeImageToBase64($image_path) {
@@ -64,12 +100,17 @@ function sendError($message, $http_code = 400) {
         'success' => false,
         'error' => $message,
         'timestamp' => date('c'),
-        'environment' => 'Render + PostgreSQL'
+        'environment' => 'Render'
     ]);
 }
 
 // Router les requêtes
 $action = $_GET['action'] ?? 'help';
+
+// SÉCURITÉ : Vérifier la clé API pour toutes les actions de données
+if (in_array($action, ['carte', 'cartes', 'statistiques', 'debug', 'sync'])) {
+    verifyApiKey();
+}
 
 switch ($action) {
     case 'help':

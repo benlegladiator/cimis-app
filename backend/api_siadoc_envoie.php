@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * API SIADOC ENVOIE - VERSION CONSOLIDÃ‰E v2.0
  * Expose les donnÃ©es CIMIS pour SIADOC
@@ -108,11 +108,10 @@ function logAPIAccess($action, $details = null) {
         $stmt = $pdo->prepare("
             INSERT INTO api_sync_log (system, action, status, details, last_sync)
             VALUES ('CIMIS_EXPORT', ?, 'SUCCESS', ?, NOW())
-            ON DUPLICATE KEY UPDATE last_sync = NOW()
         ");
         $stmt->execute([$action, $details ? json_encode($details) : null]);
     } catch (Exception $e) {
-        // Silencieux â€” ne pas bloquer la rÃ©ponse si le log Ã©choue
+        // Silencieux — ne pas bloquer la réponse si le log échoue
     }
 }
 
@@ -367,15 +366,15 @@ switch ($action) {
                 }
             }
 
-            // Filtre Ã¢ge min
+            // Filtre âge min (compatible ANSI SQL/MySQL/PostgreSQL)
             if (!empty($_GET['age_min'])) {
-                $sql .= " AND TIMESTAMPDIFF(YEAR, c.date_naissance, CURDATE()) >= ?";
+                $sql .= " AND (YEAR(CURRENT_DATE) - YEAR(c.date_naissance)) >= ?";
                 $params[] = (int)$_GET['age_min'];
             }
 
-            // Filtre Ã¢ge max
+            // Filtre âge max (compatible ANSI SQL/MySQL/PostgreSQL)
             if (!empty($_GET['age_max'])) {
-                $sql .= " AND TIMESTAMPDIFF(YEAR, c.date_naissance, CURDATE()) <= ?";
+                $sql .= " AND (YEAR(CURRENT_DATE) - YEAR(c.date_naissance)) <= ?";
                 $params[] = (int)$_GET['age_max'];
             }
 

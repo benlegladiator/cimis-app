@@ -709,7 +709,26 @@ echo "=== FIN DES TESTS ===\n";
 
 ---
 
+## CONFORMITÉ AUDIT SIADOC & DÉCISIONS TECHNIQUES
+
+### 1. Sécurité et Authentification Clé API (`X-API-KEY`)
+- **Présente sur TOUS les scripts API** (`api_siadoc_envoie.php`, `api_siadoc_envoie_render.php`, `api_siadoc.php`).
+- **Contrôle strict `verifyApiKey()`** : Nécessite le header `X-API-KEY: siadoc-2026-cimis-integration` (ou le paramètre URL `api_key`).
+- **Comportement** : Toute requête non authentifiée renvoie immédiatement un code `HTTP 401 Unauthorized` avec message JSON d'erreur.
+
+### 2. Convention des Champs BDD (`supprimer` & `suspendus`)
+- **`supprimer = 1`** : **Personnel Actif** (Présent, actif et imprimable dans le système CIMIS).
+- **`supprimer = 0`** : **Personnel Corbeille/Archivé** (Placé en corbeille).
+- **`suspendus = 0`** : Personnel actif non suspendu.
+- **`suspendus = 1`** : Personnel suspendu (carte temporairement bloquée).
+
+### 3. Rétrocompatibilité & Portabilité Multi-BDD (MySQL & PostgreSQL)
+- **Calcul d'âge réactif** : Remplacement de `TIMESTAMPDIFF` par la syntaxe standard ANSI SQL `(YEAR(CURRENT_DATE) - YEAR(date_naissance))`.
+- **Logs d'échanges** : Requêtes standardisées sans dépendances exclusives `ON DUPLICATE KEY`.
+
+---
+
 *Document de Procédure API CIMIS-SIADOC*
-*Version 1.0*
-*Dernière mise à jour : 11 Avril 2026*
+*Version 2.0 (Post-Audit SIADOC)*
+*Dernière mise à jour : 11 Août 2026*
 *Classification : CONFIDENTIEL DÉFENSE*
