@@ -26,6 +26,42 @@ if (!defined('SIADOC_API_URL')) {
     define('SIADOC_API_URL', 'https://siadoc.onrender.com');
 }
 
+// Fonction d'appel HTTP vers l'API SIADOC
+function callSIADOCAPI(string $endpoint, array $params = [], string $method = 'GET'): array {
+    $url = rtrim(SIADOC_API_URL, '/') . '/' . ltrim($endpoint, '/');
+    if (!empty($params) && $method === 'GET') {
+        $url .= '?' . http_build_query($params);
+    }
+
+    $ch = curl_init();
+    $curl_opts = [
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            'Accept: application/json',
+            'X-API-KEY: ' . SIADOC_API_KEY,
+            'Authorization: Bearer ' . SIADOC_API_KEY
+        ],
+        CURLOPT_TIMEOUT => 10,
+        CURLOPT_SSL_VERIFYPEER => false
+    ];
+
+    if ($method === 'POST') {
+        $curl_opts[CURLOPT_POST] = true;
+        $curl_opts[CURLOPT_POSTFIELDS] = json_encode($params);
+    }
+
+    curl_setopt_array($ch, $curl_opts);
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    return [
+        'http_code' => $http_code,
+        'data' => json_decode($response, true) ?: []
+    ];
+}
+
 // Helper réponses JSON API
 function sendSuccessResponse($data, $message = null) {
     header('Content-Type: application/json');
