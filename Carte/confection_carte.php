@@ -159,15 +159,18 @@ function getGradeImage($grade) {
         'general de corps aerienne' => 'img/galons/generale_corps.png',
         'general de division aérienne' => 'img/galons/generale_division.png',
         'general de brigade aérienne' => 'img/galons/generale_brigade.png',
-        'amiral d\'escadre' => 'img/galons/generale_corps.png',
+        'amiral d\'escadre' => 'img/galons/general_arme.png',
+        'amiral d escadre' => 'img/galons/general_arme.png',
+        'amiral' => 'img/galons/general_arme.png',
         'vice amiral d\'escadre' => 'img/galons/generale_corps.png',
+        'vice amiral d escadre' => 'img/galons/generale_corps.png',
         
         // OFFICIERS SUPERIEURS avec apostrophes
         'chef d\'escadron' => 'img/galons/commandant.png',
         'chef de bataillon' => 'img/galons/commandant.png',
         'capitaine de vaisseau' => 'img/galons/colonel.png',
         'capitaine de frégate' => 'img/galons/colonel.png',
-        'capitaine de frégate' => 'img/galons/colonel.png',  // avec accent
+        'capitaine de fregate' => 'img/galons/colonel.png',
         'capitaine de corvette' => 'img/galons/colonel.png',
         'lieutenant de vaisseau' => 'img/galons/lieutenant_colonel.png',
         'lieutenant colonel' => 'img/galons/lieutenant_colonel.png',
@@ -178,8 +181,6 @@ function getGradeImage($grade) {
         'lieutenant' => 'img/galons/lieutenant.png',
         'enseigne de vaisseau de 1ere classe' => 'img/galons/enseigne_1e_classe.png',
         'enseigne de vaisseau de 2eme classe' => 'img/galons/enseigne_2e_classe.png',
-        
-        // Variantes avec "E" majuscule (depuis enrolement.js)
         'enseigne de vaisseau de 1e classe' => 'img/galons/enseigne_1e_classe.png',
         'enseigne de vaisseau de 2e classe' => 'img/galons/enseigne_2e_classe.png',
         
@@ -196,14 +197,26 @@ function getGradeImage($grade) {
         'premier maitre' => 'img/galons/adjudant_chef.png',
         'second maitre' => 'img/galons/adjudant.png',
         'quartier maitre de 1ere classe' => 'img/galons/caporal_che.png',
+        'quartier maitre de 1e classe' => 'img/galons/caporal_che.png',
         'quartier maitre de 2eme classe' => 'img/galons/caporal.png',
+        'quartier maitre de 2e classe' => 'img/galons/caporal.png',
         
-        // MILITAIRES DU RANG avec apostrophes
-        'soldat de 1ere classe' => 'img/galons/soldat_1er_classe.png',
-        'soldat de 2eme classe' => 'img/galons/soldat_2eme_classe.png',
-        'matelot de 1ere classe' => 'img/galons/soldat_1er_classe.png',
-        'matelot de 2eme classe' => 'img/galons/soldat_2eme_classe.png',
-        'eleve gendarme' => 'img/galons/soldat_2eme_classe.png',
+        // MILITAIRES DU RANG SANS GALON IMAGE
+        'soldat de 1ere classe' => '',
+        'soldat de 1e classe' => '',
+        'soldat de 1er classe' => '',
+        'soldat de 2eme classe' => '',
+        'soldat de 2e classe' => '',
+        'matelot de 1ere classe' => '',
+        'matelot de 1e classe' => '',
+        'matelot de 1er classe' => '',
+        'matelot de 2eme classe' => '',
+        'matelot de 2e classe' => '',
+        'aviateur de 1ere classe' => '',
+        'aviateur de 1e classe' => '',
+        'aviateur de 2eme classe' => '',
+        'aviateur de 2e classe' => '',
+        'eleve gendarme' => '',
         
         'general de division' => 'img/galons/generale_division.png',
         'general de division aerienne' => 'img/galons/generale_division.png',
@@ -270,15 +283,21 @@ function getGradeImage($grade) {
         'gendarme' => 'img/galons/gendarme.png',
         'quartier maitre de 2eme classe' => 'img/galons/caporal.png',
         
-        'soldat de 1ere classe' => 'img/galons/soldat_1er_classe.png',
-        'matelot de 1ere classe' => 'img/galons/soldat_1er_classe.png',
-        'aviateur de 1ere classe' => 'img/galons/soldat_1er_classe.png',
-        'gendarme de 1ere classe' => 'img/galons/soldat_1er_classe.png',
+        'soldat de 1ere classe' => '',
+        'soldat de 1e classe' => '',
+        'matelot de 1ere classe' => '',
+        'matelot de 1e classe' => '',
+        'aviateur de 1ere classe' => '',
+        'aviateur de 1e classe' => '',
+        'gendarme de 1ere classe' => '',
         
         // SANS GALON (soldat, aviateur, matelot, gendarme de 2eme classe)
         'soldat de 2eme classe' => '',
+        'soldat de 2e classe' => '',
         'matelot de 2eme classe' => '',
+        'matelot de 2e classe' => '',
         'aviateur de 2eme classe' => '',
+        'aviateur de 2e classe' => '',
         'gendarme de 2eme classe' => '',
         
         // ÉLÈVES (PAS DE GALON)
@@ -657,9 +676,13 @@ function renderRecto($candidat, $config, $unite, $fond_image, $logo_unit) {
             </div>
             
             <!-- Image du grade positionnée à x=90% y=50% z-index=3 -->
-            <?php if ($candidat['unite'] !== 'CIVIL'): ?>
+            <?php 
+            $img_grade = getGradeImage($candidat['grade'] ?? '');
+            $img_grade_clean = ltrim($img_grade, '.');
+            if ($candidat['unite'] !== 'CIVIL' && !empty($img_grade) && file_exists('../' . ltrim($img_grade_clean, '/'))): 
+            ?>
             <div class="grade-image-container">
-                <img src="<?php echo getGradeImage($candidat['grade']); ?>" class="grade-image" alt="Grade">
+                <img src="<?php echo htmlspecialchars($img_grade); ?>" class="grade-image" alt="Grade">
             </div>
             <?php endif; ?>
             

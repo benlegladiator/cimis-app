@@ -137,9 +137,11 @@
 - Adjudant-Chef
 - Adjudant
 
-### Sous-Officiers Subalternes (5)
+### Sous-Officiers Subalternes (2)
 - Maréchal des Logis-Chef
 - Maréchal des Logis
+
+### Militaires du Rang (3)
 - Gendarme Major
 - Gendarme
 - Élève-Gendarme

@@ -757,9 +757,11 @@ $form_data = $form_data ?? $candidat;
                 'Adjudant-Chef',
                 'Adjudant',
                 
-                // SOUS OFFICIERS SUBALTERNES (3)
+                // SOUS OFFICIERS SUBALTERNES (2)
                 'Maréchal des Logis-Chef',
                 'Maréchal des Logis',
+                
+                // MILITAIRES DU RANG (3)
                 'Gendarme Major',
                 'Gendarme',
                 'Élève-Gendarme'

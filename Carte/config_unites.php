@@ -2,22 +2,22 @@
 return [
     'ARMÉE DE TERRE' => [
         'class' => 'terre',
-        'fond'  => 'img/vert.PNG',
-        'logo'  => 'img/terre.PNG'
+        'fond'  => 'img/vert.png',
+        'logo'  => 'img/terre.png'
     ],
     'ARMÉE DE L\'AIR' => [
         'class' => 'air',
         'fond'  => 'img/blue.png',
-        'logo'  => 'img/1air.PNG'
+        'logo'  => 'img/1air.png'
     ],
     'GENDARMERIE NATIONALE' => [
         'class' => 'gendarmerie',
-        'fond'  => 'img/blanc.PNG',
+        'fond'  => 'img/blanc.png',
         'logo'  => 'img/gendarmerie.png'
     ],
     'MARINE NATIONALE' => [
         'class' => 'marine',
-        'fond'  => 'img/noir.PNG',
+        'fond'  => 'img/bleu.png',
         'logo'  => 'img/marine.png'
     ],
     'CIVIL' => [
