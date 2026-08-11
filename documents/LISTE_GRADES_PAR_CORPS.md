@@ -94,13 +94,13 @@
 ### Aspirants (1)
 - Aspirant
 
-### Sous-Officiers Supérieurs (4)
+### Sous-Officiers Supérieurs (3)
 - Adjudant-Chef Major
 - Adjudant-Chef
 - Adjudant
-- Sergent-Chef
 
-### Sous-Officiers Subalternes (3)
+### Sous-Officiers Subalternes (4)
+- Sergent-Chef
 - Sergent
 - Caporal-Chef
 - Caporal

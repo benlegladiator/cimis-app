@@ -827,13 +827,13 @@ const gradesParUnite = {
         // ASPIRANTS (1)
         'Aspirant',
         
-        // SOUS OFFICIERS SUPERIEURS (4)
+        // SOUS OFFICIERS SUPERIEURS (3)
         'Adjudant-Chef Major',
         'Adjudant-Chef',
         'Adjudant',
-        'Sergent-Chef',
         
-        // SOUS OFFICIERS SUBALTERNES (3)
+        // SOUS OFFICIERS SUBALTERNES (4)
+        'Sergent-Chef',
         'Sergent',
         'Caporal-Chef',
         'Caporal',
