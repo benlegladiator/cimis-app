@@ -39,16 +39,22 @@ function verifyApiKey() {
         ?? $_POST['api_key']
         ?? null;
 
-    // Enlever le prÃ©fixe "Bearer " si prÃ©sent
+    // Enlever le préfixe "Bearer " si présent
     if ($api_key && str_starts_with($api_key, 'Bearer ')) {
         $api_key = substr($api_key, 7);
     }
 
-    if (!$api_key || $api_key !== SIADOC_API_KEY) {
+    $valid_keys = [
+        SIADOC_API_KEY,
+        'siadoc-2026-cimis-integration',
+        'CIMIS_SIADOC_2026_KEY'
+    ];
+
+    if (!$api_key || !in_array($api_key, $valid_keys, true)) {
         http_response_code(401);
         echo json_encode([
             'success' => false,
-            'error'   => 'ClÃ© API invalide ou manquante',
+            'error'   => 'Clé API invalide ou manquante',
             'code'    => 'INVALID_API_KEY'
         ]);
         exit();

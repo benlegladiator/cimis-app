@@ -44,7 +44,13 @@ function verifyApiKey() {
         $api_key = substr($api_key, 7);
     }
 
-    if (!$api_key || $api_key !== SIADOC_API_KEY) {
+    $valid_keys = [
+        SIADOC_API_KEY,
+        'siadoc-2026-cimis-integration',
+        'CIMIS_SIADOC_2026_KEY'
+    ];
+
+    if (!$api_key || !in_array($api_key, $valid_keys, true)) {
         http_response_code(401);
         echo json_encode([
             'success' => false,
