@@ -1,12 +1,12 @@
 <?php
 /**
- * SIADOC DASHBOARD - Tableau de bord de monitoring de l'interopÃ©rabilitÃ© CIMIS-SIADOC
- * AccÃ¨s : Frontend/siadoc_dashboard.php
+ * SIADOC DASHBOARD - Tableau de bord de monitoring de l'interopérabilité CIMIS-SIADOC
+ * Accès : Frontend/siadoc_dashboard.php
  */
 require_once '../backend/config.php';
 requireLogin();
 
-// RÃ©cupÃ©rer les statistiques de la BDD pour la vue initiale
+// Récupérer les statistiques de la BDD pour la vue initiale
 $stats = [];
 try {
     $stmt = $pdo->query("
@@ -21,7 +21,7 @@ try {
     $stats = $stmt->fetch(PDO::FETCH_ASSOC);
 } catch (Exception $e) { }
 
-// DerniÃ¨res opÃ©rations de sync
+// Dernières opérations de sync
 $last_ops = [];
 try {
     $stmt = $pdo->query("
@@ -31,7 +31,7 @@ try {
     $last_ops = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) { }
 
-// ActivitÃ© des 7 derniers jours
+// Activité des 7 derniers jours
 $activity_chart = [];
 try {
     $stmt = $pdo->query("
@@ -58,8 +58,8 @@ if (!empty($last_ops)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIADOC â€” Tableau de Bord InteropÃ©rabilitÃ© | CIMIS</title>
-    <meta name="description" content="Monitoring et gestion de l'interopÃ©rabilitÃ© CIMIS-SIADOC. Synchronisation, import de donnÃ©es militaires, diagnostic.">
+    <title>SIADOC — Tableau de Bord Interopérabilité | CIMIS</title>
+    <meta name="description" content="Monitoring et gestion de l'interopérabilité CIMIS-SIADOC. Synchronisation, import de données militaires, diagnostic.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -274,7 +274,7 @@ if (!empty($last_ops)) {
 
         .content { flex: 1; padding: 1.75rem; overflow-y: auto; }
 
-        /* â”€â”€ MÃ‰TRIQUES â”€â”€ */
+        /* â”€â”€ MÉTRIQUES â”€â”€ */
         .metrics {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -376,7 +376,7 @@ if (!empty($last_ops)) {
 
         .card-body { padding: 1.25rem; }
 
-        /* â”€â”€ GRAPHIQUE ACTIVITÃ‰ â”€â”€ */
+        /* â”€â”€ GRAPHIQUE ACTIVITÉ â”€â”€ */
         .chart-container {
             height: 200px;
             display: flex;
@@ -503,7 +503,7 @@ if (!empty($last_ops)) {
 
         .form-textarea { resize: vertical; min-height: 80px; }
 
-        /* â”€â”€ RÃ‰SULTAT D'OPÃ‰RATION â”€â”€ */
+        /* â”€â”€ RÉSULTAT D'OPÉRATION â”€â”€ */
         #operation-result {
             display: none;
             margin-top: 1rem;
@@ -611,8 +611,8 @@ if (!empty($last_ops)) {
     <div class="sidebar-brand">
         <div class="brand-icon"><i class="fas fa-exchange-alt"></i></div>
         <div class="brand-text">
-            <div class="brand-title">CIMIS Ã— SIADOC</div>
-            <div class="brand-sub">InteropÃ©rabilitÃ© v2.0</div>
+            <div class="brand-title">CIMIS × SIADOC</div>
+            <div class="brand-sub">Interopérabilité v2.0</div>
         </div>
     </div>
 
@@ -621,17 +621,17 @@ if (!empty($last_ops)) {
         <i class="fas fa-chart-line"></i> Vue d'ensemble
     </a>
 
-    <span class="nav-section">Import SIADOC â†’ CIMIS</span>
+    <span class="nav-section">Import SIADOC → CIMIS</span>
     <a class="nav-item" onclick="showSection('import')">
-        <i class="fas fa-file-import"></i> Importer des donnÃ©es
+        <i class="fas fa-file-import"></i> Importer des données
     </a>
     <a class="nav-item" onclick="showSection('sync')">
         <i class="fas fa-sync-alt"></i> Synchronisation auto
     </a>
 
-    <span class="nav-section">ContrÃ´le</span>
+    <span class="nav-section">Contrôle</span>
     <a class="nav-item" onclick="showSection('journal')">
-        <i class="fas fa-list-alt"></i> Journal des Ã©changes
+        <i class="fas fa-list-alt"></i> Journal des échanges
     </a>
     <a class="nav-item" href="siadoc_diagnostic.php">
         <i class="fas fa-stethoscope"></i> Diagnostic
@@ -642,13 +642,13 @@ if (!empty($last_ops)) {
         <i class="fas fa-home"></i> Dashboard CIMIS
     </a>
     <a class="nav-item" href="enrolement.php">
-        <i class="fas fa-user-plus"></i> EnrÃ´lement
+        <i class="fas fa-user-plus"></i> Enrôlement
     </a>
 
     <div class="connection-badge">
         <div class="conn-status">
             <div class="dot dot-yellow" id="conn-dot"></div>
-            <span id="conn-label">VÃ©rification...</span>
+            <span id="conn-label">Vérification...</span>
         </div>
         <div class="siadoc-url" id="siadoc-url-display">siadoc.onrender.com</div>
         <button class="btn btn-outline btn-sm" style="margin-top:.75rem;width:100%" onclick="testConnexion()">
@@ -661,7 +661,7 @@ if (!empty($last_ops)) {
 <main class="main">
     <div class="topbar">
         <div class="topbar-left">
-            <div class="page-title">InteropÃ©rabilitÃ© SIADOC</div>
+            <div class="page-title">Interopérabilité SIADOC</div>
             <span class="page-badge">Monitoring en direct</span>
         </div>
         <div class="topbar-actions">
@@ -669,7 +669,7 @@ if (!empty($last_ops)) {
                 <i class="fas fa-redo"></i> Actualiser
             </button>
             <button class="btn btn-success" onclick="syncIncremental()">
-                <i class="fas fa-sync-alt"></i> Sync incrÃ©mentielle
+                <i class="fas fa-sync-alt"></i> Sync incrémentielle
             </button>
             <button class="btn btn-primary" onclick="showSection('import')">
                 <i class="fas fa-file-import"></i> Importer
@@ -682,7 +682,7 @@ if (!empty($last_ops)) {
         <!-- â”€â”€ SECTION DASHBOARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
         <div id="section-dashboard">
 
-            <!-- MÃ‰TRIQUES -->
+            <!-- MÉTRIQUES -->
             <div class="metrics">
                 <div class="metric-card blue">
                     <div class="metric-icon"><i class="fas fa-id-card"></i></div>
@@ -693,14 +693,14 @@ if (!empty($last_ops)) {
                 <div class="metric-card green">
                     <div class="metric-icon"><i class="fas fa-download"></i></div>
                     <div class="metric-value" id="m-siadoc"><?= number_format((int)($stats['venus_de_siadoc']??0)) ?></div>
-                    <div class="metric-label">ImportÃ©s depuis SIADOC</div>
+                    <div class="metric-label">Importés depuis SIADOC</div>
                     <div class="metric-delta"><i class="fas fa-arrow-trend-up"></i> source_system = SIADOC</div>
                 </div>
                 <div class="metric-card blue">
                     <div class="metric-icon"><i class="fas fa-qrcode"></i></div>
                     <div class="metric-value" id="m-qr"><?= number_format((int)($stats['avec_qr']??0)) ?></div>
                     <div class="metric-label">Avec code QR</div>
-                    <div class="metric-delta">PrÃªts pour impression</div>
+                    <div class="metric-delta">Prêts pour impression</div>
                 </div>
                 <div class="metric-card yellow">
                     <div class="metric-icon"><i class="fas fa-ban"></i></div>
@@ -711,8 +711,8 @@ if (!empty($last_ops)) {
                 <div class="metric-card green">
                     <div class="metric-icon"><i class="fas fa-check-circle"></i></div>
                     <div class="metric-value"><?= $taux_succes ?>%</div>
-                    <div class="metric-label">Taux de succÃ¨s sync</div>
-                    <div class="metric-delta">Sur les 20 derniÃ¨res ops.</div>
+                    <div class="metric-label">Taux de succès sync</div>
+                    <div class="metric-delta">Sur les 20 dernières ops.</div>
                 </div>
             </div>
 
@@ -720,9 +720,9 @@ if (!empty($last_ops)) {
             <div class="grid-2">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title"><i class="fas fa-chart-bar"></i> ActivitÃ© des 7 derniers jours</div>
+                        <div class="card-title"><i class="fas fa-chart-bar"></i> Activité des 7 derniers jours</div>
                         <span style="font-size:.72rem;color:var(--muted)">
-                            <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--accent);margin-right:4px"></span>SuccÃ¨s
+                            <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--accent);margin-right:4px"></span>Succès
                             <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--danger);margin-left:8px;margin-right:4px"></span>Erreurs
                         </span>
                     </div>
@@ -735,7 +735,7 @@ if (!empty($last_ops)) {
                         ?>
                         <div class="chart-container" id="activity-chart">
                         <?php
-                        // GÃ©nÃ©rer les 7 derniers jours
+                        // Générer les 7 derniers jours
                         for ($i = 6; $i >= 0; $i--) {
                             $date = date('Y-m-d', strtotime("-$i days"));
                             $label = date('d/m', strtotime("-$i days"));
@@ -749,7 +749,7 @@ if (!empty($last_ops)) {
                             $h_suc  = $max_ops > 0 ? round($suc / $max_ops * 150) : 0;
                             $h_err  = $max_ops > 0 ? round($err / $max_ops * 150) : 0;
                             echo "
-                            <div class='chart-bar-group' title='$label : $suc succÃ¨s, $err erreurs'>
+                            <div class='chart-bar-group' title='$label : $suc succès, $err erreurs'>
                                 <div class='chart-bar error'   style='height:{$h_err}px'></div>
                                 <div class='chart-bar success' style='height:{$h_suc}px'></div>
                                 <div class='chart-label'>$label</div>
@@ -773,11 +773,11 @@ if (!empty($last_ops)) {
                             </div>
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;background:rgba(255,255,255,.03);border-radius:8px;border:1px solid var(--border)">
-                            <div style="font-size:.8rem;color:var(--muted)">Temps de rÃ©ponse</div>
-                            <div style="font-size:.85rem;font-weight:700" id="siadoc-latency">â€”</div>
+                            <div style="font-size:.8rem;color:var(--muted)">Temps de réponse</div>
+                            <div style="font-size:.85rem;font-weight:700" id="siadoc-latency">—</div>
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem;background:rgba(255,255,255,.03);border-radius:8px;border:1px solid var(--border)">
-                            <div style="font-size:.8rem;color:var(--muted)">DerniÃ¨re sync</div>
+                            <div style="font-size:.8rem;color:var(--muted)">Dernière sync</div>
                             <div style="font-size:.8rem" id="last-sync-time">
                                 <?= $derniere_sync ? date('d/m/Y H:i', strtotime($derniere_sync)) : 'Jamais' ?>
                             </div>
@@ -793,20 +793,20 @@ if (!empty($last_ops)) {
                 </div>
             </div>
 
-            <!-- JOURNAL RÃ‰CENT -->
+            <!-- JOURNAL RÉCENT -->
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title"><i class="fas fa-history"></i> Journal rÃ©cent des Ã©changes</div>
+                    <div class="card-title"><i class="fas fa-history"></i> Journal récent des échanges</div>
                     <button class="btn btn-outline btn-sm" onclick="showSection('journal')">Voir tout</button>
                 </div>
                 <div style="overflow-x:auto">
                     <table class="log-table">
                         <thead>
                             <tr>
-                                <th>SystÃ¨me</th>
+                                <th>Système</th>
                                 <th>Action</th>
                                 <th>Statut</th>
-                                <th>DÃ©tails</th>
+                                <th>Détails</th>
                                 <th>Date</th>
                             </tr>
                         </thead>
@@ -832,7 +832,7 @@ if (!empty($last_ops)) {
                                     if (isset($d['total'])) $parts[] = $d['total'] . ' enr.';
                                     if (isset($d['succes'])) $parts[] = $d['succes'] . ' ok';
                                     if (isset($d['erreurs'])) $parts[] = $d['erreurs'] . ' err.';
-                                    $details = implode(' Â· ', $parts);
+                                    $details = implode(' · ', $parts);
                                 } else {
                                     $details = substr($op['details'], 0, 40);
                                 }
@@ -856,7 +856,7 @@ if (!empty($last_ops)) {
                     <?php if (empty($last_ops)): ?>
                     <div style="text-align:center;padding:2rem;color:var(--muted);font-size:.85rem">
                         <i class="fas fa-inbox" style="font-size:2rem;margin-bottom:.75rem;display:block;opacity:.3"></i>
-                        Aucune opÃ©ration enregistrÃ©e
+                        Aucune opération enregistrée
                     </div>
                     <?php endif; ?>
                 </div>
@@ -866,17 +866,17 @@ if (!empty($last_ops)) {
         <!-- â”€â”€ SECTION IMPORT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
         <div id="section-import" style="display:none">
             <div style="margin-bottom:1.25rem">
-                <h2 style="font-size:1rem;font-weight:700;margin-bottom:.25rem">Import SIADOC â†’ CIMIS</h2>
+                <h2 style="font-size:1rem;font-weight:700;margin-bottom:.25rem">Import SIADOC → CIMIS</h2>
                 <p style="font-size:.8rem;color:var(--muted)">
-                    RÃ©cupÃ©rez les donnÃ©es depuis SIADOC, vÃ©rifiez-les et importez-les dans CIMIS.
-                    Un matricule CIMIS et un QR code sont gÃ©nÃ©rÃ©s automatiquement.
+                    Récupérez les données depuis SIADOC, vérifiez-les et importez-les dans CIMIS.
+                    Un matricule CIMIS et un QR code sont générés automatiquement.
                 </p>
             </div>
 
             <div class="grid-2">
                 <div class="import-panel">
 
-                    <!-- MÃ©thode 1 : Par matricule -->
+                    <!-- Méthode 1 : Par matricule -->
                     <div class="import-method" onclick="toggleMethod('method-single')">
                         <div class="method-title">
                             <i class="fas fa-user" style="color:var(--primary)"></i>
@@ -894,7 +894,7 @@ if (!empty($last_ops)) {
                         </div>
                     </div>
 
-                    <!-- MÃ©thode 2 : Plusieurs matricules -->
+                    <!-- Méthode 2 : Plusieurs matricules -->
                     <div class="import-method" onclick="toggleMethod('method-multiple')">
                         <div class="method-title">
                             <i class="fas fa-users" style="color:var(--accent)"></i>
@@ -912,17 +912,17 @@ if (!empty($last_ops)) {
                         </div>
                     </div>
 
-                    <!-- MÃ©thode 3 : Par pÃ©riode -->
+                    <!-- Méthode 3 : Par période -->
                     <div class="import-method" onclick="toggleMethod('method-periode')">
                         <div class="method-title">
                             <i class="fas fa-calendar" style="color:var(--warning)"></i>
-                            Par pÃ©riode d'enrÃ´lement
+                            Par période d'enrôlement
                         </div>
-                        <div class="method-desc">Importez tous les militaires enrÃ´lÃ©s entre deux dates</div>
+                        <div class="method-desc">Importez tous les militaires enrôlés entre deux dates</div>
                         <div class="import-form" id="method-periode">
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
                                 <div class="form-group">
-                                    <label class="form-label">Date dÃ©but</label>
+                                    <label class="form-label">Date début</label>
                                     <input type="date" id="inp-date-debut" class="form-input">
                                 </div>
                                 <div class="form-group">
@@ -931,21 +931,21 @@ if (!empty($last_ops)) {
                                 </div>
                             </div>
                             <button class="btn btn-outline" onclick="importPeriode(event)">
-                                <i class="fas fa-file-import"></i> Importer la pÃ©riode
+                                <i class="fas fa-file-import"></i> Importer la période
                             </button>
                         </div>
                     </div>
 
-                    <!-- MÃ©thode 4 : JSON direct -->
+                    <!-- Méthode 4 : JSON direct -->
                     <div class="import-method" onclick="toggleMethod('method-json')">
                         <div class="method-title">
                             <i class="fas fa-code" style="color:var(--danger)"></i>
-                            DonnÃ©es JSON directes
+                            Données JSON directes
                         </div>
-                        <div class="method-desc">Collez directement les donnÃ©es JSON reÃ§ues de SIADOC</div>
+                        <div class="method-desc">Collez directement les données JSON reçues de SIADOC</div>
                         <div class="import-form" id="method-json">
                             <div class="form-group">
-                                <label class="form-label">JSON des donnÃ©es militaires</label>
+                                <label class="form-label">JSON des données militaires</label>
                                 <textarea id="inp-json-data" class="form-textarea" style="min-height:120px;font-family:monospace;font-size:.75rem" placeholder='{"matricule":"T14/6584","nom":"DUPONT","prenom":"Jean",...}'></textarea>
                             </div>
                             <button class="btn btn-danger" onclick="importJSON(event)">
@@ -955,20 +955,20 @@ if (!empty($last_ops)) {
                     </div>
                 </div>
 
-                <!-- RÃ©sultat -->
+                <!-- Résultat -->
                 <div>
                     <div class="card" style="position:sticky;top:1rem">
                         <div class="card-header">
-                            <div class="card-title"><i class="fas fa-clipboard-check"></i> RÃ©sultat</div>
+                            <div class="card-title"><i class="fas fa-clipboard-check"></i> Résultat</div>
                         </div>
                         <div class="card-body">
                             <div id="operation-result">
-                                <div class="result-title" id="result-title">â€”</div>
+                                <div class="result-title" id="result-title">—</div>
                                 <div id="result-body"></div>
                             </div>
                             <div id="result-placeholder" style="text-align:center;padding:2rem;color:var(--muted);font-size:.82rem">
                                 <i class="fas fa-arrow-left" style="font-size:1.5rem;margin-bottom:.5rem;display:block;opacity:.3"></i>
-                                SÃ©lectionnez une mÃ©thode d'import et cliquez sur le bouton.
+                                Sélectionnez une méthode d'import et cliquez sur le bouton.
                             </div>
                         </div>
                     </div>
@@ -980,7 +980,7 @@ if (!empty($last_ops)) {
         <div id="section-journal" style="display:none">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title"><i class="fas fa-history"></i> Journal complet des Ã©changes</div>
+                    <div class="card-title"><i class="fas fa-history"></i> Journal complet des échanges</div>
                     <button class="btn btn-outline btn-sm" onclick="loadJournal()">
                         <i class="fas fa-redo"></i> Actualiser
                     </button>
@@ -990,10 +990,10 @@ if (!empty($last_ops)) {
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>SystÃ¨me</th>
+                                <th>Système</th>
                                 <th>Action</th>
                                 <th>Statut</th>
-                                <th>DÃ©tails</th>
+                                <th>Détails</th>
                                 <th>Date/Heure</th>
                             </tr>
                         </thead>
@@ -1010,17 +1010,17 @@ if (!empty($last_ops)) {
             <div class="grid-2">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title"><i class="fas fa-sync-alt"></i> Synchronisation incrÃ©mentielle</div>
+                        <div class="card-title"><i class="fas fa-sync-alt"></i> Synchronisation incrémentielle</div>
                     </div>
                     <div class="card-body" style="display:flex;flex-direction:column;gap:1rem">
                         <p style="font-size:.82rem;color:var(--muted)">
-                            La synchronisation incrÃ©mentielle rÃ©cupÃ¨re uniquement les enregistrements modifiÃ©s depuis la derniÃ¨re synchronisation.
-                            Cela Ã©vite de re-traiter toute la base de donnÃ©es Ã  chaque fois.
+                            La synchronisation incrémentielle récupère uniquement les enregistrements modifiés depuis la dernière synchronisation.
+                            Cela évite de re-traiter toute la base de données Ã  chaque fois.
                         </p>
                         <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:1rem">
-                            <div style="font-size:.75rem;color:var(--muted);margin-bottom:.35rem">DerniÃ¨re synchronisation</div>
+                            <div style="font-size:.75rem;color:var(--muted);margin-bottom:.35rem">Dernière synchronisation</div>
                             <div style="font-size:1rem;font-weight:700" id="sync-last-date">
-                                <?= $derniere_sync ? date('d/m/Y Ã  H:i:s', strtotime($derniere_sync)) : 'Jamais effectuÃ©e' ?>
+                                <?= $derniere_sync ? date('d/m/Y Ã  H:i:s', strtotime($derniere_sync)) : 'Jamais effectuée' ?>
                             </div>
                         </div>
                         <button class="btn btn-success" onclick="syncIncremental()" id="btn-sync-incr">
@@ -1101,12 +1101,12 @@ async function testConnexion() {
 
         if (res.success) {
             dot.className = 'dot dot-green';
-            label.textContent = 'ConnectÃ©';
-            pill.innerHTML = '<div class="dot dot-green"></div><span>ConnectÃ©</span>';
+            label.textContent = 'Connecté';
+            pill.innerHTML = '<div class="dot dot-green"></div><span>Connecté</span>';
             pill.style.cssText = 'background:rgba(52,211,153,.15);color:var(--accent)';
             latency.textContent = res.duree_ms + ' ms';
             latency.style.color = res.duree_ms < 500 ? 'var(--accent)' : 'var(--warning)';
-            showToast('Connexion SIADOC OK â€” ' + res.duree_ms + ' ms', 'success');
+            showToast('Connexion SIADOC OK — ' + res.duree_ms + ' ms', 'success');
         } else {
             throw new Error('HTTP ' + res.http_code);
         }
@@ -1115,15 +1115,15 @@ async function testConnexion() {
         label.textContent = 'Hors ligne';
         pill.innerHTML = '<div class="dot dot-red"></div><span>Hors ligne</span>';
         pill.style.cssText = 'background:rgba(248,113,113,.15);color:var(--danger)';
-        latency.textContent = 'â€”';
-        showToast('Connexion SIADOC Ã©chouÃ©e: ' + e.message, 'error');
+        latency.textContent = '—';
+        showToast('Connexion SIADOC échouée: ' + e.message, 'error');
     } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-plug"></i> Tester la connexion';
     }
 }
 
-// â”€â”€ TOGGLES MÃ‰THODES IMPORT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€ TOGGLES MÉTHODES IMPORT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function toggleMethod(id) {
     const form = document.getElementById(id);
@@ -1139,7 +1139,7 @@ async function importSingle(e) {
     const mat = document.getElementById('inp-matricule-single').value.trim();
     if (!mat) { showToast('Entrez un matricule', 'error'); return; }
 
-    showLoading('RÃ©cupÃ©ration depuis SIADOC...');
+    showLoading('Récupération depuis SIADOC...');
     try {
         const res = await apiFetch('siadoc_import.php?action=importer', {
             method: 'POST',
@@ -1173,16 +1173,16 @@ async function importMultiple(e) {
     } finally { hideLoading(); }
 }
 
-// â”€â”€ IMPORT PÃ‰RIODE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€ IMPORT PÉRIODE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function importPeriode(e) {
     e.stopPropagation();
     const d1 = document.getElementById('inp-date-debut').value;
     const d2 = document.getElementById('inp-date-fin').value;
-    if (!d1 || !d2) { showToast('SÃ©lectionnez les deux dates', 'error'); return; }
-    if (d1 > d2) { showToast('La date de dÃ©but doit Ãªtre avant la date de fin', 'error'); return; }
+    if (!d1 || !d2) { showToast('Sélectionnez les deux dates', 'error'); return; }
+    if (d1 > d2) { showToast('La date de début doit être avant la date de fin', 'error'); return; }
 
-    showLoading('Import de la pÃ©riode...');
+    showLoading('Import de la période...');
     try {
         const res = await apiFetch('siadoc_import.php?action=importer_periode', {
             method: 'POST',
@@ -1199,7 +1199,7 @@ async function importPeriode(e) {
 async function importJSON(e) {
     e.stopPropagation();
     const raw = document.getElementById('inp-json-data').value.trim();
-    if (!raw) { showToast('Collez des donnÃ©es JSON', 'error'); return; }
+    if (!raw) { showToast('Collez des données JSON', 'error'); return; }
 
     let parsed;
     try { parsed = JSON.parse(raw); }
@@ -1223,19 +1223,19 @@ async function importJSON(e) {
 // â”€â”€ SYNCHRONISATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function syncIncremental() {
-    showLoading('Synchronisation incrÃ©mentielle...');
+    showLoading('Synchronisation incrémentielle...');
     try {
         const res = await apiFetch('api_siadoc_envoie.php?action=synchronisation', { method: 'GET' });
         const count = res.data?.total_modifiees ?? 0;
-        showToast(`Sync terminÃ©e â€” ${count} enregistrement(s) mis Ã  jour`, 'success');
-        document.getElementById('sync-last-date').textContent = 'Ã€ l\'instant';
-        document.getElementById('last-sync-time').textContent = 'Ã€ l\'instant';
+        showToast(`Sync terminée — ${count} enregistrement(s) mis Ã  jour`, 'success');
+        document.getElementById('sync-last-date').textContent = 'À l\'instant';
+        document.getElementById('last-sync-time').textContent = 'À l\'instant';
 
         const r = document.getElementById('sync-result');
         r.style.display = 'block';
         r.innerHTML = `<div style="background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);border-radius:8px;padding:.75rem;font-size:.82rem;margin-top:.75rem">
-            <strong style="color:var(--accent)">Synchronisation rÃ©ussie</strong><br>
-            ${count} enregistrement(s) traitÃ©(s).
+            <strong style="color:var(--accent)">Synchronisation réussie</strong><br>
+            ${count} enregistrement(s) traité(s).
         </div>`;
     } catch(e) {
         showToast('Erreur sync: ' + e.message, 'error');
@@ -1243,12 +1243,12 @@ async function syncIncremental() {
 }
 
 async function syncTous() {
-    if (!confirm('âš ï¸ Import complet depuis SIADOC.\nCela peut prendre du temps selon le volume de donnÃ©es.\n\nContinuer ?')) return;
+    if (!confirm('âš ï¸ Import complet depuis SIADOC.\nCela peut prendre du temps selon le volume de données.\n\nContinuer ?')) return;
 
     showLoading('Import complet en cours...');
     try {
         const res = await apiFetch('siadoc_import.php?action=importer_tous', { method: 'POST', body: '{}' });
-        showToast(`Import terminÃ© â€” ${res.succes || 0} crÃ©Ã©s, ${res.mises_a_jour || 0} mis Ã  jour, ${res.erreurs || 0} erreurs`, res.erreurs > 0 ? 'warning' : 'success');
+        showToast(`Import terminé — ${res.succes || 0} créés, ${res.mises_a_jour || 0} mis Ã  jour, ${res.erreurs || 0} erreurs`, res.erreurs > 0 ? 'warning' : 'success');
     } catch(e) {
         showToast('Erreur: ' + e.message, 'error');
     } finally { hideLoading(); }
@@ -1272,13 +1272,13 @@ async function loadJournal() {
         const r = await fetch(window.location.href + '?json_logs=1', {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
-        // Le journal est gÃ©nÃ©rÃ© PHP-side, on recharge la page simplement
+        // Le journal est généré PHP-side, on recharge la page simplement
     } catch(e) { }
 
     location.reload();
 }
 
-// â”€â”€ AFFICHAGE RÃ‰SULTAT IMPORT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€ AFFICHAGE RÉSULTAT IMPORT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function showImportResult(res, resultats) {
     const el       = document.getElementById('operation-result');
@@ -1297,7 +1297,7 @@ function showImportResult(res, resultats) {
     el.className = 'show ' + (isSuccess ? 'success' : 'error');
 
     title.innerHTML = isSuccess
-        ? `<i class="fas fa-check-circle" style="color:var(--accent)"></i> Import rÃ©ussi`
+        ? `<i class="fas fa-check-circle" style="color:var(--accent)"></i> Import réussi`
         : `<i class="fas fa-times-circle" style="color:var(--danger)"></i> ${res.message || 'Erreur'}`;
 
     let detailsHTML = '';
@@ -1305,12 +1305,12 @@ function showImportResult(res, resultats) {
     if (res.matricule_cimis) {
         detailsHTML += `<div style="margin-top:.75rem;padding:.75rem;background:rgba(0,0,0,.3);border-radius:8px;font-size:.8rem">
             <div><strong>Matricule CIMIS :</strong> <span style="color:var(--primary)">${res.matricule_cimis}</span></div>
-            <div><strong>Matricule militaire :</strong> ${res.matricule_militaire || 'â€”'}</div>
-            ${res.qr_code ? `<div><strong>QR Code :</strong> <span style="color:var(--accent)">GÃ©nÃ©rÃ© âœ“</span></div>` : ''}
+            <div><strong>Matricule militaire :</strong> ${res.matricule_militaire || '—'}</div>
+            ${res.qr_code ? `<div><strong>QR Code :</strong> <span style="color:var(--accent)">Généré âœ“</span></div>` : ''}
         </div>`;
     } else if (resultats && resultats.length > 0) {
         detailsHTML += `<div class="result-grid" style="margin-top:.75rem">
-            <div class="result-item"><div class="result-num" style="color:var(--accent)">${succes}</div><div class="result-lbl">CrÃ©Ã©s</div></div>
+            <div class="result-item"><div class="result-num" style="color:var(--accent)">${succes}</div><div class="result-lbl">Créés</div></div>
             <div class="result-item"><div class="result-num" style="color:var(--primary)">${majs}</div><div class="result-lbl">Mis Ã  jour</div></div>
             <div class="result-item"><div class="result-num" style="color:var(--danger)">${erreurs}</div><div class="result-lbl">Erreurs</div></div>
         </div>`;
@@ -1329,7 +1329,7 @@ function showImportResult(res, resultats) {
 
     body.innerHTML = detailsHTML;
 
-    if (isSuccess) showToast(`Import terminÃ© â€” ${succes} crÃ©Ã©(s), ${majs} mis Ã  jour, ${erreurs} erreur(s)`, erreurs > 0 ? 'warning' : 'success');
+    if (isSuccess) showToast(`Import terminé — ${succes} créé(s), ${majs} mis Ã  jour, ${erreurs} erreur(s)`, erreurs > 0 ? 'warning' : 'success');
 }
 
 // â”€â”€ UTILITAIRES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
