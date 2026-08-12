@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * SIADOC DASHBOARD - Tableau de bord de monitoring de l'interopÃ©rabilitÃ© CIMIS-SIADOC
  * AccÃ¨s : Frontend/siadoc_dashboard.php

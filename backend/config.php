@@ -1,10 +1,12 @@
 <?php
 // En-têtes HTTP de sécurité (Web Hardening)
-header("X-Frame-Options: DENY");
-header("X-Content-Type-Options: nosniff");
-header("X-XSS-Protection: 1; mode=block");
-header("Referrer-Policy: strict-origin-when-cross-origin");
-header("Content-Security-Policy: default-src 'self' https://cdnjs.cloudflare.com/ https://fonts.googleapis.com/ https://fonts.gstatic.com/; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://fonts.googleapis.com/; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com/; frame-ancestors 'none';");
+if (!headers_sent()) {
+    header("X-Frame-Options: DENY");
+    header("X-Content-Type-Options: nosniff");
+    header("X-XSS-Protection: 1; mode=block");
+    header("Referrer-Policy: strict-origin-when-cross-origin");
+    header("Content-Security-Policy: default-src 'self' https://cdnjs.cloudflare.com/ https://fonts.googleapis.com/ https://fonts.gstatic.com/; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://fonts.googleapis.com/; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com/; frame-ancestors 'none';");
+}
 
 // Configuration de la base de données (détection dynamique Render vs Local XAMPP)
 $host_env = getenv('DB_HOST') ?: 'localhost';
@@ -64,13 +66,13 @@ try {
 }
 
 // Configuration sécurisée des cookies de session et démarrage
-if (session_status() === PHP_SESSION_NONE) {
-    ini_set('session.cookie_httponly', 1);
-    ini_set('session.use_only_cookies', 1);
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    @ini_set('session.cookie_httponly', 1);
+    @ini_set('session.use_only_cookies', 1);
     if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-        ini_set('session.cookie_secure', 1);
+        @ini_set('session.cookie_secure', 1);
     }
-    session_start();
+    @session_start();
 }
 
 // Détection et tentative d'activation automatique de l'extension GD
