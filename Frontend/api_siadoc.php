@@ -917,7 +917,7 @@ if (isset($_GET['action'])) {
                     <div class="imported-card-item" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.85rem; background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color);">
                         <!-- GAUCHE : Photo du Militaire -->
                         <div style="display: flex; align-items: center; gap: 0.85rem; min-width: 0;">
-                            <img src="${photoUrl}" class="imported-photo" alt="Photo" onerror="this.src='../img/candidats/default.png'; this.onerror=null;" style="width: 55px; height: 55px; border-radius: 8px; object-fit: cover; border: 1.5px solid var(--accent-green); flex-shrink: 0; background: #1e293b;">
+                            <img src="${photoUrl}" class="imported-photo" alt="Photo" onerror="this.onerror=null; this.src='../img/candidats/default.svg';" style="width: 55px; height: 55px; border-radius: 8px; object-fit: cover; border: 1.5px solid var(--accent-green); flex-shrink: 0; background: #1e293b;">
                             
                             <!-- CENTRE : Infos Personnel & Matricules -->
                             <div style="min-width: 0;">
