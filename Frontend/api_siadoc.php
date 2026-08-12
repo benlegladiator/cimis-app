@@ -333,6 +333,36 @@ if (isset($_GET['action'])) {
         .banner-success { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-green); color: #34d399; }
         .banner-error { background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #f87171; }
 
+        /* MODAL DE SUCCÈS IMPORTATION */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; z-index: 9999;
+        }
+        .modal-card {
+            background: var(--panel-bg); border: 1px solid var(--accent-green);
+            border-radius: 16px; width: 90%; max-width: 650px; max-height: 85vh;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 20px 50px rgba(16, 185, 129, 0.2); animation: popIn 0.3s ease-out;
+        }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-header {
+            background: rgba(16, 185, 129, 0.1); border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-header h3 { color: #34d399; font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.6rem; }
+        .modal-body { padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+        .imported-card-item {
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px;
+            padding: 1rem; display: flex; align-items: center; gap: 1rem; justify-content: space-between;
+        }
+        .imported-photo { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; border: 1px solid var(--accent-green); background: #000; }
+        .imported-qr { width: 55px; height: 55px; border-radius: 6px; border: 1px solid #3b82f6; background: #fff; padding: 2px; }
+        .modal-footer {
+            background: var(--card-bg); border-top: 1px solid var(--border-color);
+            padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+        }
+
         /* TABLE */
         .table-responsive { overflow-x: auto; margin-top: 1rem; }
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left; }
@@ -558,6 +588,32 @@ if (isset($_GET['action'])) {
 
     </div>
 
+    <!-- MODAL DE SUCCÈS IMPORTATION SIADOC -->
+    <div id="modalImportSuccess" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fas fa-circle-check"></i> Importation SIADOC Réussie avec Succès !</h3>
+                <button onclick="fermerModalImport()" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="font-size: 0.9rem; color: var(--text-muted);" id="modalSummaryText">
+                    Le personnel militaire ci-dessous a été importé depuis SIADOC avec succès. Leurs matricules CIMIS et QR Codes ont été générés.
+                </div>
+                <div id="modalMilitairesList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <!-- Rempli dynamiquement par JS -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-blue" onclick="fermerModalImport()">
+                    <i class="fas fa-xmark"></i> Fermer
+                </button>
+                <a href="impression.php" class="btn" style="text-decoration: none;" target="_blank">
+                    <i class="fas fa-print"></i> Accéder à Impression.php ➔
+                </a>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Charger les statistiques au démarrage
         document.addEventListener('DOMContentLoaded', () => {
@@ -720,7 +776,7 @@ if (isset($_GET['action'])) {
         }
 
         function importerUnMilitaire(mat) {
-            window.location.href = '../backend/siadoc_import.php?action=importer_militaires&limit=1&matricule=' + encodeURIComponent(mat) + '&api_key=siadoc-2026-cimis-integration';
+            lancerImportationAJAX([mat]);
         }
 
         function lancerImportationSelection() {
@@ -729,9 +785,88 @@ if (isset($_GET['action'])) {
                 alert('Veuillez cocher au moins un militaire à importer.');
                 return;
             }
+            lancerImportationAJAX(selected);
+        }
 
-            const matParam = selected.join(',');
-            window.location.href = '../backend/siadoc_import.php?action=importer_militaires&limit=' + selected.length + '&matricule=' + encodeURIComponent(matParam) + '&api_key=siadoc-2026-cimis-integration';
+        function lancerImportationAJAX(matriculesArray) {
+            const btnBulk = document.getElementById('btnBulkImport');
+            const spinBulk = document.getElementById('spinBulk');
+            const icoBulk = document.getElementById('icoBulk');
+
+            if (btnBulk) {
+                btnBulk.disabled = true;
+                if (spinBulk) spinBulk.style.display = 'inline-block';
+                if (icoBulk) icoBulk.style.display = 'none';
+            }
+
+            const matParam = matriculesArray.join(',');
+            const url = '../backend/siadoc_import.php?action=importer_militaires&limit=' + matriculesArray.length + '&matricule=' + encodeURIComponent(matParam) + '&api_key=siadoc-2026-cimis-integration';
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (btnBulk) {
+                        btnBulk.disabled = false;
+                        if (spinBulk) spinBulk.style.display = 'none';
+                        if (icoBulk) icoBulk.style.display = 'inline-block';
+                    }
+
+                    if (data.success && Array.isArray(data.militaires)) {
+                        afficherModalSuccesImport(data);
+                        fetchStats();
+                    } else {
+                        alert('Erreur lors de l\'importation: ' + (data.error || data.message || 'Échec'));
+                    }
+                })
+                .catch(err => {
+                    if (btnBulk) {
+                        btnBulk.disabled = false;
+                        if (spinBulk) spinBulk.style.display = 'none';
+                        if (icoBulk) icoBulk.style.display = 'inline-block';
+                    }
+                    alert('Erreur réseau lors de l\'importation: ' + err.message);
+                });
+        }
+
+        function afficherModalSuccesImport(data) {
+            const modal = document.getElementById('modalImportSuccess');
+            const listContainer = document.getElementById('modalMilitairesList');
+            const summary = document.getElementById('modalSummaryText');
+
+            summary.textContent = data.message || (data.militaires.length + ' militaire(s) importé(s) de SIADOC vers CIMIS avec succès.');
+
+            listContainer.innerHTML = data.militaires.map(m => {
+                const matMil = m.matricule_militaire || 'N/A';
+                const matCim = m.matricule_cimis || 'CIM-2026';
+                const qrPath = m.qr_code ? '../' + m.qr_code.replace('../', '') : '../img/qrcodes/' + matMil + '_qr.png';
+                const actionBadge = m.action === 'CREATION' 
+                    ? '<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399;">Nouveau</span>' 
+                    : '<span class="badge" style="background: rgba(59,130,246,0.2); color: #60a5fa;">Mis à jour</span>';
+
+                return `
+                    <div class="imported-card-item">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-weight: 700; font-size: 1.2rem; color: var(--accent-green);">
+                                <i class="fas fa-id-card"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 700; font-size: 0.95rem;">${matMil} ${actionBadge}</div>
+                                <div style="font-size: 0.85rem; color: #60a5fa; font-weight: 600;">Matricule CIMIS : ${matCim}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">${m.message || 'Enregistré dans la base CIMIS'}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <img src="${qrPath}" class="imported-qr" alt="QR Code" onerror="this.style.display='none'">
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            modal.style.display = 'flex';
+        }
+
+        function fermerModalImport() {
+            document.getElementById('modalImportSuccess').style.display = 'none';
         }
     </script>
 </body>
