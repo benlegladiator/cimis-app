@@ -7,7 +7,7 @@ return [
     ],
     'ARMÉE DE L\'AIR' => [
         'class' => 'air',
-        'fond'  => 'img/bleu.PNG',
+        'fond'  => 'img/blue.PNG',
         'logo'  => 'img/1air.PNG'
     ],
     'GENDARMERIE NATIONALE' => [
@@ -17,7 +17,7 @@ return [
     ],
     'MARINE NATIONALE' => [
         'class' => 'marine',
-        'fond'  => 'img/bleu.PNG',
+        'fond'  => 'img/noir.PNG',
         'logo'  => 'img/marine.png'
     ],
     'CIVIL' => [
