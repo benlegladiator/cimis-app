@@ -300,11 +300,22 @@ function normalizeSIADOCData(array $d): array {
     // Normalisation du grade
     $grade = strtoupper($d['grade'] ?? $d['rang'] ?? $d['rank'] ?? '');
 
-    // UnitÃ© / corps
-    $unite = $d['corps'] ?? $d['unite'] ?? $d['unit'] ?? $d['affectation'] ?? '';
+    // Unité / corps avec mapping des codes SIADOC (AT, GN, AA, AM)
+    $corps_map = [
+        'AT' => 'ARMÉE DE TERRE',
+        'GN' => 'GENDARMERIE NATIONALE',
+        'AA' => 'ARMÉE DE L\'AIR',
+        'AM' => 'MARINE NATIONALE',
+        'GENDARMERIE' => 'GENDARMERIE NATIONALE'
+    ];
+    $unite_raw = strtoupper(trim($d['corps'] ?? $d['unite'] ?? $d['unit'] ?? $d['affectation'] ?? ''));
+    $unite = $corps_map[$unite_raw] ?? $unite_raw;
 
     // Matricule militaire
     $matricule = $d['matricule'] ?? $d['matricule_militaire'] ?? $d['id'] ?? '';
+
+    // Date d'enrôlement par défaut (Aujourd'hui) pour affichage immédiat dans impression.php
+    $date_enrolement = !empty($d['date_enrolement']) ? date('Y-m-d', strtotime($d['date_enrolement'])) : date('Y-m-d');
 
     return [
         'matricule_militaire' => $matricule,
@@ -316,7 +327,7 @@ function normalizeSIADOCData(array $d): array {
         'numero_cni'          => $d['numero_cni'] ?? $d['cni'] ?? $d['cin'] ?? null,
         'grade'               => $grade,
         'unite'               => $unite,
-        'date_enrolement'     => isset($d['date_enrolement']) ? date('Y-m-d', strtotime($d['date_enrolement'])) : null,
+        'date_enrolement'     => $date_enrolement,
         'date_dernier_grade'  => isset($d['date_dernier_grade']) ? date('Y-m-d', strtotime($d['date_dernier_grade'])) : null,
         'annee_dernier_galon' => $d['annee_dernier_galon'] ?? $d['annee_galon'] ?? null,
         'statut_militaire'    => strtoupper($d['statut'] ?? $d['statut_militaire'] ?? 'ACTIF'),

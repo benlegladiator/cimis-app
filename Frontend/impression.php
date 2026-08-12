@@ -210,7 +210,7 @@ if (isset($_POST['ajax_search'])) {
     if (!empty($where)) {
         $sql .= " AND " . implode(' AND ', $where);
     }
-    $sql .= " ORDER BY date_enrolement DESC LIMIT 100";
+    $sql .= " ORDER BY id DESC LIMIT 200";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
@@ -454,7 +454,7 @@ $sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date
 if (!empty($where)) {
     $sql .= " AND " . implode(' AND ', $where);
 }
-$sql .= " ORDER BY date_enrolement DESC LIMIT 100";
+$sql .= " ORDER BY id DESC LIMIT 200";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);

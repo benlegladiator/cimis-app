@@ -468,17 +468,18 @@ if (isset($_GET['action'])) {
                 <table>
                     <thead>
                         <tr>
-                            <th>Matricule Militaire</th>
+                            <th style="width: 40px; text-align: center;"><input type="checkbox" id="checkSelectAll" onclick="toggleSelectAll(this)" style="cursor: pointer; width: 18px; height: 18px;" title="Sélectionner / Désélectionner Tout"></th>
+                            <th>Matricule SIADOC</th>
                             <th>Nom & Prénom</th>
                             <th>Grade</th>
                             <th>Corps / Unité</th>
                             <th>Source</th>
-                            <th>Statut</th>
+                            <th>Action Directe</th>
                         </tr>
                     </thead>
                     <tbody id="tbodyResults">
                         <tr>
-                            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
                                 Lancez une recherche ou appliquez un filtre pour afficher les militaires.
                             </td>
                         </tr>
@@ -488,15 +489,19 @@ if (isset($_GET['action'])) {
 
             <!-- 3. ÉTAPE 3 : ACTIONS DECOULANT DES RÉSULTATS (Apparaît après résultat) -->
             <div id="actionsArea">
-                <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--accent-blue);">
-                    <i class="fas fa-gears"></i> Actions Découlement & Synchronisation SIADOC
+                <div style="font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; color: var(--accent-green); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                    <span><i class="fas fa-layer-group"></i> Actions Multiples (<span id="selectedCount" style="color: #34d399; font-size: 1.1rem; font-weight: 700;">0</span> militaire(s) sélectionné(s))</span>
+                    <a href="impression.php" class="btn btn-blue" style="padding: 0.4rem 0.9rem; font-size: 0.85rem; text-decoration: none;" target="_blank">
+                        <i class="fas fa-print"></i> Accéder à Impression.php ➔
+                    </a>
                 </div>
                 <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
-                    <button class="btn" onclick="lancerImportationLots()">
-                        <i class="fas fa-cloud-arrow-down"></i> Synchroniser ces militaires avec SIADOC
+                    <button class="btn" id="btnBulkImport" onclick="lancerImportationSelection()">
+                        <i class="fas fa-spinner spinner" id="spinBulk"></i>
+                        <i class="fas fa-cloud-arrow-down" id="icoBulk"></i> 📥 Importer la sélection dans CIMIS (Générer Matricule CIM & QR Code)
                     </button>
                     <button class="btn btn-blue" onclick="chargerHistorique()">
-                        <i class="fas fa-clock-rotate-left"></i> Voir l'historique des requêtes
+                        <i class="fas fa-clock-rotate-left"></i> Voir le journal des échanges
                     </button>
                 </div>
             </div>
@@ -552,13 +557,14 @@ if (isset($_GET['action'])) {
             const bError = document.getElementById('bannerError');
             const tbody = document.getElementById('tbodyResults');
             const actionsArea = document.getElementById('actionsArea');
+            const checkAll = document.getElementById('checkSelectAll');
 
-            // Activation du spinner
             btn.disabled = true;
             spin.style.display = 'inline-block';
             ico.style.display = 'none';
             bSuccess.style.display = 'none';
             bError.style.display = 'none';
+            checkAll.checked = false;
 
             const matricule = document.getElementById('inputMatricule').value.trim();
             const grade = document.getElementById('selectGrade').value;
@@ -583,11 +589,13 @@ if (isset($_GET['action'])) {
                         document.getElementById('msgSuccess').textContent = (data.message || (list.length + ' militaire(s) trouvé(s)'));
                         bSuccess.style.display = 'flex';
 
-                        // Remplir le tableau avec bouton d'importation vers CIMIS
                         tbody.innerHTML = list.map(m => {
                             const mat = m.matricule_militaire || m.matricule || 'N/A';
                             return `
                                 <tr>
+                                    <td style="text-align: center;">
+                                        <input type="checkbox" class="checkMilitaire" value="${mat}" onchange="updateSelectionCount()" style="cursor: pointer; width: 18px; height: 18px;">
+                                    </td>
                                     <td style="font-weight: 600; color: #34d399;">${mat}</td>
                                     <td>${m.nom || ''} ${m.prenom || ''}</td>
                                     <td>${m.grade || 'Non spécifié'}</td>
@@ -595,7 +603,7 @@ if (isset($_GET['action'])) {
                                     <td><span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">${m.source_system || 'SIADOC'}</span></td>
                                     <td>
                                         <button class="btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="importerUnMilitaire('${mat}')">
-                                            <i class="fas fa-cloud-arrow-down"></i> Importer dans CIMIS
+                                            <i class="fas fa-cloud-arrow-down"></i> Importer
                                         </button>
                                     </td>
                                 </tr>
@@ -603,10 +611,11 @@ if (isset($_GET['action'])) {
                         }).join('');
 
                         actionsArea.style.display = 'block';
+                        updateSelectionCount();
                     } else {
                         document.getElementById('msgError').textContent = data.error || data.message || 'Aucun militaire trouvé pour ces critères.';
                         bError.style.display = 'flex';
-                        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #f87171; padding: 2rem;">Aucun résultat disponible.</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #f87171; padding: 2rem;">Aucun résultat disponible.</td></tr>`;
                         actionsArea.style.display = 'none';
                     }
                 })
@@ -617,7 +626,7 @@ if (isset($_GET['action'])) {
 
                     document.getElementById('msgError').textContent = 'Erreur réseau : ' + err.message;
                     bError.style.display = 'flex';
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #f87171; padding: 2rem;">Erreur de communication avec le serveur.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #f87171; padding: 2rem;">Erreur de communication avec le serveur.</td></tr>`;
                     actionsArea.style.display = 'none';
                 });
         }
@@ -626,15 +635,28 @@ if (isset($_GET['action'])) {
             return Array.isArray(data) && data.length > 0;
         }
 
+        function toggleSelectAll(master) {
+            const checkboxes = document.querySelectorAll('.checkMilitaire');
+            checkboxes.forEach(cb => cb.checked = master.checked);
+            updateSelectionCount();
+        }
+
+        function updateSelectionCount() {
+            const selected = document.querySelectorAll('.checkMilitaire:checked');
+            const countSpan = document.getElementById('selectedCount');
+            if (countSpan) countSpan.textContent = selected.length;
+        }
+
         function resetFiltres() {
             document.getElementById('inputMatricule').value = '';
             document.getElementById('selectGrade').value = '';
             document.getElementById('selectUnite').value = '';
+            document.getElementById('checkSelectAll').checked = false;
             document.getElementById('bannerSuccess').style.display = 'none';
             document.getElementById('bannerError').style.display = 'none';
             document.getElementById('actionsArea').style.display = 'none';
             document.getElementById('tbodyResults').innerHTML = `
-                <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">Filtres réinitialisés. Lancez une recherche.</td></tr>
+                <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">Filtres réinitialisés. Lancez une recherche.</td></tr>
             `;
         }
 
@@ -666,8 +688,15 @@ if (isset($_GET['action'])) {
             window.location.href = '../backend/siadoc_import.php?action=importer_militaires&limit=1&matricule=' + encodeURIComponent(mat) + '&api_key=siadoc-2026-cimis-integration';
         }
 
-        function lancerImportationLots() {
-            window.location.href = '../backend/siadoc_import.php?action=importer_militaires&limit=5&api_key=siadoc-2026-cimis-integration';
+        function lancerImportationSelection() {
+            const selected = Array.from(document.querySelectorAll('.checkMilitaire:checked')).map(cb => cb.value);
+            if (selected.length === 0) {
+                alert('Veuillez cocher au moins un militaire à importer.');
+                return;
+            }
+
+            const matParam = selected.join(',');
+            window.location.href = '../backend/siadoc_import.php?action=importer_militaires&limit=' + selected.length + '&matricule=' + encodeURIComponent(matParam) + '&api_key=siadoc-2026-cimis-integration';
         }
     </script>
 </body>
