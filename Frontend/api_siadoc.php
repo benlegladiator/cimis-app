@@ -124,49 +124,74 @@ if (isset($_GET['action'])) {
                 $is_real = false;
 
                 if ($siadoc_res['http_code'] === 200 && is_array($siadoc_res['data']) && !empty($siadoc_res['data'])) {
-                    $list = $siadoc_res['data'];
                     $is_real = true;
+                    // Mapper et normaliser les champs SIADOC (corps AT, GN, AA, AM)
+                    $raw_list = array_map(function($m) {
+                        $corps_map = [
+                            'AT' => 'ARMÉE DE TERRE',
+                            'GN' => 'GENDARMERIE NATIONALE',
+                            'AA' => 'ARMÉE DE L\'AIR',
+                            'AM' => 'MARINE NATIONALE',
+                            'GENDARMERIE' => 'GENDARMERIE NATIONALE'
+                        ];
+                        $c_raw = strtoupper($m['corps'] ?? $m['unite'] ?? '');
+                        $c_full = $corps_map[$c_raw] ?? $c_raw;
+
+                        return [
+                            'matricule_militaire' => $m['matricule'] ?? $m['matricule_militaire'] ?? 'N/A',
+                            'nom' => $m['nom'] ?? '',
+                            'prenom' => $m['prenom'] ?? '',
+                            'grade' => $m['grade'] ?? 'Non spécifié',
+                            'unite' => $c_full,
+                            'corps' => $c_full,
+                            'source_system' => 'SIADOC'
+                        ];
+                    }, $siadoc_res['data']);
+
+                    $list = $raw_list;
+
                     if ($grade) {
-                        $list = array_filter($list, fn($m) => strtolower($m['grade'] ?? '') === strtolower($grade));
+                        $list = array_filter($list, fn($m) => strtolower($m['grade']) === strtolower($grade));
                     }
                     if ($unite) {
-                        $list = array_filter($list, fn($m) => strtolower($m['unite'] ?? $m['corps'] ?? '') === strtolower($unite));
+                        $list = array_filter($list, function($m) use ($unite) {
+                            $u = strtolower($unite);
+                            $mu = strtolower($m['unite']);
+                            return $mu === $u || str_contains($mu, $u) || str_contains($u, $mu);
+                        });
                     }
                 }
 
                 if (empty($list)) {
-                    // Candidats de démonstration SIADOC
-                    $list = [
-                        [
-                            'matricule_militaire' => 'SIA-2026-001',
-                            'nom' => 'TCHATCHOUANG',
-                            'prenom' => 'Bertrand',
-                            'grade' => $grade ?: 'Capitaine',
-                            'unite' => $unite ?: 'ARMÉE DE TERRE',
-                            'source_system' => 'SIADOC'
-                        ],
-                        [
-                            'matricule_militaire' => 'SIA-2026-002',
-                            'nom' => 'NGAH',
-                            'prenom' => 'Marie',
-                            'grade' => $grade ?: 'Amiral',
-                            'unite' => $unite ?: 'MARINE NATIONALE',
-                            'source_system' => 'SIADOC'
-                        ],
-                        [
-                            'matricule_militaire' => 'SIA-2026-003',
-                            'nom' => 'EBAA',
-                            'prenom' => 'François',
-                            'grade' => $grade ?: 'Général de Division',
-                            'unite' => $unite ?: 'GENDARMERIE NATIONALE',
-                            'source_system' => 'SIADOC'
-                        ]
-                    ];
+                    if ($is_real) {
+                        // SIADOC a renvoyé des données réelles mais aucune ne correspond aux filtres
+                        $msg = '🟢 Connecté à SIADOC en direct : Aucun militaire SIADOC ne correspond à ces filtres.';
+                        sendSuccessResponse([], $msg);
+                    } else {
+                        // Échantillon de démonstration si le serveur SIADOC ne répond pas
+                        $list = [
+                            [
+                                'matricule_militaire' => 'SIA-2026-001',
+                                'nom' => 'TCHATCHOUANG',
+                                'prenom' => 'Bertrand',
+                                'grade' => $grade ?: 'Capitaine',
+                                'unite' => $unite ?: 'ARMÉE DE TERRE',
+                                'source_system' => 'SIADOC'
+                            ],
+                            [
+                                'matricule_militaire' => 'SIA-2026-002',
+                                'nom' => 'NGAH',
+                                'prenom' => 'Marie',
+                                'grade' => $grade ?: 'Amiral',
+                                'unite' => $unite ?: 'MARINE NATIONALE',
+                                'source_system' => 'SIADOC'
+                            ]
+                        ];
+                        $msg = '🟡 Échantillon SIADOC affiché pour test d\'importation.';
+                    }
+                } else {
+                    $msg = '🟢 ' . count($list) . ' militaire(s) RÉEL(S) chargé(s) en direct depuis le serveur SIADOC (siadoc.onrender.com)';
                 }
-
-                $msg = $is_real 
-                    ? '🟢 Données RÉELLES reçues en direct du serveur SIADOC sur Render' 
-                    : '🟡 Connexion SIADOC Réussie (HTTP 200 OK), mais leur base est encore vide []. Échantillon SIADOC affiché pour test d\'importation.';
 
                 sendSuccessResponse(array_values($list), $msg);
             } catch (Exception $e) {
