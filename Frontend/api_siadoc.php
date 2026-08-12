@@ -894,25 +894,47 @@ if (isset($_GET['action'])) {
             listContainer.innerHTML = data.militaires.map(m => {
                 const matMil = m.matricule_militaire || 'N/A';
                 const matCim = m.matricule_cimis || 'CIM-2026';
+                const nom = m.nom || '';
+                const prenom = m.prenom || '';
+                const grade = m.grade || '';
+                const unite = m.unite || '';
+                
+                // Photo du candidat
+                let photoUrl = '../img/default_photo.png';
+                if (m.photo) {
+                    photoUrl = m.photo.startsWith('http') ? m.photo : '../' + m.photo.replace('../', '');
+                }
+                
+                // QR Code
                 const qrPath = m.qr_code ? '../' + m.qr_code.replace('../', '') : '../img/qrcodes/' + matMil + '_qr.png';
+                
                 const actionBadge = m.action === 'CREATION' 
                     ? '<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399;">Nouveau</span>' 
                     : '<span class="badge" style="background: rgba(59,130,246,0.2); color: #60a5fa;">Mis à jour</span>';
 
                 return `
-                    <div class="imported-card-item">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="font-weight: 700; font-size: 1.2rem; color: var(--accent-green);">
-                                <i class="fas fa-id-card"></i>
-                            </div>
-                            <div>
-                                <div style="font-weight: 700; font-size: 0.95rem;">${matMil} ${actionBadge}</div>
-                                <div style="font-size: 0.85rem; color: #60a5fa; font-weight: 600;">Matricule CIMIS : ${matCim}</div>
-                                <div style="font-size: 0.8rem; color: var(--text-muted);">${m.message || 'Enregistré dans la base CIMIS'}</div>
+                    <div class="imported-card-item" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.85rem; background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color);">
+                        <!-- GAUCHE : Photo du Militaire -->
+                        <div style="display: flex; align-items: center; gap: 0.85rem; min-width: 0;">
+                            <img src="${photoUrl}" class="imported-photo" alt="Photo" onerror="this.src='../img/candidats/default.png'; this.onerror=null;" style="width: 55px; height: 55px; border-radius: 8px; object-fit: cover; border: 1.5px solid var(--accent-green); flex-shrink: 0; background: #1e293b;">
+                            
+                            <!-- CENTRE : Infos Personnel & Matricules -->
+                            <div style="min-width: 0;">
+                                <div style="font-weight: 700; font-size: 0.95rem; color: #f9fafb;">
+                                    ${nom} ${prenom} ${actionBadge}
+                                </div>
+                                <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 500;">
+                                    ${grade} ${unite ? '• ' + unite : ''}
+                                </div>
+                                <div style="font-size: 0.8rem; color: #34d399; font-weight: 600; margin-top: 3px;">
+                                    SIADOC: <span style="color: #fff;">${matMil}</span> ➔ CIMIS: <span style="color: #60a5fa;">${matCim}</span>
+                                </div>
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <img src="${qrPath}" class="imported-qr" alt="QR Code" onerror="this.style.display='none'">
+
+                        <!-- DROITE : Code QR Généré -->
+                        <div style="flex-shrink: 0; text-align: center;">
+                            <img src="${qrPath}" class="imported-qr" alt="QR Code" style="width: 52px; height: 52px; border-radius: 6px; border: 1px solid #3b82f6; background: #fff; padding: 2px;" onerror="this.style.display='none'">
                         </div>
                     </div>
                 `;

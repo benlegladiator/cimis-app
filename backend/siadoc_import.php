@@ -323,6 +323,35 @@ function normalizeSIADOCData(array $d): array {
     $date_dernier_grade = !empty($date_grade_raw) ? date('Y-m-d', strtotime($date_grade_raw)) : null;
     $annee_dernier_galon = !empty($date_grade_raw) ? date('Y', strtotime($date_grade_raw)) : ($d['annee_dernier_galon'] ?? null);
 
+    // Normalisation de la photo
+    $photo_path = null;
+    $photo_input = $d['photo'] ?? $d['photo_url'] ?? $d['photo_base64'] ?? $d['photoData'] ?? null;
+    if (!empty($photo_input)) {
+        if (str_starts_with($photo_input, 'data:image')) {
+            $img_dir = dirname(__DIR__) . '/img/candidats/';
+            if (!is_dir($img_dir)) mkdir($img_dir, 0777, true);
+            $img_filename = 'CIM-' . rand(10000, 99999) . '_' . time() . '.png';
+            $data_parts = explode(',', $photo_input);
+            if (count($data_parts) === 2) {
+                file_put_contents($img_dir . $img_filename, base64_decode($data_parts[1]));
+                $photo_path = 'img/candidats/' . $img_filename;
+            }
+        } elseif (str_starts_with($photo_input, 'http')) {
+            $img_dir = dirname(__DIR__) . '/img/candidats/';
+            if (!is_dir($img_dir)) mkdir($img_dir, 0777, true);
+            $img_filename = 'CIM-' . rand(10000, 99999) . '_' . time() . '.png';
+            $img_content = @file_get_contents($photo_input);
+            if ($img_content) {
+                file_put_contents($img_dir . $img_filename, $img_content);
+                $photo_path = 'img/candidats/' . $img_filename;
+            } else {
+                $photo_path = $photo_input;
+            }
+        } else {
+            $photo_path = $photo_input;
+        }
+    }
+
     return [
         'matricule_militaire' => $matricule,
         'nom'                 => strtoupper(trim($d['nom'] ?? $d['lastname'] ?? $d['name'] ?? '')),
@@ -333,6 +362,7 @@ function normalizeSIADOCData(array $d): array {
         'numero_cni'          => $d['numero_cni'] ?? $d['cni'] ?? $d['cin'] ?? $d['numeroCNI'] ?? null,
         'grade'               => $grade,
         'unite'               => $unite,
+        'photo'               => $photo_path,
         'date_enrolement'     => $date_enrolement,
         'date_dernier_grade'  => $date_dernier_grade,
         'annee_dernier_galon' => $annee_dernier_galon,
@@ -344,12 +374,12 @@ function normalizeSIADOCData(array $d): array {
     ];
 }
 
-// â”€â”€â”€ IMPORTATION D'UN MILITAIRE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── IMPORTATION D'UN MILITAIRE ──────────────────────────────────────────
 
 function importerMilitaire(array $raw_data): array {
     global $pdo;
 
-    // 1. Normaliser les donnÃ©es
+    // 1. Normaliser les données
     $data = normalizeSIADOCData($raw_data);
 
     if (empty($data['matricule_militaire'])) {
@@ -357,7 +387,7 @@ function importerMilitaire(array $raw_data): array {
     }
 
     // 2. Vérifier les doublons
-    $stmt = $pdo->prepare("SELECT id, matricule FROM candidat WHERE matricule_militaire = ?");
+    $stmt = $pdo->prepare("SELECT id, matricule, photo FROM candidat WHERE matricule_militaire = ?");
     $stmt->execute([$data['matricule_militaire']]);
     $existing = $stmt->fetch();
     $stmt->closeCursor();
@@ -371,6 +401,7 @@ function importerMilitaire(array $raw_data): array {
                     sexe = ?, grade = ?, unite = ?, date_enrolement = ?,
                     date_dernier_grade = ?, annee_dernier_galon = ?,
                     statut_militaire = ?, taille = ?, poids = ?, groupe_sanguin = ?,
+                    photo = COALESCE(?, photo),
                     source_system = 'SIADOC', siadoc_sync_date = NOW(), siadoc_sync_status = 'SYNCED',
                     date_modification = NOW()
                 WHERE matricule_militaire = ?
@@ -379,6 +410,7 @@ function importerMilitaire(array $raw_data): array {
                 $data['sexe'], $data['grade'], $data['unite'], $data['date_enrolement'],
                 $data['date_dernier_grade'], $data['annee_dernier_galon'],
                 $data['statut_militaire'], $data['taille'], $data['poids'], $data['groupe_sanguin'],
+                $data['photo'],
                 $data['matricule_militaire']
             ]);
 
@@ -389,6 +421,11 @@ function importerMilitaire(array $raw_data): array {
                 'message'             => 'Militaire mis à jour avec succès',
                 'matricule_militaire' => $data['matricule_militaire'],
                 'matricule_cimis'     => $existing['matricule'],
+                'nom'                 => $data['nom'],
+                'prenom'              => $data['prenom'],
+                'grade'               => $data['grade'],
+                'unite'               => $data['unite'],
+                'photo'               => $data['photo'] ?: $existing['photo'],
                 'candidat_id'         => $existing['id']
             ];
         } catch (Exception $e) {
@@ -408,7 +445,7 @@ function importerMilitaire(array $raw_data): array {
                 grade, unite, date_enrolement, date_dernier_grade,
                 annee_dernier_galon, statut_militaire,
                 taille, poids, groupe_sanguin,
-                code_qr, source_system,
+                photo, code_qr, source_system,
                 supprimer, suspendus,
                 siadoc_sync_date, siadoc_sync_status,
                 date_modification
@@ -418,7 +455,7 @@ function importerMilitaire(array $raw_data): array {
                 ?, ?, ?, ?,
                 ?, ?,
                 ?, ?, ?,
-                ?, 'SIADOC',
+                ?, ?, 'SIADOC',
                 1, 0,
                 NOW(), 'SYNCED',
                 NOW()
@@ -441,18 +478,24 @@ function importerMilitaire(array $raw_data): array {
             $data['taille'],
             $data['poids'],
             $data['groupe_sanguin'],
+            $data['photo'],
             $qr_data['image_path']
         ]);
 
         $candidat_id = (int)$pdo->lastInsertId();
-        logSyncDetail($candidat_id, $data['matricule_militaire'], 'IMPORT', 'SUCCESS', 'ImportÃ© depuis SIADOC â€” QR: ' . $qr_data['method']);
+        logSyncDetail($candidat_id, $data['matricule_militaire'], 'IMPORT', 'SUCCESS', 'Importé depuis SIADOC — QR: ' . $qr_data['method']);
 
         return [
             'success'             => true,
             'action'              => 'CREATION',
-            'message'             => 'Militaire importÃ© avec succÃ¨s',
+            'message'             => 'Militaire importé avec succès',
             'matricule_militaire' => $data['matricule_militaire'],
             'matricule_cimis'     => $matricule_cimis,
+            'nom'                 => $data['nom'],
+            'prenom'              => $data['prenom'],
+            'grade'               => $data['grade'],
+            'unite'               => $data['unite'],
+            'photo'               => $data['photo'],
             'qr_code'             => $qr_data['image_path'],
             'candidat_id'         => $candidat_id
         ];
