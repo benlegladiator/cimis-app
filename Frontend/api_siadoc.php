@@ -146,7 +146,7 @@ if (isset($_GET['action'])) {
                             'grade'               => $m['grade'] ?? 'Non spécifié',
                             'unite'               => $c_full,
                             'corps'               => $c_full,
-                            'date_enrolement'     => $m['dateEnrolement'] ?? $m['date_enrolement'] ?? '',
+                            'date_enrolement'     => $m['dateService'] ?? $m['dateEnrolement'] ?? $m['date_enrolement'] ?? '',
                             'date_dernier_grade'  => $m['dateGrade'] ?? $m['date_dernier_grade'] ?? $m['annee_dernier_galon'] ?? '',
                             'source_system'       => 'SIADOC'
                         ];
@@ -567,9 +567,28 @@ if (isset($_GET['action'])) {
 
         <!-- HISTORIQUE DES REQUÊTES -->
         <div class="panel" id="panelHistorique" style="display: none;">
-            <div class="panel-title">
-                <i class="fas fa-history"></i> Journal des Échanges & Sécurité
+            <div class="panel-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <span><i class="fas fa-history"></i> Journal des Échanges & Sécurité</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted);" id="histCountLabel">0 élement(s)</span>
             </div>
+
+            <!-- Filtres de l'Historique -->
+            <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; background: var(--card-bg); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <input type="text" id="histSearchInput" oninput="filtrerHistoriqueLocal()" class="form-control" style="flex: 1; min-width: 180px;" placeholder="🔍 Recherche dans l'historique (action, utilisateur, détails)...">
+                
+                <select id="histFilterStatus" onchange="filtrerHistoriqueLocal()" class="form-control" style="width: auto;">
+                    <option value="">Tous les statuts</option>
+                    <option value="SUCCESS">🟢 Succès (SUCCESS)</option>
+                    <option value="ERROR">🔴 Erreurs (ERROR)</option>
+                </select>
+
+                <select id="histFilterAction" onchange="filtrerHistoriqueLocal()" class="form-control" style="width: auto;">
+                    <option value="">Toutes les actions</option>
+                    <option value="IMPORT">📥 Importations</option>
+                    <option value="GET">🔍 Recherches & consultations</option>
+                </select>
+            </div>
+
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -751,28 +770,65 @@ if (isset($_GET['action'])) {
             `;
         }
 
+        let rawHistoryData = [];
+
         function chargerHistorique() {
             const panel = document.getElementById('panelHistorique');
-            const tbody = document.getElementById('tbodyHistorique');
 
             fetch('api_siadoc.php?action=get_historique')
                 .then(res => res.json())
                 .then(data => {
                     if (data.success && Array.isArray(data.data.operations)) {
+                        rawHistoryData = data.data.operations;
                         panel.style.display = 'block';
-                        tbody.innerHTML = data.data.operations.map(op => `
-                            <tr>
-                                <td>${op.date || ''}</td>
-                                <td style="font-weight: 600;">${op.action || ''}</td>
-                                <td>${op.utilisateur || 'SIADOC_SYSTEM'}</td>
-                                <td><span class="badge">${op.status || 'SUCCESS'}</span></td>
-                                <td>${op.details || '-'}</td>
-                            </tr>
-                        `).join('');
+                        filtrerHistoriqueLocal();
                         panel.scrollIntoView({ behavior: 'smooth' });
                     }
                 })
                 .catch(() => {});
+        }
+
+        function filtrerHistoriqueLocal() {
+            const tbody = document.getElementById('tbodyHistorique');
+            const search = (document.getElementById('histSearchInput').value || '').toLowerCase();
+            const statusFilter = document.getElementById('histFilterStatus').value;
+            const actionFilter = document.getElementById('histFilterAction').value;
+            const countLabel = document.getElementById('histCountLabel');
+
+            let filtered = rawHistoryData.filter(op => {
+                const action = (op.action || '').toUpperCase();
+                const status = (op.status || '').toUpperCase();
+                const user = (op.utilisateur || '').toLowerCase();
+                const details = (op.details || '').toLowerCase();
+
+                if (statusFilter && status !== statusFilter) return false;
+                if (actionFilter && !action.includes(actionFilter)) return false;
+                if (search && !action.toLowerCase().includes(search) && !user.includes(search) && !details.includes(search)) return false;
+
+                return true;
+            });
+
+            if (countLabel) countLabel.textContent = filtered.length + ' élément(s) affiché(s)';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Aucun échange ne correspond à ces critères.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(op => {
+                const badgeColor = op.status === 'SUCCESS' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)';
+                const badgeTextColor = op.status === 'SUCCESS' ? '#34d399' : '#f87171';
+
+                return `
+                    <tr>
+                        <td style="font-size: 0.85rem; color: var(--text-muted);">${op.date || ''}</td>
+                        <td style="font-weight: 600; color: #60a5fa;">${op.action || ''}</td>
+                        <td>${op.utilisateur || 'SIADOC_SYSTEM'}</td>
+                        <td><span class="badge" style="background: ${badgeColor}; color: ${badgeTextColor};">${op.status || 'SUCCESS'}</span></td>
+                        <td style="font-size: 0.85rem;">${op.details || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function importerUnMilitaire(mat) {

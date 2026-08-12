@@ -314,8 +314,14 @@ function normalizeSIADOCData(array $d): array {
     // Matricule militaire
     $matricule = $d['matricule'] ?? $d['matricule_militaire'] ?? $d['id'] ?? '';
 
-    // Date d'enrôlement par défaut (Aujourd'hui) pour affichage immédiat dans impression.php
-    $date_enrolement = !empty($d['date_enrolement']) ? date('Y-m-d', strtotime($d['date_enrolement'])) : date('Y-m-d');
+    // Date d'entrée en service (dateService ou date_enrolement)
+    $date_enrolement_raw = $d['dateService'] ?? $d['date_enrolement'] ?? $d['dateEnrolement'] ?? null;
+    $date_enrolement = !empty($date_enrolement_raw) ? date('Y-m-d', strtotime($date_enrolement_raw)) : date('Y-m-d');
+
+    // Date de dernier grade / promotion galon (dateGrade ou date_dernier_grade)
+    $date_grade_raw = $d['dateGrade'] ?? $d['date_dernier_grade'] ?? $d['annee_dernier_galon'] ?? null;
+    $date_dernier_grade = !empty($date_grade_raw) ? date('Y-m-d', strtotime($date_grade_raw)) : null;
+    $annee_dernier_galon = !empty($date_grade_raw) ? date('Y', strtotime($date_grade_raw)) : ($d['annee_dernier_galon'] ?? null);
 
     return [
         'matricule_militaire' => $matricule,
@@ -324,12 +330,12 @@ function normalizeSIADOCData(array $d): array {
         'date_naissance'      => $date_naissance,
         'lieu_naissance'      => $d['lieu_naissance'] ?? $d['lieuNaissance'] ?? $d['birthplace'] ?? null,
         'sexe'                => $sexe,
-        'numero_cni'          => $d['numero_cni'] ?? $d['cni'] ?? $d['cin'] ?? null,
+        'numero_cni'          => $d['numero_cni'] ?? $d['cni'] ?? $d['cin'] ?? $d['numeroCNI'] ?? null,
         'grade'               => $grade,
         'unite'               => $unite,
         'date_enrolement'     => $date_enrolement,
-        'date_dernier_grade'  => isset($d['date_dernier_grade']) ? date('Y-m-d', strtotime($d['date_dernier_grade'])) : null,
-        'annee_dernier_galon' => $d['annee_dernier_galon'] ?? $d['annee_galon'] ?? null,
+        'date_dernier_grade'  => $date_dernier_grade,
+        'annee_dernier_galon' => $annee_dernier_galon,
         'statut_militaire'    => strtoupper($d['statut'] ?? $d['statut_militaire'] ?? 'ACTIF'),
         'type_personnel'      => strtoupper($d['type_personnel'] ?? 'MILITAIRE'),
         'taille'              => $d['taille'] ?? null,
