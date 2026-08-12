@@ -1,4 +1,9 @@
 <?php
+// Démarrer l'Output Buffering pour éviter les erreurs "headers already sent"
+if (ob_get_level() === 0) {
+    ob_start();
+}
+
 // En-têtes HTTP de sécurité (Web Hardening)
 if (!headers_sent()) {
     header("X-Frame-Options: DENY");
@@ -179,7 +184,11 @@ function isLoggedIn() {
 
 function requireLogin() {
     if (!isLoggedIn()) {
-        header('Location: ../index.php');
+        if (!headers_sent()) {
+            header('Location: ../index.php');
+        } else {
+            echo '<script>window.location.href="../index.php";</script>';
+        }
         exit();
     }
 }
