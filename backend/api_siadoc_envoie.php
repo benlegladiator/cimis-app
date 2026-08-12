@@ -86,6 +86,43 @@ function resolveImagePath($relative_path) {
     return null;
 }
 
+function formatCarteImageFields(array &$carte) {
+    $base_url = 'https://cimis-app.onrender.com/';
+
+    // Traitement de la photo (URL absolue + Base64)
+    if (!empty($carte['photo'])) {
+        $clean_photo = ltrim($carte['photo'], '/');
+        $full_photo_url = str_starts_with($carte['photo'], 'http') ? $carte['photo'] : $base_url . $clean_photo;
+
+        $carte['photo_url'] = $full_photo_url;
+        $carte['photo']     = $full_photo_url; // URL publique complète pour SIADOC
+
+        $local_path = resolveImagePath($clean_photo);
+        $carte['photo_base64'] = ($local_path && file_exists($local_path)) ? encodeImageToBase64($local_path) : null;
+    } else {
+        $carte['photo_url']    = null;
+        $carte['photo_base64'] = null;
+    }
+
+    // Traitement du QR Code (URL absolue + Base64)
+    if (!empty($carte['code_qr'])) {
+        $clean_qr = ltrim(str_replace('../', '', $carte['code_qr']), '/');
+        $full_qr_url = str_starts_with($carte['code_qr'], 'http') ? $carte['code_qr'] : $base_url . $clean_qr;
+
+        $carte['qr_code_url'] = $full_qr_url;
+        $carte['qr_code']     = $full_qr_url;
+        $carte['code_qr']     = $full_qr_url;
+
+        $local_qr_path = resolveImagePath($clean_qr);
+        $carte['qr_code_base64'] = ($local_qr_path && file_exists($local_qr_path)) ? encodeImageToBase64($local_qr_path) : null;
+    } else {
+        $carte['qr_code_url']    = null;
+        $carte['qr_code_base64'] = null;
+    }
+
+    $carte['peut_voir_carte'] = (isset($carte['suspendus']) && $carte['suspendus'] == 0);
+}
+
 function sendResponse($data, $message = null, $http_code = 200) {
     http_response_code($http_code);
     $response = [
@@ -242,31 +279,23 @@ switch ($action) {
             $carte = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$carte) {
-                sendError('Carte non trouvÃ©e pour le matricule: ' . $matricule, 404, 'NOT_FOUND');
+                sendError('Carte non trouvée pour le matricule: ' . $matricule, 404, 'NOT_FOUND');
                 break;
             }
 
-            // Images
-            $carte['peut_voir_carte'] = ($carte['suspendus'] == 0);
-            if ($carte['photo']) {
-                $path = resolveImagePath($carte['photo']);
-                $carte['photo_base64'] = $path ? encodeImageToBase64($path) : null;
-            }
-            if ($carte['code_qr']) {
-                $path = resolveImagePath($carte['code_qr']);
-                $carte['qr_code_base64'] = $path ? encodeImageToBase64($path) : null;
-            }
+            // Normalisation automatique des images (URLs absolues et Base64)
+            formatCarteImageFields($carte);
             $carte['url_verification'] = 'https://cimis.ct.ws/verify/' . urlencode($carte['matricule_militaire'] ?? $carte['matricule']);
 
             logAPIAccess('GET_CARTE', ['matricule' => $matricule]);
-            sendResponse($carte, 'Carte rÃ©cupÃ©rÃ©e avec succÃ¨s');
+            sendResponse($carte, 'Carte récupérée avec succès');
 
         } catch (PDOException $e) {
-            sendError('Erreur base de donnÃ©es: ' . $e->getMessage(), 500, 'DB_ERROR');
+            sendError('Erreur base de données: ' . $e->getMessage(), 500, 'DB_ERROR');
         }
         break;
 
-    // â”€â”€ LISTE DES CARTES (avec filtres avancÃ©s) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── LISTE DES CARTES (avec filtres avancés) ────────────────────────
     case 'cartes':
         // Support ?matricules=XXX,YYY (batch)
         if (isset($_GET['matricules'])) {
@@ -289,13 +318,10 @@ switch ($action) {
                 $stmt->execute($matricules);
                 $resultats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                if (isset($_GET['include_images']) && $_GET['include_images'] === 'true') {
-                    foreach ($resultats as &$r) {
-                        if ($r['photo'])   $r['photo_base64']   = encodeImageToBase64(resolveImagePath($r['photo']));
-                        if ($r['code_qr']) $r['qr_code_base64'] = encodeImageToBase64(resolveImagePath($r['code_qr']));
-                    }
-                    unset($r);
+                foreach ($resultats as &$r) {
+                    formatCarteImageFields($r);
                 }
+                unset($r);
 
                 sendResponse([
                     'militaires'          => $resultats,
@@ -305,12 +331,12 @@ switch ($action) {
                     'non_trouves'         => array_values(array_diff($matricules, array_column($resultats, 'matricule_militaire')))
                 ]);
             } catch (PDOException $e) {
-                sendError('Erreur base de donnÃ©es: ' . $e->getMessage(), 500, 'DB_ERROR');
+                sendError('Erreur base de données: ' . $e->getMessage(), 500, 'DB_ERROR');
             }
             break;
         }
 
-        // RequÃªte standard avec filtres
+        // Requête standard avec filtres
         try {
             $sql    = "SELECT " . SQL_COLONNES_CARTE . " FROM candidat c WHERE c.supprimer = 1";
             $params = [];
@@ -328,7 +354,7 @@ switch ($action) {
                 $params = array_merge($params, $grades);
             }
 
-            // Filtre unitÃ©
+            // Filtre unité
             if (!empty($_GET['unite'])) {
                 $unites = is_array($_GET['unite']) ? $_GET['unite'] : [$_GET['unite']];
                 $sql .= " AND c.unite IN (" . implode(',', array_fill(0, count($unites), '?')) . ")";
@@ -348,20 +374,20 @@ switch ($action) {
                 $params[] = strtoupper($_GET['sexe']);
             }
 
-            // Filtre annÃ©e dernier galon
+            // Filtre année dernier galon
             if (!empty($_GET['annee_galon'])) {
                 $sql .= " AND YEAR(c.annee_dernier_galon) = ?";
                 $params[] = (int)$_GET['annee_galon'];
             }
 
-            // Filtre annÃ©e entrÃ©e en service
+            // Filtre année entrée en service
             if (!empty($_GET['annee_entree'])) {
                 $annee = preg_replace('/[^0-9]/', '', $_GET['annee_entree']);
                 $sql .= " AND c.date_enrolement LIKE ?";
                 $params[] = $annee . '%';
             }
 
-            // Filtre pÃ©riode d'entrÃ©e (ex: 2014-2016)
+            // Filtre période d'entrée (ex: 2014-2016)
             if (!empty($_GET['periode_entree'])) {
                 $periodes = explode('-', $_GET['periode_entree']);
                 if (count($periodes) === 2) {
@@ -383,7 +409,7 @@ switch ($action) {
                 $params[] = (int)$_GET['age_max'];
             }
 
-            // Filtre pÃ©riode d'enrÃ´lement (ex: 2023-01-01,2023-12-31)
+            // Filtre période d'enrôlement (ex: 2023-01-01,2023-12-31)
             if (!empty($_GET['periode'])) {
                 $periodes = explode(',', $_GET['periode']);
                 if (count($periodes) === 2) {
@@ -393,13 +419,13 @@ switch ($action) {
                 }
             }
 
-            // Filtre source systÃ¨me
+            // Filtre source système
             if (!empty($_GET['source'])) {
                 $sql .= " AND c.source_system = ?";
                 $params[] = strtoupper($_GET['source']);
             }
 
-            // Filtre suspendus (par dÃ©faut on retourne tous actifs, suspendus inclus)
+            // Filtre suspendus (par défaut on retourne tous actifs, suspendus inclus)
             if (isset($_GET['suspendus'])) {
                 $sql .= " AND c.suspendus = ?";
                 $params[] = (int)$_GET['suspendus'];
@@ -422,18 +448,9 @@ switch ($action) {
             $stmt->execute($params);
             $cartes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Images en base64 si demandÃ©es
-            if (isset($_GET['include_images']) && $_GET['include_images'] === 'true') {
-                foreach ($cartes as &$carte) {
-                    if ($carte['photo'])   $carte['photo_base64']   = encodeImageToBase64(resolveImagePath($carte['photo']));
-                    if ($carte['code_qr']) $carte['qr_code_base64'] = encodeImageToBase64(resolveImagePath($carte['code_qr']));
-                }
-                unset($carte);
-            }
-
-            // Ajouter champ synthÃ©tique peut_voir_carte
+            // Normalisation automatique de TOUTES les photos (URLs absolues et Base64)
             foreach ($cartes as &$c) {
-                $c['peut_voir_carte'] = ($c['suspendus'] == 0);
+                formatCarteImageFields($c);
             }
             unset($c);
 
