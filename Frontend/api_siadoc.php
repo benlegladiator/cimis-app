@@ -114,8 +114,10 @@ if (isset($_GET['action'])) {
 
         case 'get_militaires_filtres':
         case 'get_filtres':
-            $grade = $_GET['grade'] ?? null;
-            $unite = $_GET['unite'] ?? null;
+            $grade            = $_GET['grade'] ?? null;
+            $unite            = $_GET['unite'] ?? null;
+            $annee_enrolement = $_GET['annee_enrolement'] ?? null;
+            $annee_grade      = $_GET['annee_grade'] ?? null;
 
             try {
                 // Interroger le serveur SIADOC officiel
@@ -139,12 +141,14 @@ if (isset($_GET['action'])) {
 
                         return [
                             'matricule_militaire' => $m['matricule'] ?? $m['matricule_militaire'] ?? 'N/A',
-                            'nom' => $m['nom'] ?? '',
-                            'prenom' => $m['prenom'] ?? '',
-                            'grade' => $m['grade'] ?? 'Non spécifié',
-                            'unite' => $c_full,
-                            'corps' => $c_full,
-                            'source_system' => 'SIADOC'
+                            'nom'                 => $m['nom'] ?? '',
+                            'prenom'              => $m['prenom'] ?? '',
+                            'grade'               => $m['grade'] ?? 'Non spécifié',
+                            'unite'               => $c_full,
+                            'corps'               => $c_full,
+                            'date_enrolement'     => $m['dateEnrolement'] ?? $m['date_enrolement'] ?? '',
+                            'date_dernier_grade'  => $m['dateGrade'] ?? $m['date_dernier_grade'] ?? $m['annee_dernier_galon'] ?? '',
+                            'source_system'       => 'SIADOC'
                         ];
                     }, $siadoc_res['data']);
 
@@ -158,6 +162,16 @@ if (isset($_GET['action'])) {
                             $u = strtolower($unite);
                             $mu = strtolower($m['unite']);
                             return $mu === $u || str_contains($mu, $u) || str_contains($u, $mu);
+                        });
+                    }
+                    if ($annee_enrolement) {
+                        $list = array_filter($list, function($m) use ($annee_enrolement) {
+                            return str_contains((string)$m['date_enrolement'], (string)$annee_enrolement);
+                        });
+                    }
+                    if ($annee_grade) {
+                        $list = array_filter($list, function($m) use ($annee_grade) {
+                            return str_contains((string)$m['date_dernier_grade'], (string)$annee_grade);
                         });
                     }
                 }
@@ -224,14 +238,18 @@ if (isset($_GET['action'])) {
 
         case 'stats':
             try {
-                $stmt = $pdo->query("SELECT COUNT(*) as total FROM candidat WHERE supprimer = 1");
-                $total = $stmt->fetchColumn();
-                $stmt->closeCursor();
+                $stmt_total = $pdo->query("SELECT COUNT(*) FROM candidat WHERE supprimer = 1");
+                $total = $stmt_total->fetchColumn();
+                $stmt_total->closeCursor();
+
+                $stmt_siadoc = $pdo->query("SELECT COUNT(*) FROM candidat WHERE supprimer = 1 AND (source_system = 'SIADOC' OR siadoc_sync_status = 'SYNCED' OR matricule_militaire LIKE 'SIA%' OR matricule_militaire LIKE '%-AT-%' OR matricule_militaire LIKE '%-GN-%' OR matricule_militaire LIKE '%-AA-%' OR matricule_militaire LIKE '%-AM-%')");
+                $siadoc_total = $stmt_siadoc->fetchColumn();
+                $stmt_siadoc->closeCursor();
 
                 sendSuccessResponse([
                     'total_militaires' => (int)$total,
-                    'cartes_generees' => (int)$total,
-                    'envois_siadoc' => (int)$total
+                    'cartes_generees'  => (int)$total,
+                    'envois_siadoc'    => (int)$siadoc_total
                 ]);
             } catch (Exception $e) {
                 sendErrorResponse($e->getMessage());
@@ -437,6 +455,16 @@ if (isset($_GET['action'])) {
                     </select>
                 </div>
 
+                <div class="form-group">
+                    <label>Année Entrée Service (Enrôlement)</label>
+                    <input type="number" id="inputAnneeEnrolement" class="form-control" placeholder="ex: 2026">
+                </div>
+
+                <div class="form-group">
+                    <label>Année Promotion Galon (Grade)</label>
+                    <input type="number" id="inputAnneeGrade" class="form-control" placeholder="ex: 2026">
+                </div>
+
                 <div class="form-group" style="display: flex; gap: 0.5rem;">
                     <button class="btn" id="btnSearch" onclick="rechercherMilitaires()">
                         <i class="fas fa-spinner spinner" id="spinSearch"></i>
@@ -569,12 +597,17 @@ if (isset($_GET['action'])) {
             const matricule = document.getElementById('inputMatricule').value.trim();
             const grade = document.getElementById('selectGrade').value;
             const unite = document.getElementById('selectUnite').value;
+            const anneeEnrolement = document.getElementById('inputAnneeEnrolement').value.trim();
+            const anneeGrade = document.getElementById('inputAnneeGrade').value.trim();
 
             let url = 'api_siadoc.php?action=';
             if (matricule) {
                 url += 'get_militaire&matricule=' + encodeURIComponent(matricule);
             } else {
-                url += 'get_filtres&grade=' + encodeURIComponent(grade) + '&unite=' + encodeURIComponent(unite);
+                url += 'get_filtres&grade=' + encodeURIComponent(grade) 
+                    + '&unite=' + encodeURIComponent(unite)
+                    + '&annee_enrolement=' + encodeURIComponent(anneeEnrolement)
+                    + '&annee_grade=' + encodeURIComponent(anneeGrade);
             }
 
             fetch(url)
@@ -651,6 +684,8 @@ if (isset($_GET['action'])) {
             document.getElementById('inputMatricule').value = '';
             document.getElementById('selectGrade').value = '';
             document.getElementById('selectUnite').value = '';
+            document.getElementById('inputAnneeEnrolement').value = '';
+            document.getElementById('inputAnneeGrade').value = '';
             document.getElementById('checkSelectAll').checked = false;
             document.getElementById('bannerSuccess').style.display = 'none';
             document.getElementById('bannerError').style.display = 'none';
