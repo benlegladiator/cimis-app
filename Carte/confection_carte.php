@@ -893,13 +893,34 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
     <?php return ob_get_clean();
 }
 
+function resolveCardBgImage($path) {
+    if (empty($path)) return '../img/vert.PNG';
+    
+    // Si le fichier existe tel quel avec '../'
+    if (file_exists('../' . ltrim($path, '/'))) return '../' . ltrim($path, '/');
+    if (file_exists($path)) return $path;
+
+    // Tester l'extension alternative (png vs PNG, jpg vs JPG)
+    $ext = pathinfo($path, PATHINFO_EXTENSION);
+    $filename = pathinfo($path, PATHINFO_FILENAME);
+    $dir = pathinfo($path, PATHINFO_DIRNAME);
+    
+    $alt_ext = (strtolower($ext) === 'png') ? 'PNG' : 'png';
+    $alt_path = $dir . '/' . $filename . '.' . $alt_ext;
+
+    if (file_exists('../' . ltrim($alt_path, '/'))) return '../' . ltrim($alt_path, '/');
+    if (file_exists($alt_path)) return $alt_path;
+
+    return '../' . ltrim($path, '/');
+}
+
 function renderCarte($candidat) {
     $config_unites = include __DIR__ . '/config_unites.php';
     $unite = $candidat['unite'] ?? 'ARMÉE DE TERRE';
     $config = $config_unites[$unite] ?? $config_unites['ARMÉE DE TERRE'];
 
-    $fond_image = file_exists('../' . $config['fond']) ? '../' . $config['fond'] : '../img/default_fond.png';
-    $logo_unit = !empty($config['logo']) && file_exists('../' . $config['logo']) ? '../' . $config['logo'] : '';
+    $fond_image = resolveCardBgImage($config['fond']);
+    $logo_unit = !empty($config['logo']) ? resolveCardBgImage($config['logo']) : '';
 
     ob_start(); ?>
     <div class="carte-militaire-container">
@@ -913,17 +934,16 @@ function renderCarte($candidat) {
 }
 
 // Fonction pour rendre une carte avec un fond uniforme (mode preview)
-// Cette fonction ignore le fond défini dans config_unites et force un fond personnalisé
 function renderCarteUniforme($candidat, $fond_uniforme) {
     $unite = $candidat['unite'] ?? 'ARMÉE DE TERRE';
     
     // Utiliser le fond uniforme fourni au lieu du fond de l'unité
-    $fond_image = file_exists('../' . $fond_uniforme) ? '../' . $fond_uniforme : '../img/default_fond.png';
+    $fond_image = resolveCardBgImage($fond_uniforme);
     
     // Récupérer la config pour le logo (on garde le logo de l'unité)
     $config_unites = include __DIR__ . '/config_unites.php';
     $config = $config_unites[$unite] ?? $config_unites['ARMÉE DE TERRE'];
-    $logo_unit = !empty($config['logo']) && file_exists('../' . $config['logo']) ? '../' . $config['logo'] : '';
+    $logo_unit = !empty($config['logo']) ? resolveCardBgImage($config['logo']) : '';
 
     ob_start(); ?>
     <div class="carte-militaire-container">
