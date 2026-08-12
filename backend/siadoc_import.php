@@ -323,14 +323,15 @@ function normalizeSIADOCData(array $d): array {
     $date_dernier_grade = !empty($date_grade_raw) ? date('Y-m-d', strtotime($date_grade_raw)) : null;
     $annee_dernier_galon = !empty($date_grade_raw) ? date('Y', strtotime($date_grade_raw)) : ($d['annee_dernier_galon'] ?? null);
 
-    // Normalisation de la photo
+    // Normalisation de la photo (priorité à photoBase64 puis photoUrl)
     $photo_path = null;
-    $photo_input = $d['photo'] ?? $d['photo_url'] ?? $d['photo_base64'] ?? $d['photoData'] ?? null;
+    $photo_input = $d['photoBase64'] ?? $d['photo_base64'] ?? $d['photoUrl'] ?? $d['photo_url'] ?? $d['photo'] ?? $d['photoData'] ?? null;
+
     if (!empty($photo_input)) {
         if (str_starts_with($photo_input, 'data:image')) {
             $img_dir = dirname(__DIR__) . '/img/candidats/';
             if (!is_dir($img_dir)) mkdir($img_dir, 0777, true);
-            $img_filename = 'CIM-' . rand(10000, 99999) . '_' . time() . '.png';
+            $img_filename = 'CIM-' . rand(10000, 99999) . '_' . time() . '.jpg';
             $data_parts = explode(',', $photo_input);
             if (count($data_parts) === 2) {
                 file_put_contents($img_dir . $img_filename, base64_decode($data_parts[1]));
@@ -339,9 +340,21 @@ function normalizeSIADOCData(array $d): array {
         } elseif (str_starts_with($photo_input, 'http')) {
             $img_dir = dirname(__DIR__) . '/img/candidats/';
             if (!is_dir($img_dir)) mkdir($img_dir, 0777, true);
-            $img_filename = 'CIM-' . rand(10000, 99999) . '_' . time() . '.png';
-            $img_content = @file_get_contents($photo_input);
-            if ($img_content) {
+            $img_filename = 'CIM-' . rand(10000, 99999) . '_' . time() . '.jpg';
+            
+            $ch = curl_init($photo_input);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'X-API-KEY: ' . (defined('SIADOC_API_KEY') ? SIADOC_API_KEY : 'siadoc-2026-cimis-integration'),
+                'User-Agent: CIMIS-Client/2.0'
+            ]);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+            $img_content = curl_exec($ch);
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($http_code === 200 && !empty($img_content)) {
                 file_put_contents($img_dir . $img_filename, $img_content);
                 $photo_path = 'img/candidats/' . $img_filename;
             } else {

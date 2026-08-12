@@ -148,6 +148,7 @@ if (isset($_GET['action'])) {
                             'corps'               => $c_full,
                             'date_enrolement'     => $m['dateService'] ?? $m['dateEnrolement'] ?? $m['date_enrolement'] ?? '',
                             'date_dernier_grade'  => $m['dateGrade'] ?? $m['date_dernier_grade'] ?? $m['annee_dernier_galon'] ?? '',
+                            'photo'               => $m['photoBase64'] ?? $m['photo_base64'] ?? $m['photoUrl'] ?? $m['photo_url'] ?? $m['photo'] ?? '',
                             'source_system'       => 'SIADOC'
                         ];
                     }, $siadoc_res['data']);
