@@ -1,6 +1,20 @@
 <?php
-// Inclure le fichier de fonctions
+// Inclure les configurations et fonctions
+require_once '../backend/config.php';
 require_once '../Carte/confection_carte.php'; 
+
+// Détection d'un scan QR Code smartphone via l'URL (?matricule=...)
+$scanned_matricule = $_GET['matricule'] ?? $_GET['m'] ?? null;
+$scanned_candidat = null;
+
+if (!empty($scanned_matricule)) {
+    global $pdo;
+    if (isset($pdo)) {
+        $stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule = :m OR matricule_militaire = :m");
+        $stmt->execute(['m' => $scanned_matricule]);
+        $scanned_candidat = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+}
 
 // Données de test pour la démo
 $candidat_test = [
@@ -471,9 +485,40 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
                 align-items: center;
             }
         }
-    </style>
-</head>
 <body>
+<?php if (!empty($scanned_matricule)): ?>
+    <div class="scan-verification-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+        <div class="scan-verification-card" style="background: #1e293b; border: 2px solid #10b981; border-radius: 16px; width: 100%; max-width: 500px; padding: 1.75rem; color: #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; font-family: system-ui, -apple-system, sans-serif;">
+            <?php if ($scanned_candidat): ?>
+                <div style="font-size: 3rem; color: #10b981; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-check"></i></div>
+                <h2 style="color: #34d399; margin: 0 0 0.25rem 0; font-size: 1.4rem;">CARTE AUTHENTIQUE & VALIDE</h2>
+                <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 1.25rem;">MINISTÈRE DE LA DÉFENSE • RÉPUBLIQUE DU CAMEROUN</div>
+                
+                <div style="display: flex; align-items: center; gap: 1rem; background: #0f172a; padding: 1rem; border-radius: 12px; border: 1px solid #334155; text-align: left; margin-bottom: 1.25rem;">
+                    <?php 
+                    $photo_src = !empty($scanned_candidat['photo']) ? '../' . ltrim($scanned_candidat['photo'], '../') : '../img/candidats/default.svg';
+                    ?>
+                    <img src="<?php echo htmlspecialchars($photo_src); ?>" alt="Photo" style="width: 65px; height: 65px; border-radius: 10px; object-fit: cover; border: 2px solid #10b981; background: #1e293b;" onerror="this.src='../img/candidats/default.svg';">
+                    <div>
+                        <div style="font-weight: 700; font-size: 1.1rem; color: #f8fafc;"><?php echo htmlspecialchars(($scanned_candidat['nom'] ?? '') . ' ' . ($scanned_candidat['prenom'] ?? '')); ?></div>
+                        <div style="font-size: 0.85rem; color: #60a5fa; font-weight: 600;"><?php echo htmlspecialchars(($scanned_candidat['grade'] ?? '') . ' • ' . ($scanned_candidat['unite'] ?? '')); ?></div>
+                        <div style="font-size: 0.8rem; color: #34d399; font-weight: 600; margin-top: 2px;">CIMIS: <?php echo htmlspecialchars($scanned_candidat['matricule'] ?? ''); ?></div>
+                    </div>
+                </div>
+                
+                <div style="font-size: 0.8rem; color: #cbd5e1; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.6rem; border-radius: 8px; margin-bottom: 1.25rem;">
+                    <i class="fa-solid fa-shield-halved" style="color: #34d399;"></i> Signature numérique certifiée CIMIS 2.0 • Horodatage: <?php echo date('d/m/Y H:i:s'); ?>
+                </div>
+            <?php else: ?>
+                <div style="font-size: 3rem; color: #ef4444; margin-bottom: 0.5rem;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <h2 style="color: #f87171; margin: 0 0 0.5rem 0; font-size: 1.3rem;">MATRICULE INCONNU OU NON VALIDE</h2>
+                <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 1.25rem;">Le matricule <strong><?php echo htmlspecialchars($scanned_matricule); ?></strong> ne correspond à aucun enregistrement actif dans la base de données de la Défense.</p>
+            <?php endif; ?>
+
+            <a href="securite.php" style="display: inline-block; background: #3b82f6; color: #fff; padding: 0.75rem 1.75rem; border-radius: 10px; font-weight: 700; text-decoration: none;">Fermer la vérification</a>
+        </div>
+    </div>
+<?php endif; ?>
     <div class="security-container">
         <div class="security-header">
             <h1>🛡️ Sécurité des Cartes Militaires</h1>

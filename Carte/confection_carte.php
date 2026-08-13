@@ -796,38 +796,37 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
                         </div>
                         
                         <?php 
-                        $qr_path = $candidat['code_qr'] ?? '';
-                        // Si le QR code n'existe pas physiquement ou si le chemin est vide, on le régénère à la volée !
-                        if (empty($qr_path) || !file_exists($qr_path)) {
-                            // Inclure le générateur si pas encore fait
+                        $c_mat = $candidat['matricule'] ?? $candidat['matricule_militaire'] ?? 'CIMIS';
+                        $safe_mat = preg_replace('/[^a-zA-Z0-9\-_]/', '_', $c_mat);
+                        $expected_disk_qr = __DIR__ . '/../img/qrcodes/' . $safe_mat . '_qr.png';
+                        
+                        // Si le fichier QR n'existe pas encore sur disque, le générer avec l'URL scannable
+                        if (!file_exists($expected_disk_qr)) {
                             if (!function_exists('generateQRCodeForMatricule')) {
                                 if (file_exists(__DIR__ . '/../backend/qrcode_generator.php')) {
                                     require_once __DIR__ . '/../backend/qrcode_generator.php';
                                 }
                             }
                             if (function_exists('generateQRCodeForMatricule')) {
-                                $new_qr = generateQRCodeForMatricule($candidat['matricule']);
-                                if (!empty($new_qr) && file_exists($new_qr)) {
-                                    $qr_path = $new_qr;
-                                    // Tenter de mettre à jour en BDD si pdo est défini
-                                    global $pdo;
-                                    if (isset($pdo)) {
-                                        $update_stmt = $pdo->prepare("UPDATE candidat SET code_qr = :code_qr WHERE matricule = :matricule");
-                                        $update_stmt->execute(['code_qr' => $new_qr, 'matricule' => $candidat['matricule']]);
-                                    }
-                                }
+                                generateQRCodeForMatricule($c_mat);
                             }
                         }
-                        
-                        if (!empty($qr_path) && file_exists($qr_path)): 
+
+                        // Résoudre le lien d'image web pour la balise <img>
+                        if (file_exists($expected_disk_qr)) {
+                            $qr_img_url = '../img/qrcodes/' . $safe_mat . '_qr.png';
+                        } else {
+                            $host = $_SERVER['HTTP_HOST'] ?? 'cimis-app.onrender.com';
+                            $verify_link = 'https://' . $host . '/Frontend/securite.php?matricule=' . urlencode($c_mat);
+                            $qr_img_url = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' . urlencode($verify_link);
+                        }
                         ?>
                         <div class="verso-qr" style="margin-top: -15px;">
-                            <div class="qr-secure" style="padding: 0.5mm; position: relative;">
-                                <img src="<?php echo $qr_path; ?>" class="qr-code-image" alt="QR Code">
+                            <div class="qr-secure" style="padding: 1mm; position: relative; background: #ffffff; border-radius: 4px; box-shadow: 0 0 5px rgba(0,0,0,0.3);">
+                                <img src="<?php echo $qr_img_url; ?>" class="qr-code-image" alt="QR Code" style="width: 22mm; height: 22mm; object-fit: contain; display: block; background: #ffffff;">
                             </div>
                             <span class="qr-text"><i class="fa-solid fa-lock" style="font-size: 0.8em; margin-right: 0.3mm; color: #d4af37;"></i> QR Code</span>
                         </div>
-                        <?php endif; ?>
                         
                         <div class="verso-signature" style="left: 55%; top: 15px; transform: translateX(-50%);">
                             <div class="signature-text signature-yellow" style="

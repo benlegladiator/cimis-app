@@ -130,6 +130,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
             }
         }
 
+        // Traitement propre de l'année du dernier galon (pour éviter l'erreur SQL 1265 Data truncated)
+        $annee_galon_raw = $_POST['annee_dernier_galon'] ?? null;
+        $annee_galon_val = null;
+        if (!empty($annee_galon_raw)) {
+            $annee_galon_val = date('Y', strtotime($annee_galon_raw));
+        }
+
         // Préparation des données pour la mise à jour
         $data = [
             'nom' => strtoupper(trim($_POST['nom'])),
@@ -145,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
             'unite' => $unite,
             'grade' => $_POST['grade'] ?? '',
             'categorie_civil' => $_POST['categorie_civil'] ?? '',
-            'annee_dernier_galon' => $_POST['annee_dernier_galon'] ?? null,
+            'annee_dernier_galon' => $annee_galon_val,
             'suspendus' => $_POST['suspendus'] ?? 0,
             'statut_militaire' => $_POST['statut_militaire'] ?? 'ACTIF',
             'date_changement_statut' => $_POST['statut_militaire'] !== ($candidat['statut_militaire'] ?? 'ACTIF') ? date('Y-m-d') : null,

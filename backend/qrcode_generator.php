@@ -3,17 +3,13 @@
 require_once __DIR__ . '/phpqrcode/qrlib.php';
 
 /**
- * Génère un QR code PNG basé sur le matricule militaire
+ * Génère un QR code PNG scannable par tout smartphone
  * @param string $matricule Le matricule militaire
  * @return string Le chemin vers le fichier QR généré
  */
 function generateQRCodeForMatricule($matricule) {
-    // Vérifier si l'extension GD est chargée
-    if (!extension_loaded('gd')) {
-        error_log("ATTENTION : L'extension GD n'est pas chargée dans PHP. Le QR code ne peut pas être généré.");
-        return '';
-    }
-    
+    if (empty($matricule)) return '';
+
     // Créer le répertoire si nécessaire
     $dir = __DIR__ . '/../img/qrcodes/';
     if (!is_dir($dir)) {
@@ -22,15 +18,23 @@ function generateQRCodeForMatricule($matricule) {
     
     // Nettoyer le matricule pour le nom de fichier
     $safe_matricule = preg_replace('/[^a-zA-Z0-9\-_]/', '_', $matricule);
-    
-    // Générer un nom de fichier unique
     $filename = $safe_matricule . '_qr.png';
     $filepath = $dir . $filename;
     
-    // Générer le QR code en taille 150x150 pixels avec correction d'erreur maximale (High)
-    QRcode::png($matricule, $filepath, QR_ECLEVEL_H, 3);
+    // URL HTTPS scannable par tout smartphone
+    $host = isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== 'localhost' ? $_SERVER['HTTP_HOST'] : 'cimis-app.onrender.com';
+    $qr_url = 'https://' . $host . '/Frontend/securite.php?matricule=' . urlencode($matricule);
     
-    // Retourner le chemin web (accessible depuis Frontend/)
-    return '../img/qrcodes/' . $filename;
+    if (class_exists('QRcode')) {
+        QRcode::png($qr_url, $filepath, QR_ECLEVEL_M, 4, 1);
+    } else {
+        $api_url = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" . urlencode($qr_url);
+        $img_data = @file_get_contents($api_url);
+        if ($img_data) {
+            file_put_contents($filepath, $img_data);
+        }
+    }
+    
+    return 'img/qrcodes/' . $filename;
 }
 ?>
