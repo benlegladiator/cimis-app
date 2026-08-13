@@ -115,9 +115,85 @@ if (empty($cartes_confectionnees)) {
             font-weight: bold;
         }
         
+        /* Dynamic Action Bar */
+        .actions-container-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            padding: 1.5rem 2rem;
+            margin: 2.5rem auto 1.5rem auto;
+            max-width: 1050px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .btn-action-custom {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            padding: 0.9rem 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease-in-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+        }
+        
+        .btn-action-custom:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+        }
+        
+        .btn-action-security {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: #ffffff !important;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+        }
+        .btn-action-security:hover {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .btn-action-edit {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff !important;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+        .btn-action-edit:hover {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        
+        .btn-action-print {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: #ffffff !important;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+        .btn-action-print:hover {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .btn-action-back {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e2e8f0 !important;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-action-back:hover {
+            background: rgba(255, 255, 255, 0.18);
+            color: #ffffff !important;
+        }
+
         @media print {
-            .header, .actions {
-                display: none;
+            .header, .actions, .actions-container-bar {
+                display: none !important;
             }
             
             .visualization-container {
@@ -411,30 +487,41 @@ if (empty($cartes_confectionnees)) {
                     <?php endif; ?>
                 </div>
 
-                <!-- Actions -->
-                <div class="actions">
-                    <button class="btn" onclick="window.print()">
-                        <i class="fa-solid fa-print"></i> IMPRIMER TOUTES LES CARTES / PRINT ALL CARDS
-                    </button>
-                    <div class="action-buttons">
-                        <a href="../Carte/confection_carte.php" class="btn">
-                            <i class="fa-solid fa-magic"></i> CONFECTIONNER D'AUTRES CARTES / CREATE OTHER CARDS
+                <!-- Barres d'actions principales réorganisées -->
+                <div class="actions-container-bar">
+                    <!-- 1. Bouton Vérifier la Sécurité -->
+                    <a href="securite.php" class="btn-action-custom btn-action-security" title="Vérifier la sécurité et l'authenticité de la carte">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>VÉRIFIER LA SÉCURITÉ / CHECK SECURITY</span>
+                    </a>
+
+                    <!-- 2. Bouton Modifier le Candidat -->
+                    <?php 
+                    $first_candidat_id = !empty($cartes_confectionnees[0]['candidat']['id']) ? $cartes_confectionnees[0]['candidat']['id'] : '';
+                    if (!empty($first_candidat_id)): 
+                    ?>
+                        <a href="modifier_candidat.php?id=<?php echo urlencode($first_candidat_id); ?>" class="btn-action-custom btn-action-edit" title="Modifier les informations de ce candidat">
+                            <i class="fa-solid fa-user-pen"></i>
+                            <span>MODIFIER / EDIT</span>
                         </a>
-                        <div class="back-button-container" style="position: static; display: inline-block;">
-                            <a href="impression.php" class="btn-back btn-back-list">
-                                <i class="fa-solid fa-arrow-left"></i>
-                                <span>RETOUR À LA LISTE / BACK TO LIST</span>
-                            </a>
-                        </div>
-                        <a href="../securite.php" class="btn" style="background: linear-gradient(45deg, #d4af37, #b8941f); color: #000;">
-                            <i class="fa-solid fa-shield-alt"></i> VÉRIFIER LA SÉCURITÉ / CHECK SECURITY
+                    <?php else: ?>
+                        <a href="impression.php" class="btn-action-custom btn-action-edit" title="Sélectionner un candidat à modifier">
+                            <i class="fa-solid fa-user-pen"></i>
+                            <span>MODIFIER / EDIT</span>
                         </a>
-                    </div>
-                    <?php if (!empty($cartes_confectionnees)): ?>
-                        <button onclick="clearSession()" class="btn btn-logout">
-                            <i class="fa-solid fa-trash"></i> VIDER LA SESSION / CLEAR SESSION
-                        </button>
                     <?php endif; ?>
+
+                    <!-- 3. Bouton Imprimer PVC -->
+                    <button class="btn-action-custom btn-action-print" onclick="window.print()" title="Imprimer la carte au format PVC">
+                        <i class="fa-solid fa-print"></i>
+                        <span>IMPRIMER LA CARTE PVC / PRINT PVC</span>
+                    </button>
+
+                    <!-- 4. Bouton Retour à la Liste -->
+                    <a href="impression.php" class="btn-action-custom btn-action-back" title="Retourner à la liste de sélection des cartes">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>RETOUR À LA LISTE / BACK TO LIST</span>
+                    </a>
                 </div>
             </div>
         </div>
