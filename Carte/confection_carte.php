@@ -800,16 +800,14 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
                         $safe_mat = preg_replace('/[^a-zA-Z0-9\-_]/', '_', $c_mat);
                         $expected_disk_qr = __DIR__ . '/../img/qrcodes/' . $safe_mat . '_qr.png';
                         
-                        // Si le fichier QR n'existe pas encore sur disque, le générer avec l'URL scannable
-                        if (!file_exists($expected_disk_qr)) {
-                            if (!function_exists('generateQRCodeForMatricule')) {
-                                if (file_exists(__DIR__ . '/../backend/qrcode_generator.php')) {
-                                    require_once __DIR__ . '/../backend/qrcode_generator.php';
-                                }
+                        // Régénérer pour garantir la haute résolution 300x300 avec marge blanche scannable
+                        if (!function_exists('generateQRCodeForMatricule')) {
+                            if (file_exists(__DIR__ . '/../backend/qrcode_generator.php')) {
+                                require_once __DIR__ . '/../backend/qrcode_generator.php';
                             }
-                            if (function_exists('generateQRCodeForMatricule')) {
-                                generateQRCodeForMatricule($c_mat);
-                            }
+                        }
+                        if (function_exists('generateQRCodeForMatricule')) {
+                            generateQRCodeForMatricule($c_mat);
                         }
 
                         // Résoudre le lien d'image web pour la balise <img>
@@ -818,14 +816,14 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
                         } else {
                             $host = $_SERVER['HTTP_HOST'] ?? 'cimis-app.onrender.com';
                             $verify_link = 'https://' . $host . '/Frontend/securite.php?matricule=' . urlencode($c_mat);
-                            $qr_img_url = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' . urlencode($verify_link);
+                            $qr_img_url = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=2&data=' . urlencode($verify_link);
                         }
                         ?>
-                        <div class="verso-qr" style="position: absolute; right: 4mm; bottom: 1.5mm; z-index: 11; display: flex; flex-direction: column; align-items: center;">
-                            <div class="qr-secure" style="padding: 0.4mm; background: #ffffff; border-radius: 2px; border: 0.4mm solid rgba(0,0,0,0.3); box-shadow: 0 0 3px rgba(0,0,0,0.3);">
-                                <img src="<?php echo $qr_img_url; ?>" class="qr-code-image" alt="QR Code" style="width: 12mm; height: 12mm; object-fit: contain; display: block; background: #ffffff;">
+                        <div class="verso-qr" style="position: absolute; right: 3mm; bottom: 0.5mm; z-index: 11; display: flex; flex-direction: column; align-items: center;">
+                            <div class="qr-secure" style="padding: 0.8mm; background: #ffffff; border-radius: 2px; border: 0.4mm solid rgba(0,0,0,0.4); box-shadow: 0 1px 4px rgba(0,0,0,0.3);">
+                                <img src="<?php echo $qr_img_url; ?>" class="qr-code-image" alt="QR Code" style="width: 14mm; height: 14mm; object-fit: contain; display: block; background: #ffffff; image-rendering: -webkit-optimize-contrast;">
                             </div>
-                            <span class="qr-text" style="font-size: 1.2mm; color: #ffffff; font-weight: bold; margin-top: 0.3mm;"><i class="fa-solid fa-lock" style="font-size: 0.8em; margin-right: 0.3mm; color: #d4af37;"></i> QR Code</span>
+                            <span class="qr-text" style="font-size: 1.1mm; color: #ffffff; font-weight: bold; margin-top: 0.2mm; text-shadow: 0 1px 2px rgba(0,0,0,0.8);"><i class="fa-solid fa-lock" style="font-size: 0.8em; margin-right: 0.3mm; color: #d4af37;"></i> QR Code</span>
                         </div>
                         
                         <div class="verso-signature" style="left: 55%; top: 15px; transform: translateX(-50%);">

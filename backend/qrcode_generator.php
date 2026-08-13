@@ -26,9 +26,9 @@ function generateQRCodeForMatricule($matricule) {
     $qr_url = 'https://' . $host . '/Frontend/securite.php?matricule=' . urlencode($matricule);
     
     if (class_exists('QRcode')) {
-        QRcode::png($qr_url, $filepath, QR_ECLEVEL_M, 4, 1);
+        QRcode::png($qr_url, $filepath, QR_ECLEVEL_M, 8, 2);
     } else {
-        $api_url = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" . urlencode($qr_url);
+        $api_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=2&data=" . urlencode($qr_url);
         $img_data = @file_get_contents($api_url);
         if ($img_data) {
             file_put_contents($filepath, $img_data);
