@@ -517,11 +517,188 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             color: #dc3545;
             font-weight: bold;
         }
-    </style>
-    </style>
-    <style>
-    /* ──── VUE PLATEAU D'IMPRESSION ──────────────────────────────────────── */
-    .personnels-plateau {
+
+        /* ──── STYLES RESPONSIFS AVANCÉS (MOBILE / TABLETTE / DESKTOP) ──── */
+        body {
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem 2rem 1rem;
+        }
+
+        .top-status-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(15, 23, 42, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-left, .status-right {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input-wrapper input,
+        .search-input-wrapper select {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .main-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1.25rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        .main-actions .btn {
+            flex: 1 1 auto;
+            min-width: 180px;
+            max-width: 100%;
+            margin: 0 !important;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .personnel-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .personnel-item:hover {
+            border-color: rgba(52, 211, 153, 0.4);
+            background: rgba(30, 41, 59, 0.85);
+        }
+
+        .personnel-photo {
+            width: 48px;
+            height: 58px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .personnel-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .personnel-info {
+            flex: 1 1 200px;
+            min-width: 0;
+        }
+
+        .personnel-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #f8fafc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .personnel-details {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .personnel-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .personnel-actions .btn {
+            padding: 0.45rem 0.75rem !important;
+            font-size: 0.85rem !important;
+            border-radius: 6px !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        @media (max-width: 768px) {
+            .top-status-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .search-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-actions .btn {
+                width: 100%;
+                min-width: 100%;
+            }
+
+            .personnel-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .personnel-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .personnel-name {
+                white-space: normal;
+            }
+
+            .candidats-header {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: flex-start;
+            }
+        }
+
+        /* ──── VUE PLATEAU D'IMPRESSION ──────────────────────────────────────── */
+        .personnels-plateau {
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
