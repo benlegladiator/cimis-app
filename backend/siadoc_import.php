@@ -648,41 +648,51 @@ switch ($action) {
         $matricule = $_GET['matricule'] ?? $_POST['matricule'] ?? null;
         $unite     = $_GET['unite']     ?? $_POST['unite']     ?? null;
         $grade     = $_GET['grade']     ?? $_POST['grade']     ?? null;
-        $limit     = (int)($_GET['limit'] ?? $_POST['limit'] ?? 2);
+        $limit     = (int)($_GET['limit'] ?? $_POST['limit'] ?? 20);
 
-        // Tenter d'abord de récupérer depuis le serveur SIADOC
-        $siadoc_res = callSIADOCAPI('/api/export/militaire/info/all');
         $militaires_siadoc = [];
 
-        if ($siadoc_res['http_code'] === 200 && is_array($siadoc_res['data']) && !empty($siadoc_res['data'])) {
-            $militaires_siadoc = array_slice($siadoc_res['data'], 0, $limit);
+        if (!empty($matricule)) {
+            $requested_mats = array_unique(array_filter(array_map('trim', explode(',', $matricule))));
+            
+            foreach ($requested_mats as $mat) {
+                // Tenter de récupérer le militaire spécifique par son matricule chez SIADOC
+                $siadoc_single = callSIADOCAPI('/api/export/militaire/info', ['matricule' => $mat]);
+                if ($siadoc_single['http_code'] === 200 && is_array($siadoc_single['data']) && !empty($siadoc_single['data'])) {
+                    $item = $siadoc_single['data']['militaire'] ?? $siadoc_single['data']['data'] ?? $siadoc_single['data'];
+                    if (is_array($item) && isset($item['matricule'])) {
+                        $militaires_siadoc[] = $item;
+                    }
+                }
+            }
+
+            // Si la recherche individuelle n'a pas retourné certains résultats, chercher dans l'export global
+            if (count($militaires_siadoc) < count($requested_mats)) {
+                $siadoc_all = callSIADOCAPI('/api/export/militaire/info/all');
+                if ($siadoc_all['http_code'] === 200 && is_array($siadoc_all['data'])) {
+                    foreach ($siadoc_all['data'] as $m) {
+                        $m_mat = $m['matricule'] ?? $m['matricule_militaire'] ?? '';
+                        if (in_array($m_mat, $requested_mats)) {
+                            $already_in = false;
+                            foreach ($militaires_siadoc as $existing_item) {
+                                if (($existing_item['matricule'] ?? '') === $m_mat) {
+                                    $already_in = true;
+                                    break;
+                                }
+                            }
+                            if (!$already_in) {
+                                $militaires_siadoc[] = $m;
+                            }
+                        }
+                    }
+                }
+            }
         } else {
-            // Échantillons SIADOC pour démonstration et test d'interopérabilité
-            $militaires_siadoc = [
-                [
-                    'matricule' => 'SIA-2026-001',
-                    'nom' => 'TCHATCHOUANG',
-                    'prenom' => 'Bertrand',
-                    'date_naissance' => '1985-04-12',
-                    'lieu_naissance' => 'YAOUNDE',
-                    'sexe' => 'MASCULIN',
-                    'grade' => $grade ?: 'Capitaine',
-                    'unite' => $unite ?: 'ARMÉE DE TERRE',
-                    'source_system' => 'SIADOC'
-                ],
-                [
-                    'matricule' => 'SIA-2026-002',
-                    'nom' => 'NGAH',
-                    'prenom' => 'Marie',
-                    'date_naissance' => '1990-09-25',
-                    'lieu_naissance' => 'DOUALA',
-                    'sexe' => 'FEMININ',
-                    'grade' => $grade ?: 'Colonel',
-                    'unite' => $unite ?: 'GENDARMERIE NATIONALE',
-                    'source_system' => 'SIADOC'
-                ]
-            ];
-            $militaires_siadoc = array_slice($militaires_siadoc, 0, $limit);
+            // Aucun matricule spécifié : récupérer les N premiers depuis SIADOC
+            $siadoc_res = callSIADOCAPI('/api/export/militaire/info/all');
+            if ($siadoc_res['http_code'] === 200 && is_array($siadoc_res['data']) && !empty($siadoc_res['data'])) {
+                $militaires_siadoc = array_slice($siadoc_res['data'], 0, $limit);
+            }
         }
 
         $resultats = [];
@@ -691,11 +701,11 @@ switch ($action) {
         }
 
         echo json_encode([
-            'success' => true,
-            'message' => count($resultats) . " militaire(s) récupéré(s) et importé(s) depuis SIADOC",
-            'source' => 'SIADOC (https://siadoc.onrender.com)',
+            'success'    => true,
+            'message'    => count($resultats) . " militaire(s) récupéré(s) et importé(s) depuis SIADOC",
+            'source'     => 'SIADOC (https://siadoc.onrender.com)',
             'militaires' => $resultats,
-            'timestamp' => date('c')
+            'timestamp'  => date('c')
         ], JSON_UNESCAPED_UNICODE);
         break;
 
