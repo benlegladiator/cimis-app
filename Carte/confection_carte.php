@@ -815,13 +815,13 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
                             $qr_img_url = '../img/qrcodes/' . $safe_mat . '_qr.png?v=' . filemtime($expected_disk_qr);
                         } else {
                             $host = $_SERVER['HTTP_HOST'] ?? 'cimis-app.onrender.com';
-                            $verify_link = 'https://' . $host . '/Frontend/securite.php?m=' . urlencode($c_mat);
-                            $qr_img_url = 'https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=2&ecc=L&data=' . urlencode($verify_link);
+                            $verify_link = 'https://' . $host . '/Frontend/securite.php?matricule=' . urlencode($c_mat);
+                            $qr_img_url = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=2&data=' . urlencode($verify_link);
                         }
                         ?>
                         <div class="verso-qr" style="position: absolute; left: 90%; top: 20%; transform: translate(-50%, -50%); z-index: 11; display: flex; flex-direction: column; align-items: center;">
-                            <div class="qr-secure" style="padding: 1.2mm; background: #ffffff; border-radius: 3px; border: 0.5mm solid #000000; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
-                                <img src="<?php echo $qr_img_url; ?>" class="qr-code-image" alt="QR Code" style="width: 16mm; height: 16mm; object-fit: contain; display: block; background: #ffffff; image-rendering: pixelated;">
+                            <div class="qr-secure" style="padding: 0.6mm; background: #ffffff; border-radius: 2px; border: 0.4mm solid rgba(0,0,0,0.4); box-shadow: 0 1px 4px rgba(0,0,0,0.3);">
+                                <img src="<?php echo $qr_img_url; ?>" class="qr-code-image" alt="QR Code" style="width: 12mm; height: 12mm; object-fit: contain; display: block; background: #ffffff; image-rendering: -webkit-optimize-contrast;">
                             </div>
                             <span class="qr-text" style="font-size: 1.1mm; color: #ffffff; font-weight: bold; margin-top: 0.2mm; text-shadow: 0 1px 2px rgba(0,0,0,0.8);"><i class="fa-solid fa-lock" style="font-size: 0.8em; margin-right: 0.3mm; color: #d4af37;"></i> QR Code</span>
                         </div>
