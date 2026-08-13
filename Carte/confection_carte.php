@@ -821,11 +821,11 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
                             $qr_img_url = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' . urlencode($verify_link);
                         }
                         ?>
-                        <div class="verso-qr" style="margin-top: -15px;">
-                            <div class="qr-secure" style="padding: 1mm; position: relative; background: #ffffff; border-radius: 4px; box-shadow: 0 0 5px rgba(0,0,0,0.3);">
-                                <img src="<?php echo $qr_img_url; ?>" class="qr-code-image" alt="QR Code" style="width: 22mm; height: 22mm; object-fit: contain; display: block; background: #ffffff;">
+                        <div class="verso-qr" style="position: absolute; right: 4mm; bottom: 1.5mm; z-index: 11; display: flex; flex-direction: column; align-items: center;">
+                            <div class="qr-secure" style="padding: 0.4mm; background: #ffffff; border-radius: 2px; border: 0.4mm solid rgba(0,0,0,0.3); box-shadow: 0 0 3px rgba(0,0,0,0.3);">
+                                <img src="<?php echo $qr_img_url; ?>" class="qr-code-image" alt="QR Code" style="width: 12mm; height: 12mm; object-fit: contain; display: block; background: #ffffff;">
                             </div>
-                            <span class="qr-text"><i class="fa-solid fa-lock" style="font-size: 0.8em; margin-right: 0.3mm; color: #d4af37;"></i> QR Code</span>
+                            <span class="qr-text" style="font-size: 1.2mm; color: #ffffff; font-weight: bold; margin-top: 0.3mm;"><i class="fa-solid fa-lock" style="font-size: 0.8em; margin-right: 0.3mm; color: #d4af37;"></i> QR Code</span>
                         </div>
                         
                         <div class="verso-signature" style="left: 55%; top: 15px; transform: translateX(-50%);">
