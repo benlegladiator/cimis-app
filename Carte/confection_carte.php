@@ -810,16 +810,16 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
                             generateQRCodeForMatricule($c_mat);
                         }
 
-                        // Résoudre le lien d'image web pour la balise <img>
+                        // Résoudre le lien d'image web pour la balise <img> avec buster de cache ?v=
                         if (file_exists($expected_disk_qr)) {
-                            $qr_img_url = '../img/qrcodes/' . $safe_mat . '_qr.png';
+                            $qr_img_url = '../img/qrcodes/' . $safe_mat . '_qr.png?v=' . filemtime($expected_disk_qr);
                         } else {
                             $host = $_SERVER['HTTP_HOST'] ?? 'cimis-app.onrender.com';
                             $verify_link = 'https://' . $host . '/Frontend/securite.php?matricule=' . urlencode($c_mat);
                             $qr_img_url = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=2&data=' . urlencode($verify_link);
                         }
                         ?>
-                        <div class="verso-qr" style="position: absolute; right: 3mm; bottom: 0.5mm; z-index: 11; display: flex; flex-direction: column; align-items: center;">
+                        <div class="verso-qr" style="position: absolute; left: 90%; top: 80%; transform: translate(-50%, -50%); z-index: 11; display: flex; flex-direction: column; align-items: center;">
                             <div class="qr-secure" style="padding: 0.8mm; background: #ffffff; border-radius: 2px; border: 0.4mm solid rgba(0,0,0,0.4); box-shadow: 0 1px 4px rgba(0,0,0,0.3);">
                                 <img src="<?php echo $qr_img_url; ?>" class="qr-code-image" alt="QR Code" style="width: 14mm; height: 14mm; object-fit: contain; display: block; background: #ffffff; image-rendering: -webkit-optimize-contrast;">
                             </div>
