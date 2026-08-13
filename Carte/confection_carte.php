@@ -819,7 +819,7 @@ function renderVerso($candidat, $config, $unite, $fond_image, $logo_unit) {
                             $qr_img_url = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=2&data=' . urlencode($verify_link);
                         }
                         ?>
-                        <div class="verso-qr" style="position: absolute; left: 90%; top: 80%; transform: translate(-50%, -50%); z-index: 11; display: flex; flex-direction: column; align-items: center;">
+                        <div class="verso-qr" style="position: absolute; left: 90%; top: 70%; transform: translate(-50%, -50%); z-index: 11; display: flex; flex-direction: column; align-items: center;">
                             <div class="qr-secure" style="padding: 0.8mm; background: #ffffff; border-radius: 2px; border: 0.4mm solid rgba(0,0,0,0.4); box-shadow: 0 1px 4px rgba(0,0,0,0.3);">
                                 <img src="<?php echo $qr_img_url; ?>" class="qr-code-image" alt="QR Code" style="width: 14mm; height: 14mm; object-fit: contain; display: block; background: #ffffff; image-rendering: -webkit-optimize-contrast;">
                             </div>
