@@ -187,10 +187,14 @@ if (isset($_POST['ajax_search'])) {
         $params['search_grade'] = $_POST['search_grade'];
     }
 
-    // Filtre par unité
+    // Filtre par unité / SIADOC
     if (!empty($_POST['search_unite'])) {
-        $where[] = "unite = :search_unite";
-        $params['search_unite'] = $_POST['search_unite'];
+        if ($_POST['search_unite'] === 'SIADOC') {
+            $where[] = "(source_system = 'SIADOC' OR siadoc_sync_status = 'SYNCED' OR matricule_militaire LIKE 'SIA%' OR matricule_militaire LIKE '%-AT-%' OR matricule_militaire LIKE '%-GN-%' OR matricule_militaire LIKE '%-AA-%' OR matricule_militaire LIKE '%-AM-%')";
+        } else {
+            $where[] = "unite = :search_unite";
+            $params['search_unite'] = $_POST['search_unite'];
+        }
     }
 
     // Filtre par année de dernier grade
@@ -431,10 +435,14 @@ if (!empty($_GET['search_grade'])) {
     $params['search_grade'] = $_GET['search_grade'];
 }
 
-// Filtre par unité
+// Filtre par unité / SIADOC
 if (!empty($_GET['search_unite'])) {
-    $where[] = "unite = :search_unite";
-    $params['search_unite'] = $_GET['search_unite'];
+    if ($_GET['search_unite'] === 'SIADOC') {
+        $where[] = "(source_system = 'SIADOC' OR siadoc_sync_status = 'SYNCED' OR matricule_militaire LIKE 'SIA%' OR matricule_militaire LIKE '%-AT-%' OR matricule_militaire LIKE '%-GN-%' OR matricule_militaire LIKE '%-AA-%' OR matricule_militaire LIKE '%-AM-%')";
+    } else {
+        $where[] = "unite = :search_unite";
+        $params['search_unite'] = $_GET['search_unite'];
+    }
 }
 
 // Filtre par année de dernier grade
@@ -1002,6 +1010,7 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <div class="search-input-wrapper">
                                 <select id="search_unite" name="search_unite">
                                     <option value="">Toutes les unités / All units</option>
+                                    <option value="SIADOC" <?php echo (isset($_GET['search_unite']) && $_GET['search_unite'] === 'SIADOC') ? 'selected' : ''; ?>>SIADOC (IMPORTÉS SIADOC)</option>
                                     <option value="GENDARMERIE NATIONALE" <?php echo (isset($_GET['search_unite']) && $_GET['search_unite'] === 'GENDARMERIE NATIONALE') ? 'selected' : ''; ?>>GENDARMERIE NATIONALE / National Gendarmerie</option>
                                     <option value="ARMÉE DE TERRE" <?php echo (isset($_GET['search_unite']) && $_GET['search_unite'] === 'ARMÉE DE TERRE') ? 'selected' : ''; ?>>ARMÉE DE TERRE / Army</option>
                                     <option value="ARMÉE DE L'AIR" <?php echo (isset($_GET['search_unite']) && $_GET['search_unite'] === 'ARMÉE DE L\'AIR') ? 'selected' : ''; ?>>ARMÉE DE L'AIR / Air Force</option>
@@ -1825,6 +1834,73 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
         }
         
+        // Suppression multiple des éléments sélectionnés
+        function deleteSelected() {
+            const selected = document.querySelectorAll('.personnel-checkbox:checked');
+            if (selected.length === 0) {
+                showNotification('Veuillez sélectionner au moins une carte à supprimer', 'error');
+                return;
+            }
+
+            const count = selected.length;
+            if (!confirm(`Êtes-vous sûr de vouloir déplacer les ${count} carte(s) sélectionnée(s) dans la corbeille ?`)) {
+                return;
+            }
+
+            const ids = Array.from(selected).map(cb => cb.value);
+
+            const formData = new FormData();
+            formData.append('ids', JSON.stringify(ids));
+
+            fetch('delete_candidat.php', {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message || `${count} carte(s) déplacée(s) dans la corbeille`, 'success');
+                    ids.forEach(id => {
+                        const item = document.querySelector(`#personnel_${id}`)?.closest('.personnel-item');
+                        if (item) {
+                            item.style.transition = 'all 0.3s ease';
+                            item.style.opacity = '0';
+                            item.style.transform = 'scale(0.8)';
+                            setTimeout(() => item.remove(), 300);
+                        }
+                    });
+                    setTimeout(updateResultCount, 350);
+                } else {
+                    showNotification(data.message || 'Erreur lors de la suppression multiple', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showNotification('Erreur lors de la suppression des éléments sélectionnés', 'error');
+            });
+        }
+
+        // Sélectionner / Désélectionner toutes les cartes
+        function selectAll() {
+            const checkboxes = document.querySelectorAll('.personnel-checkbox');
+            if (checkboxes.length === 0) return;
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+            updateSelection();
+        }
+
+        // Visualiser en 3D la sélection
+        function visualizeMultiple() {
+            const selected = document.querySelectorAll('.personnel-checkbox:checked');
+            if (selected.length === 0) {
+                alert('Veuillez sélectionner au moins une carte à visualiser.');
+                return;
+            }
+            const matricule = selected[0].getAttribute('data-matricule');
+            window.open(`visualisation_3d.php?matricule=${encodeURIComponent(matricule)}`, '_blank');
+        }
+
         // Gestion de la sélection multiple
         function updateSelection() {
             selectedCandidates.clear();

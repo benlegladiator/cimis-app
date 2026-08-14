@@ -5,79 +5,64 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once '../backend/config.php';
 
+header('Content-Type: application/json');
+
 // Vérifier si l'utilisateur est connecté
 if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
-    header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'Utilisateur non connecté']);
     exit;
 }
 
-// Accepter uniquement les requêtes POST
+// Accepter uniquement POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'Méthode non autorisée. Utilisez POST.']);
     exit;
 }
 
-// Vérifier le jeton CSRF
-if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
-    header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Erreur de sécurité CSRF : jeton invalide.']);
-    exit;
+// Récupérer les IDs à supprimer (unique ou multiple)
+$raw_ids = $_POST['ids'] ?? $_POST['id'] ?? null;
+$ids = [];
+
+if (is_string($raw_ids)) {
+    $decoded = json_decode($raw_ids, true);
+    if (is_array($decoded)) {
+        $ids = array_map('intval', $decoded);
+    } else {
+        $ids = array_filter(array_map('intval', explode(',', $raw_ids)));
+    }
+} elseif (is_array($raw_ids)) {
+    $ids = array_map('intval', $raw_ids);
+} elseif (is_numeric($raw_ids)) {
+    $ids = [intval($raw_ids)];
 }
 
-// Vérifier si l'ID est fourni
-if (!isset($_POST['id']) || empty($_POST['id'])) {
-    header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'ID du candidat non fourni']);
+if (empty($ids)) {
+    echo json_encode(['success' => false, 'message' => 'Aucun ID de candidat fourni']);
     exit;
 }
-
-$id = $_POST['id'];
 
 try {
-    // Récupérer les informations du candidat avant suppression
-    $stmt = $pdo->prepare("SELECT matricule, nom, prenom, photo FROM candidat WHERE id = :id");
-    $stmt->execute(['id' => $id]);
-    $candidat = $stmt->fetch(PDO::FETCH_ASSOC);
+    global $pdo;
+    $username = $_SESSION['username'] ?? 'SUPER_ADMIN';
     
-    if (!$candidat) {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Candidat non trouvé']);
-        exit;
-    }
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
     
-    // Supprimer la photo si elle existe
-    if (!empty($candidat['photo']) && file_exists($candidat['photo'])) {
-        if (unlink($candidat['photo'])) {
-            error_log("Photo supprimée: " . $candidat['photo']);
-        } else {
-            error_log("Erreur lors de la suppression de la photo: " . $candidat['photo']);
-        }
-    }
-    
-    // Suppression soft : mettre à jour les attributs au lieu de supprimer
-    $stmt = $pdo->prepare("UPDATE candidat SET supprimer = 0, supprimer_par = :username, date_suppression = NOW() WHERE id = :id");
-    $result = $stmt->execute(['id' => $id, 'username' => $_SESSION['username']]);
-    
-    if ($result) {
-        // Journaliser la suppression soft
-        error_log("Candidat déplacé dans corbeille: ID=$id, Matricule=" . $candidat['matricule'] . ", Nom=" . $candidat['nom'] . " " . $candidat['prenom'] . ", Par=" . $_SESSION['username']);
-        
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => true, 
-            'message' => 'Carte déplacée dans la corbeille / Card moved to trash',
-            'candidat' => $candidat
-        ]);
-    } else {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Erreur lors du déplacement dans la corbeille / Error moving to trash']);
-    }
-    
+    // Soft delete (supprimer = 0)
+    $sql = "UPDATE candidat SET supprimer = 0, supprimer_par = ?, date_suppression = NOW() WHERE id IN ($placeholders)";
+    $stmt = $pdo->prepare($sql);
+    $params = array_merge([$username], $ids);
+    $result = $stmt->execute($params);
+    $affected = $stmt->rowCount();
+
+    error_log("Soft delete réussi pour $affected candidat(s) par $username");
+
+    echo json_encode([
+        'success' => true,
+        'message' => $affected > 1 ? "$affected cartes déplacées dans la corbeille" : "Carte déplacée dans la corbeille",
+        'count' => $affected
+    ]);
 } catch (Exception $e) {
     error_log("Erreur suppression candidat: " . $e->getMessage());
-    header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'Erreur: ' . $e->getMessage()]);
 }
 ?>

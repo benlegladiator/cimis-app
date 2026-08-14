@@ -257,6 +257,22 @@ if (isset($_GET['action'])) {
             }
             break;
 
+        case 'get_imported_militaires':
+            try {
+                $stmt = $pdo->query("
+                    SELECT id, matricule, matricule_militaire, nom, prenom, grade, unite, photo, source_system, siadoc_sync_date, siadoc_sync_status, date_enrolement
+                    FROM candidat 
+                    WHERE supprimer = 1 AND (source_system = 'SIADOC' OR siadoc_sync_status = 'SYNCED' OR matricule_militaire LIKE 'SIA%' OR matricule_militaire LIKE '%-AT-%' OR matricule_militaire LIKE '%-GN-%' OR matricule_militaire LIKE '%-AA-%' OR matricule_militaire LIKE '%-AM-%')
+                    ORDER BY id DESC
+                    LIMIT 200
+                ");
+                $militaires = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                sendSuccessResponse(['militaires' => $militaires]);
+            } catch (Exception $e) {
+                sendErrorResponse($e->getMessage());
+            }
+            break;
+
         default:
             sendErrorResponse('Action non reconnue');
             break;
@@ -606,6 +622,56 @@ if (isset($_GET['action'])) {
             </div>
         </div>
 
+        <!-- PANEL DÉDIÉ : HISTORIQUE DES MILITAIRES IMPORTÉS DE SIADOC & GESTION DES CARTES -->
+        <div class="panel" id="panelSiadocMilitaires">
+            <div class="panel-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <span><i class="fas fa-database" style="color: #c084fc;"></i> Historique des Militaires Importés de SIADOC</span>
+                <button class="btn btn-blue" onclick="chargerMilitairesImportesSIADOC()" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                    <i class="fas fa-sync-alt"></i> Actualiser la liste SIADOC
+                </button>
+            </div>
+
+            <!-- Barre d'actions groupées pour les militaires SIADOC -->
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); padding: 0.85rem; border-radius: 8px; margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <input type="checkbox" id="checkSelectAllSiadoc" onclick="toggleSelectAllSiadoc(this)" style="cursor: pointer; width: 18px; height: 18px;">
+                    <label for="checkSelectAllSiadoc" style="font-weight: 600; cursor: pointer; color: #e9d5ff;">Sélectionner Tout (<span id="siadocSelectedCount" style="color: #c084fc; font-weight: 700;">0</span> sélectionné(s))</label>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <button class="btn" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="supprimerSelectionSIADOC()">
+                        <i class="fas fa-trash-alt"></i> Supprimer la Sélection (Corbeille)
+                    </button>
+                    <button class="btn btn-blue" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="imprimerSelectionSIADOCPVC()">
+                        <i class="fas fa-credit-card"></i> Imprimer Sélection (PVC)
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 40px; text-align: center;">#</th>
+                            <th>Photo</th>
+                            <th>Matricule SIADOC ➔ CIMIS</th>
+                            <th>Nom & Prénom</th>
+                            <th>Grade</th>
+                            <th>Corps / Unité</th>
+                            <th>Date Import / Synchro</th>
+                            <th>Actions Directes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodySiadocMilitaires">
+                        <tr>
+                            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                Chargement des militaires SIADOC importés...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <!-- MODAL DE SUCCÈS IMPORTATION SIADOC -->
@@ -635,10 +701,152 @@ if (isset($_GET['action'])) {
     </div>
 
     <script>
-        // Charger les statistiques au démarrage
+        // Charger les statistiques et la liste des militaires SIADOC au démarrage
         document.addEventListener('DOMContentLoaded', () => {
             fetchStats();
+            chargerMilitairesImportesSIADOC();
         });
+
+        let siadocMilitairesList = [];
+
+        function chargerMilitairesImportesSIADOC() {
+            const tbody = document.getElementById('tbodySiadocMilitaires');
+            if (!tbody) return;
+
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--accent-green); padding: 2rem;"><i class="fas fa-spinner fa-spin"></i> Chargement de l'historique SIADOC...</td></tr>`;
+
+            fetch('api_siadoc.php?action=get_imported_militaires')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.data && Array.isArray(data.data.militaires)) {
+                        siadocMilitairesList = data.data.militaires;
+                        renderTableSiadocMilitaires(siadocMilitairesList);
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">Aucun militaire SIADOC importé dans la base de données.</td></tr>`;
+                    }
+                })
+                .catch(err => {
+                    tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #f87171; padding: 2rem;">Erreur de chargement: ${err.message}</td></tr>`;
+                });
+        }
+
+        function renderTableSiadocMilitaires(list) {
+            const tbody = document.getElementById('tbodySiadocMilitaires');
+            if (!tbody) return;
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">Aucun militaire SIADOC trouvé.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = list.map(m => {
+                const photoSrc = m.photo ? (m.photo.startsWith('http') ? m.photo : '../' + m.photo.replace('../', '')) : '../img/candidats/default.svg';
+                const dateSync = m.siadoc_sync_date || m.date_enrolement || 'N/A';
+
+                return `
+                    <tr id="row_siadoc_${m.id}">
+                        <td style="text-align: center;">
+                            <input type="checkbox" class="checkSiadocItem" value="${m.id}" data-matricule="${m.matricule}" onchange="updateSiadocSelectionCount()" style="cursor: pointer; width: 18px; height: 18px;">
+                        </td>
+                        <td>
+                            <img src="${photoSrc}" style="width: 40px; height: 48px; border-radius: 6px; object-fit: cover; border: 1px solid var(--accent-green); background: #1e293b;" onerror="this.src='../img/candidats/default.svg';">
+                        </td>
+                        <td>
+                            <div style="font-size: 0.8rem; color: #34d399; font-weight: 600;">SIA: ${m.matricule_militaire || 'N/A'}</div>
+                            <div style="font-size: 0.85rem; color: #60a5fa; font-weight: 700;">CIM: ${m.matricule}</div>
+                        </td>
+                        <td style="font-weight: 600; color: #f9fafb;">${m.nom || ''} ${m.prenom || ''}</td>
+                        <td>${m.grade || 'N/A'}</td>
+                        <td><span class="badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">${m.unite || 'MILITAIRE'}</span></td>
+                        <td style="font-size: 0.8rem; color: var(--text-muted);">${dateSync}</td>
+                        <td>
+                            <div style="display: flex; gap: 0.35rem;">
+                                <a href="visualiser_carte.php?matricule=${encodeURIComponent(m.matricule)}" class="btn btn-blue" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" title="Visualiser la carte" target="_blank">
+                                    <i class="fas fa-id-card"></i>
+                                </a>
+                                <a href="modifier_candidat.php?id=${m.id}" class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: #f59e0b; color: white;" title="Modifier" target="_blank">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: #ef4444; color: white;" onclick="supprimerSIADOCUnique(${m.id}, '${(m.nom || '').replace(/'/g, "\\'")} ${(m.prenom || '').replace(/'/g, "\\'")}')" title="Supprimer">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            updateSiadocSelectionCount();
+        }
+
+        function toggleSelectAllSiadoc(master) {
+            const checkboxes = document.querySelectorAll('.checkSiadocItem');
+            checkboxes.forEach(cb => cb.checked = master.checked);
+            updateSiadocSelectionCount();
+        }
+
+        function updateSiadocSelectionCount() {
+            const count = document.querySelectorAll('.checkSiadocItem:checked').length;
+            const label = document.getElementById('siadocSelectedCount');
+            if (label) label.textContent = count;
+        }
+
+        function supprimerSIADOCUnique(id, nom) {
+            if (!confirm(`Voulez-vous vraiment déplacer ${nom} dans la corbeille ?`)) return;
+
+            const formData = new FormData();
+            formData.append('id', id);
+
+            fetch('delete_candidat.php', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message || 'Militaire SIADOC supprimé');
+                        const row = document.getElementById(`row_siadoc_${id}`);
+                        if (row) row.remove();
+                        chargerMilitairesImportesSIADOC();
+                        fetchStats();
+                    } else {
+                        alert('Erreur: ' + (data.message || 'Échec'));
+                    }
+                })
+                .catch(err => alert('Erreur réseau: ' + err.message));
+        }
+
+        function supprimerSelectionSIADOC() {
+            const selected = Array.from(document.querySelectorAll('.checkSiadocItem:checked')).map(cb => cb.value);
+            if (selected.length === 0) {
+                alert('Veuillez sélectionner au moins un militaire SIADOC à supprimer.');
+                return;
+            }
+
+            if (!confirm(`Voulez-vous vraiment supprimer les ${selected.length} militaire(s) SIADOC sélectionné(s) ?`)) return;
+
+            const formData = new FormData();
+            formData.append('ids', JSON.stringify(selected));
+
+            fetch('delete_candidat.php', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message || `${selected.length} militaire(s) supprimé(s) avec succès`);
+                        chargerMilitairesImportesSIADOC();
+                        fetchStats();
+                    } else {
+                        alert('Erreur: ' + (data.message || 'Échec'));
+                    }
+                })
+                .catch(err => alert('Erreur réseau: ' + err.message));
+        }
+
+        function imprimerSelectionSIADOCPVC() {
+            const selected = Array.from(document.querySelectorAll('.checkSiadocItem:checked')).map(cb => cb.getAttribute('data-matricule'));
+            if (selected.length === 0) {
+                alert('Veuillez sélectionner au moins une carte SIADOC à imprimer.');
+                return;
+            }
+            window.open(`impression_pvc.php?matricules=${selected.join(',')}&mode=recto-verso`, '_blank');
+        }
 
         function fetchStats() {
             fetch('api_siadoc.php?action=stats')
