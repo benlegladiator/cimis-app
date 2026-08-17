@@ -1890,11 +1890,11 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             updateSelection();
         }
 
-        // Visualiser toutes les cartes sélectionnées (Galerie & Impression)
+        // Visualiser en 3D la sélection (Multi-cartes 3D)
         function visualizeMultiple() {
             const selected = document.querySelectorAll('.personnel-checkbox:checked');
             if (selected.length === 0) {
-                showNotification('Veuillez sélectionner au moins une carte à visualiser', 'error');
+                showNotification('Veuillez sélectionner au moins une carte à visualiser en 3D', 'error');
                 return;
             }
 
@@ -1907,7 +1907,7 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 return;
             }
 
-            window.open(`visualiser_carte.php?matricules=${encodeURIComponent(matricules.join(','))}`, '_blank');
+            window.open(`visualisation_3d.php?matricules=${encodeURIComponent(matricules.join(','))}`, '_blank');
         }
 
         // Gestion de la sélection multiple

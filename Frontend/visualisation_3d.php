@@ -2,93 +2,38 @@
 // Inclure le fichier de fonctions
 require_once '../Carte/confection_carte.php'; 
 
-// Récupérer le matricule depuis l'URL
-$matricule_url = $_GET['matricule'] ?? '';
+// Récupérer le ou les matricules depuis l'URL
+$raw_mats = $_GET['matricules'] ?? $_GET['matricule'] ?? '';
+$matricules_list = [];
+if (!empty($raw_mats)) {
+    if (is_array($raw_mats)) {
+        $matricules_list = $raw_mats;
+    } else {
+        $matricules_list = array_filter(array_map('trim', explode(',', $raw_mats)));
+    }
+}
 
-// Si un matricule est fourni, récupérer les données du candidat
-if (!empty($matricule_url)) {
+$candidats_db_list = [];
+if (!empty($matricules_list)) {
     try {
         require_once '../backend/config.php';
-        
-        $stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule LIKE ? OR matricule_militaire LIKE ?");
-        $stmt->execute(['%' . $matricule_url . '%', '%' . $matricule_url . '%']);
-        $candidat_db = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        // Debug temporaire
-        error_log("Matricule recherché: " . $matricule_url);
-        error_log("Candidat trouvé: " . ($candidat_db ? 'OUI' : 'NON'));
-        
-        if ($candidat_db) {
-            $candidat_test = [
-                'nom' => $candidat_db['nom'] ?? 'NDONGMO',
-                'prenom' => $candidat_db['prenom'] ?? 'Tejiona',
-                'sexe' => $candidat_db['sexe'] === 'MASCULIN' ? 'M' : ($candidat_db['sexe'] === 'FEMININ' ? 'F' : 'M'),
-                'matricule' => $candidat_db['matricule'] ?? 'CIM-96354',
-                'matricule_militaire' => $candidat_db['matricule_militaire'] ?? $candidat_db['matricule'] ?? 'CIM-96354',
-                'unite' => $candidat_db['unite'] ?? 'ARMÉE DE TERRE',
-                'grade' => $candidat_db['grade'] ?? 'Ingénieur',
-                'photo' => $candidat_db['photo'] ?? '',
-                'code_qr' => $candidat_db['code_qr'] ?? '',
-                'date_enrolement' => $candidat_db['date_enrolement'] ?? '2024-01-15',
-                'numero_cni' => $candidat_db['numero_cni'] ?? '1234567890123',
-                'taille' => $candidat_db['taille'] ?? '175',
-                'groupe_sanguin' => $candidat_db['groupe_sanguin'] ?? 'O+',
-                'id' => $candidat_db['id'] ?? 0
-            ];
-            
-            // Debug des données récupérées
-            error_log("Nom récupéré: " . $candidat_test['nom']);
-            error_log("Prénom récupéré: " . $candidat_test['prenom']);
-            error_log("Grade récupéré: " . $candidat_test['grade']);
-        } else {
-            // Si le candidat n'est pas trouvé, utiliser les données par défaut
-            error_log("Candidat non trouvé, utilisation des données par défaut");
-            $candidat_test = [
-                'nom' => 'NDONGMO',
-                'prenom' => 'Tejiona',
-                'sexe' => 'M',
-                'matricule' => 'CIM-96354',
-                'matricule_militaire' => 'CIM-96354',
-                'unite' => 'ARMÉE DE TERRE',
-                'grade' => 'Ingénieur',
-                'photo' => '',
-                'code_qr' => '',
-                'date_enrolement' => '2024-01-15',
-                'numero_cni' => '1234567890123',
-                'taille' => '175',
-                'groupe_sanguin' => 'O+',
-                'id' => 0
-            ];
-        }
+        $placeholders = implode(',', array_fill(0, count($matricules_list), '?'));
+        $params = array_merge($matricules_list, $matricules_list);
+        $stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule IN ($placeholders) OR matricule_militaire IN ($placeholders)");
+        $stmt->execute($params);
+        $candidats_db_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Exception $e) {
-        // En cas d'erreur de base de données, utiliser les données par défaut
-        error_log("Erreur base de données: " . $e->getMessage());
-        $candidat_test = [
-            'nom' => 'NDONGMO',
-            'prenom' => 'Tejiona',
-            'sexe' => 'M',
-            'matricule' => 'CIM-96354',
-            'matricule_militaire' => 'CIM-96354',
-            'unite' => 'ARMÉE DE TERRE',
-            'grade' => 'Ingénieur',
-            'photo' => '',
-            'code_qr' => '',
-            'date_enrolement' => '2024-01-15',
-            'numero_cni' => '1234567890123',
-            'taille' => '175',
-            'groupe_sanguin' => 'O+',
-            'id' => 0
-        ];
+        error_log("Erreur BDD 3D: " . $e->getMessage());
     }
-} else {
-    // Données de test par défaut si aucun matricule n'est fourni
-    error_log("Aucun matricule fourni, utilisation des données par défaut");
-    $candidat_test = [
+}
+
+if (empty($candidats_db_list)) {
+    $candidats_db_list = [[
         'nom' => 'NDONGMO',
         'prenom' => 'Tejiona',
-        'sexe' => 'M',
-        'matricule' => 'CIM-96354',
-        'matricule_militaire' => 'CIM-96354',
+        'sexe' => 'MASCULIN',
+        'matricule' => 'CIM-20260001',
+        'matricule_militaire' => 'T17/47856',
         'unite' => 'ARMÉE DE TERRE',
         'grade' => 'Ingénieur',
         'photo' => '',
@@ -98,8 +43,33 @@ if (!empty($matricule_url)) {
         'taille' => '175',
         'groupe_sanguin' => 'O+',
         'id' => 0
-    ];
+    ]];
 }
+
+// Index du candidat courant
+$current_index = isset($_GET['index']) ? (int)$_GET['index'] : 0;
+if ($current_index < 0 || $current_index >= count($candidats_db_list)) {
+    $current_index = 0;
+}
+
+$candidat_db = $candidats_db_list[$current_index];
+
+$candidat_test = [
+    'nom' => $candidat_db['nom'] ?? '',
+    'prenom' => $candidat_db['prenom'] ?? '',
+    'sexe' => ($candidat_db['sexe'] ?? '') === 'MASCULIN' ? 'M' : (($candidat_db['sexe'] ?? '') === 'FEMININ' ? 'F' : 'M'),
+    'matricule' => $candidat_db['matricule'] ?? '',
+    'matricule_militaire' => $candidat_db['matricule_militaire'] ?? $candidat_db['matricule'] ?? '',
+    'unite' => $candidat_db['unite'] ?? '',
+    'grade' => $candidat_db['grade'] ?? '',
+    'photo' => $candidat_db['photo'] ?? '',
+    'code_qr' => $candidat_db['code_qr'] ?? '',
+    'date_enrolement' => $candidat_db['date_enrolement'] ?? '',
+    'numero_cni' => $candidat_db['numero_cni'] ?? '',
+    'taille' => $candidat_db['taille'] ?? '',
+    'groupe_sanguin' => $candidat_db['groupe_sanguin'] ?? '',
+    'id' => $candidat_db['id'] ?? 0
+];
 
 // Générer la carte complète
 $carte_complete_html = renderCarte($candidat_test);
@@ -591,11 +561,31 @@ $carte_complete_html = renderCarte($candidat_test);
     <div class="container-3d">
         <div class="header-3d">
             <h1>🎯 Visualisation 3D</h1>
-            <p>Carte de : <strong><?php echo htmlspecialchars($candidat_test['nom'] . ' ' . $candidat_test['prenom']); ?></strong> | Matricule : <?php echo htmlspecialchars($candidat_test['matricule']); ?></p>
-            <p>Debug: Matricule URL = <?php echo htmlspecialchars($matricule_url); ?> | Unité = <?php echo htmlspecialchars($candidat_test['unite']); ?></p>
-            <?php if (!empty($matricule_url) && $candidat_test['matricule'] === 'CIM-96354'): ?>
-                <p style="color: red; font-weight: bold;">⚠️ Candidat avec matricule '<?php echo htmlspecialchars($matricule_url); ?>' non trouvé dans la base de données!</p>
+            <?php if (count($candidats_db_list) > 1): ?>
+                <div class="multi-nav-3d" style="margin: 15px 0; padding: 10px 20px; background: rgba(255,255,255,0.15); border-radius: 12px; display: inline-flex; align-items: center; gap: 15px; flex-wrap: wrap; justify-content: center; backdrop-filter: blur(5px);">
+                    <a href="?matricules=<?php echo urlencode(implode(',', $matricules_list)); ?>&index=<?php echo max(0, $current_index - 1); ?>" class="view-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                        ◀ Précédent
+                    </a>
+                    
+                    <span style="font-weight: bold; color: #4ade80;">
+                        Carte <?php echo ($current_index + 1); ?> sur <?php echo count($candidats_db_list); ?>
+                    </span>
+
+                    <select onchange="location.href=this.value" style="padding: 6px 12px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 0.9rem; cursor: pointer;">
+                        <?php foreach ($candidats_db_list as $idx => $cand): ?>
+                            <option value="?matricules=<?php echo urlencode(implode(',', $matricules_list)); ?>&index=<?php echo $idx; ?>" <?php echo $idx === $current_index ? 'selected' : ''; ?>>
+                                [<?php echo ($idx + 1); ?>/<?php echo count($candidats_db_list); ?>] <?php echo htmlspecialchars($cand['nom'] . ' ' . $cand['prenom'] . ' (' . ($cand['matricule_militaire'] ?: $cand['matricule']) . ')'); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <a href="?matricules=<?php echo urlencode(implode(',', $matricules_list)); ?>&index=<?php echo min(count($candidats_db_list) - 1, $current_index + 1); ?>" class="view-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                        Suivant ▶
+                    </a>
+                </div>
             <?php endif; ?>
+
+            <p>Carte de : <strong><?php echo htmlspecialchars($candidat_test['nom'] . ' ' . $candidat_test['prenom']); ?></strong> | Matricule : <?php echo htmlspecialchars($candidat_test['matricule_militaire'] ?: $candidat_test['matricule']); ?></p>
             <p>Découvrez votre carte militaire sous tous les angles</p>
         </div>
         
