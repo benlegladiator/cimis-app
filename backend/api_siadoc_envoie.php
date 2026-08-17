@@ -91,29 +91,35 @@ function formatCarteImageFields(array &$carte) {
     $id = $carte['id'] ?? 0;
     $mat_mil = $carte['matricule_militaire'] ?? $carte['matricule'] ?? '';
 
-    // Traitement de la photo (URL dynamique 100% 200 OK + Base64)
+    // 1. Traitement de la Photo (Encodage Base64 Direct garanti 100% sans Timeout + URL)
     $clean_photo = !empty($carte['photo']) ? ltrim(str_replace('../', '', $carte['photo']), '/') : '';
     $local_photo_path = resolveImagePath($clean_photo);
 
+    $base64_photo = null;
     if ($local_photo_path && file_exists($local_photo_path)) {
-        $carte['photo_url']    = $base_url . $clean_photo;
-        $carte['photo']        = $base_url . $clean_photo;
-        $carte['photo_base64'] = encodeImageToBase64($local_photo_path);
+        $base64_photo = encodeImageToBase64($local_photo_path);
+        $full_photo_url = $base_url . $clean_photo;
     } else {
-        // Fallback dynamique garanti HTTP 200 OK pour SIADOC
-        $dynamic_photo_url     = $base_url . 'backend/get_photo.php?id=' . $id;
-        $carte['photo_url']    = $dynamic_photo_url;
-        $carte['photo']        = $dynamic_photo_url;
-
+        // Fallback sur l'image par défaut en Base64
         $default_photo = __DIR__ . '/../img/1ONANA.PNG';
-        $carte['photo_base64'] = file_exists($default_photo) ? encodeImageToBase64($default_photo) : null;
+        if (file_exists($default_photo)) {
+            $base64_photo = encodeImageToBase64($default_photo);
+        }
+        $full_photo_url = $base_url . 'backend/get_photo.php?id=' . $id;
     }
 
-    // Traitement du QR Code (URL dynamique 100% 200 OK + Base64)
+    // Fournir à la fois les clés Base64 directes et les clés URLs pour compatibilité totale SIADOC
+    $carte['photo_base64'] = $base64_photo;
+    $carte['photo_visage'] = $base64_photo ?: $full_photo_url;
+    $carte['photo_data']   = $base64_photo;
+    $carte['photo_url']    = $full_photo_url;
+    $carte['photo']        = $full_photo_url;
+
+    // 2. Traitement du QR Code (Encodage Base64 Direct garanti 100% sans Timeout + URL)
     $clean_qr = !empty($carte['code_qr']) ? ltrim(str_replace('../', '', $carte['code_qr']), '/') : '';
     $local_qr_path = resolveImagePath($clean_qr);
 
-    // Si le fichier QR physique n'existe pas, le générer maintenant
+    // S'assurer que le fichier QR physique existe ou le générer à la volée
     if ((!$local_qr_path || !file_exists($local_qr_path)) && !empty($mat_mil)) {
         require_once __DIR__ . '/qrcode_generator.php';
         $generated_qr = generateQRCodeForMatricule($mat_mil);
@@ -123,19 +129,20 @@ function formatCarteImageFields(array &$carte) {
         }
     }
 
+    $base64_qr = null;
     if ($local_qr_path && file_exists($local_qr_path)) {
-        $carte['qr_code_url']    = $base_url . $clean_qr;
-        $carte['qr_code']        = $base_url . $clean_qr;
-        $carte['code_qr']        = $base_url . $clean_qr;
-        $carte['qr_code_base64'] = encodeImageToBase64($local_qr_path);
+        $base64_qr = encodeImageToBase64($local_qr_path);
+        $full_qr_url = $base_url . $clean_qr;
     } else {
-        // Fallback dynamique garanti HTTP 200 OK pour SIADOC
-        $dynamic_qr_url          = $base_url . 'backend/get_qr.php?matricule=' . urlencode($mat_mil);
-        $carte['qr_code_url']    = $dynamic_qr_url;
-        $carte['qr_code']        = $dynamic_qr_url;
-        $carte['code_qr']        = $dynamic_qr_url;
-        $carte['qr_code_base64'] = null;
+        $full_qr_url = $base_url . 'backend/get_qr.php?matricule=' . urlencode($mat_mil);
     }
+
+    // Fournir à la fois les clés Base64 directes et les clés URLs pour compatibilité totale SIADOC
+    $carte['qr_code_base64'] = $base64_qr;
+    $carte['qr_code_data']   = $base64_qr;
+    $carte['qr_code_url']    = $full_qr_url;
+    $carte['qr_code']        = $full_qr_url;
+    $carte['code_qr']        = $full_qr_url;
 
     $carte['peut_voir_carte'] = (isset($carte['suspendus']) && $carte['suspendus'] == 0);
 }
