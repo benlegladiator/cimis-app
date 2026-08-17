@@ -301,10 +301,6 @@ if (isset($_POST['ajax_search'])) {
                            class="btn btn-sm btn-info" title="Visualiser la carte en 3D" target="_blank">
                             <i class="fa-solid fa-cube"></i>
                         </a>
-                        <button class="btn btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 2px;" title="Encoder la puce RFID / Encode RFID"
-                                onclick="encoderCarteRFID(\'' . htmlspecialchars($personnel['matricule']) . '\', \'' . htmlspecialchars(addslashes($personnel['nom'])) . '\', \'' . htmlspecialchars(addslashes($personnel['grade'])) . '\')">
-                            <i class="fa-solid fa-microchip"></i>
-                        </button>
                         <button class="btn btn-sm btn-logout" title="Supprimer" style="padding: 2px;"
                                 onclick="confirmDelete(\'' . $personnel['id'] . '\')">
                             <i class="fa-solid fa-trash"></i>
@@ -1163,10 +1159,6 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                            class="btn btn-sm btn-info" title="Visualiser la carte en 3D" target="_blank">
                                             <i class="fa-solid fa-cube"></i>
                                         </a>
-                                        <button class="btn btn-sm" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 2px;" title="Encoder la puce RFID / Encode RFID"
-                                                onclick="encoderCarteRFID('<?php echo htmlspecialchars($personnel['matricule']); ?>', '<?php echo htmlspecialchars(addslashes($personnel['nom'])); ?>', '<?php echo htmlspecialchars(addslashes($personnel['grade'])); ?>')">
-                                            <i class="fa-solid fa-microchip"></i>
-                                        </button>
                                         <button class="btn btn-sm btn-logout" title="Supprimer" style="padding: 2px;"
                                                 onclick="confirmDelete('<?php echo $personnel['id']; ?>')">
                                             <i class="fa-solid fa-trash"></i>
@@ -1569,60 +1561,6 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 loadingModal.remove();
                 console.error('Erreur:', error);
                 showNotification('Erreur lors de la suppression de la carte', 'error');
-            });
-        }
-        
-        function encoderCarteRFID(matricule, nom, grade) {
-            // Afficher un indicateur de chargement
-            const loadingModal = document.createElement('div');
-            loadingModal.className = 'confirm-delete-modal';
-            loadingModal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.9);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 10000;
-            `;
-            loadingModal.innerHTML = `
-                <div style="background: #1a1a1a; padding: 2rem; border-radius: 10px; border: 2px solid var(--neon-green); max-width: 400px; text-align: center;">
-                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: var(--neon-green); margin-bottom: 1rem;"></i>
-                    <p style="color: white; margin-bottom: 0.5rem;"><strong>RFID ENCODING / ENCODAGE RFID</strong></p>
-                    <p style="color: #ccc; font-size: 0.9rem;">Veuillez insérer ou laisser la carte dans l'imprimante...</p>
-                </div>
-            `;
-            document.body.appendChild(loadingModal);
-
-            const data = {
-                matricule: matricule,
-                nom: nom,
-                grade: grade
-            };
-
-            fetch('http://localhost:8080/encode', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(res => {
-                loadingModal.remove();
-                if (res.success) {
-                    showNotification(res.message, 'success');
-                } else {
-                    showNotification(res.message, 'error');
-                }
-            })
-            .catch(err => {
-                loadingModal.remove();
-                console.error("Erreur de connexion avec le bridge :", err);
-                showNotification("Impossible de contacter le pont d'encodage local. Lancez cimis_bridge.py", 'error');
             });
         }
         
@@ -2296,12 +2234,12 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             padding-right: 4px;
         }
 
-        /* === VUE GRILLE === */
+        /* === VUE GRILLE COMPACTE ET CARRÉE === */
         .personnels-grid-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1.25rem;
-            max-height: 650px;
+            grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+            gap: 1rem;
+            max-height: 680px;
             overflow-y: auto;
             padding-right: 4px;
         }
