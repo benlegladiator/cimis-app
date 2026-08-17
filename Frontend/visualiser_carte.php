@@ -42,15 +42,19 @@ $cartes_confectionnees = $_SESSION['cartes_confectionnees'] ?? [];
 
 // Si pas de cartes en session, essayer de récupérer depuis l'URL
 if (empty($cartes_confectionnees)) {
-    $matricules = $_GET['matricules'] ?? (isset($_GET['matricule']) ? [$_GET['matricule']] : []);
-    if (!is_array($matricules)) {
-        $matricules = explode(',', $matricules);
+    $raw_mats = $_GET['matricules'] ?? $_GET['matricule'] ?? [];
+    if (!is_array($raw_mats)) {
+        $matricules = array_filter(array_map('trim', explode(',', $raw_mats)));
+    } else {
+        $matricules = $raw_mats;
     }
     
     if (!empty($matricules)) {
         $placeholders = implode(',', array_fill(0, count($matricules), '?'));
-        $stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule IN ($placeholders)");
-        $stmt->execute($matricules);
+        // Exécuter la requête sur matricule et matricule_militaire
+        $params = array_merge($matricules, $matricules);
+        $stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule IN ($placeholders) OR matricule_militaire IN ($placeholders)");
+        $stmt->execute($params);
         $candidats = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         // Générer les cartes à la volée

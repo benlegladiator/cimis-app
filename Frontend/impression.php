@@ -1890,15 +1890,24 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             updateSelection();
         }
 
-        // Visualiser en 3D la sélection
+        // Visualiser toutes les cartes sélectionnées (Galerie & Impression)
         function visualizeMultiple() {
             const selected = document.querySelectorAll('.personnel-checkbox:checked');
             if (selected.length === 0) {
-                alert('Veuillez sélectionner au moins une carte à visualiser.');
+                showNotification('Veuillez sélectionner au moins une carte à visualiser', 'error');
                 return;
             }
-            const matricule = selected[0].getAttribute('data-matricule');
-            window.open(`visualisation_3d.php?matricule=${encodeURIComponent(matricule)}`, '_blank');
+
+            const matricules = Array.from(selected)
+                .map(cb => cb.getAttribute('data-matricule'))
+                .filter(m => m && m.trim() !== '');
+
+            if (matricules.length === 0) {
+                showNotification('Aucun matricule valide trouvé dans la sélection', 'error');
+                return;
+            }
+
+            window.open(`visualiser_carte.php?matricules=${encodeURIComponent(matricules.join(','))}`, '_blank');
         }
 
         // Gestion de la sélection multiple
