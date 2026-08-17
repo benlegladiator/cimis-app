@@ -1819,19 +1819,24 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
         }
         
-        // Visualiser 3D la sélection
+        // Visualiser 3D la sélection (Studio 3D)
         function visualize3DSelected() {
             const selected = document.querySelectorAll('.personnel-checkbox:checked');
             if (selected.length === 0) {
-                alert('Veuillez sélectionner au moins une carte');
+                showNotification('Veuillez sélectionner au moins une carte pour la vue 3D', 'error');
                 return;
             }
-            if (confirm(`Visualiser en 3D les ${selected.length} candidat(s) sélectionné(s) ?`)) {
-                selected.forEach(checkbox => {
-                    const matricule = checkbox.getAttribute('data-matricule');
-                    window.open(`visualisation_3d.php?matricule=${encodeURIComponent(matricule)}`, '_blank');
-                });
+
+            const matricules = Array.from(selected)
+                .map(cb => cb.getAttribute('data-matricule'))
+                .filter(m => m && m.trim() !== '');
+
+            if (matricules.length === 0) {
+                showNotification('Aucun matricule valide trouvé dans la sélection', 'error');
+                return;
             }
+
+            window.open(`visualisation_3d.php?matricules=${encodeURIComponent(matricules.join(','))}`, '_blank');
         }
         
         // Suppression multiple des éléments sélectionnés
@@ -1890,11 +1895,11 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             updateSelection();
         }
 
-        // Visualiser en 3D la sélection (Multi-cartes 3D)
+        // Visualiser toutes les cartes sélectionnées (Galerie 2D)
         function visualizeMultiple() {
             const selected = document.querySelectorAll('.personnel-checkbox:checked');
             if (selected.length === 0) {
-                showNotification('Veuillez sélectionner au moins une carte à visualiser en 3D', 'error');
+                showNotification('Veuillez sélectionner au moins une carte à visualiser', 'error');
                 return;
             }
 
@@ -1907,7 +1912,7 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 return;
             }
 
-            window.open(`visualisation_3d.php?matricules=${encodeURIComponent(matricules.join(','))}`, '_blank');
+            window.open(`visualiser_carte.php?matricules=${encodeURIComponent(matricules.join(','))}`, '_blank');
         }
 
         // Gestion de la sélection multiple
