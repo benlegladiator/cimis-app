@@ -103,16 +103,35 @@ if (!extension_loaded('gd') && !isset($_SESSION['gd_auto_enabled'])) {
     }
 }
 
-// Protection contre le vol de session (Session Hijacking)
+// Configuration sécurisée et durable des cookies de session (24h)
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    @ini_set('session.gc_maxlifetime', 86400);  // 24 heures
+    @ini_set('session.cookie_lifetime', 86400); // 24 heures
+    @ini_set('session.cookie_httponly', 1);
+    @ini_set('session.use_only_cookies', 1);
+
+    if (function_exists('session_set_cookie_params')) {
+        $is_https = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+        @session_set_cookie_params([
+            'lifetime' => 86400,
+            'path'     => '/',
+            'secure'   => $is_https,
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+    }
+
+    @session_start();
+}
+
+// Protection contre le vol de session (Basée sur l'User-Agent pour supporter les IP dynamiques/mobiles et proxies Render)
 if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) {
-    $current_ip = $_SERVER['REMOTE_ADDR'] ?? '';
     $current_ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
     
-    if (!isset($_SESSION['secure_ip']) || !isset($_SESSION['secure_ua'])) {
-        $_SESSION['secure_ip'] = $current_ip;
+    if (!isset($_SESSION['secure_ua'])) {
         $_SESSION['secure_ua'] = $current_ua;
-    } elseif ($_SESSION['secure_ip'] !== $current_ip || $_SESSION['secure_ua'] !== $current_ua) {
-        // Discordance détectée -> destruction de session
+    } elseif ($_SESSION['secure_ua'] !== $current_ua) {
+        // Discordance majeure d'User-Agent -> destruction de session
         session_unset();
         session_destroy();
         header('Location: ../index.php');
@@ -120,9 +139,9 @@ if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) 
     }
 }
 
-// Gestion de la déconnexion automatique après 30 minutes d'inactivité
+// Gestion de la déconnexion automatique (Délai étendu à 24h d'inactivité)
 if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) {
-    $timeout_duration = 1800; // 30 minutes en secondes
+    $timeout_duration = 86400; // 24 heures en secondes
     
     if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $timeout_duration) {
         // Destruction de la session expirée
@@ -133,7 +152,7 @@ if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) 
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        $_SESSION['error'] = "Votre session a expiré après 30 minutes d'inactivité. Veuillez vous reconnecter.";
+        $_SESSION['error'] = "Votre session a expiré après 24h d'inactivité. Veuillez vous reconnecter.";
         
         // Détermination dynamique du chemin de redirection vers le login
         $redirect_url = 'login.php';
