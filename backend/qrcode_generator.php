@@ -21,14 +21,14 @@ function generateQRCodeForMatricule($matricule) {
     $filename = $safe_matricule . '_qr.png';
     $filepath = $dir . $filename;
     
-    // URL HTTPS courte scannable instantanément par tout smartphone
+    // URL HTTPS scannable par tout smartphone
     $host = isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== 'localhost' ? $_SERVER['HTTP_HOST'] : 'cimis-app.onrender.com';
-    $qr_url = 'https://' . $host . '/Frontend/securite.php?m=' . urlencode($matricule);
+    $qr_url = 'https://' . $host . '/Frontend/securite.php?matricule=' . urlencode($matricule);
     
     if (class_exists('QRcode')) {
-        QRcode::png($qr_url, $filepath, QR_ECLEVEL_L, 10, 2);
+        QRcode::png($qr_url, $filepath, QR_ECLEVEL_M, 8, 2);
     } else {
-        $api_url = "https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=2&ecc=L&data=" . urlencode($qr_url);
+        $api_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=2&data=" . urlencode($qr_url);
         $img_data = @file_get_contents($api_url);
         if ($img_data) {
             file_put_contents($filepath, $img_data);
