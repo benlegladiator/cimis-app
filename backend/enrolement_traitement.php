@@ -144,22 +144,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        // 7. Génération du matricule
-        $matricule = 'CIM-' . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
-        
-        // 8. Vérification du matricule unique
-        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM candidat WHERE matricule = :matricule");
-        $stmt->execute(['matricule' => $matricule]);
-        $count = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-        
-        if ($count > 0) {
-            // Régénérer si déjà utilisé
-            do {
-                $matricule = 'CIM-' . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
-                $stmt->execute(['matricule' => $matricule]);
-                $count = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-            } while ($count > 0);
-        }
+        // 7. Génération du matricule séquentiel CIMIS officiel (CIM-YYYYXXXX)
+        $matricule = generateCIMISMatricule();
         
         // 10. Validation et traitement de la photo (obligatoire pour tous)
         $photoData = null;

@@ -204,4 +204,42 @@ function isSupervisor() {
 function isOfficier() {
     return getUserRole() === 'OFFICIER';
 }
+
+/**
+ * Génère un matricule CIMIS séquentiel officiel au format CIM-YYYYXXXX
+ * Exemple: CIM-20260001, CIM-20260002, ...
+ */
+if (!function_exists('generateCIMISMatricule')) {
+    function generateCIMISMatricule(): string {
+        global $pdo;
+
+        $prefix = 'CIM-';
+        $year   = date('Y');
+
+        try {
+            if ($pdo) $pdo->query("SELECT GET_LOCK('cimis_matricule_lock', 5)")->closeCursor();
+        } catch (Exception $e) {}
+
+        try {
+            $stmt = $pdo->prepare("
+                SELECT COALESCE(MAX(CAST(SUBSTRING(matricule, 9) AS UNSIGNED)), 0) + 1 as next_seq
+                FROM candidat
+                WHERE matricule LIKE ?
+            ");
+            $stmt->execute([$prefix . $year . '%']);
+            $row      = $stmt->fetch();
+            $stmt->closeCursor();
+            $next_num = (int)($row['next_seq'] ?? 1);
+            $sequence = str_pad($next_num, 4, '0', STR_PAD_LEFT);
+        } catch (Exception $e) {
+            $sequence = str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        } finally {
+            try {
+                if ($pdo) $pdo->query("SELECT RELEASE_LOCK('cimis_matricule_lock')")->closeCursor();
+            } catch (Exception $e) {}
+        }
+
+        return $prefix . $year . $sequence;
+    }
+}
 ?>
