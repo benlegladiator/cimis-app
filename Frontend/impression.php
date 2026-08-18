@@ -247,14 +247,13 @@ if (isset($_POST['ajax_search'])) {
                     
                     echo '<div class="personnel-photo">';
             
-            // Déterminer une photo par défaut aléatoire
+            // Déterminer une photo par défaut aléatoire dans la liste sélectionnée
             $default_photos = [
                 'img/1ONANA.PNG',
                 'img/1YANNICK.PNG', 
-                'img/GRACE.PNG',
-                'img/KRISS.PNG',
-                'img/ONANA.PNG',
-                'img/YANNICK.PNG'
+                'img/1KRISS.PNG',
+                'img/ben.PNG',
+                'img/GRACE.PNG'
             ];
             $random_photo = $default_photos[array_rand($default_photos)];
             
@@ -1100,8 +1099,8 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php else: ?>
                             <?php foreach ($personnels as $personnel): ?>
                                 <?php
-                                // Déterminer une photo par défaut aléatoire
-                                $default_photos_list = ['img/1ONANA.PNG','img/1YANNICK.PNG','img/GRACE.PNG','img/KRISS.PNG','img/ONANA.PNG','img/YANNICK.PNG'];
+                                // Déterminer une photo par défaut aléatoire dans la liste sélectionnée
+                                $default_photos_list = ['img/1ONANA.PNG','img/1YANNICK.PNG','img/1KRISS.PNG','img/ben.PNG','img/GRACE.PNG'];
                                 $random_photo_default = $default_photos_list[array_rand($default_photos_list)];
                                 // Gestion robuste du chemin de photo
                                 if (!empty($personnel['photo'])) {
