@@ -174,7 +174,7 @@ function formatCarteImageFields(array &$carte) {
         }
     }
 
-    $full_qr_url = $base_url . ($clean_qr ?: ('backend/get_qr.php?matricule=' . urlencode($mat_mil)));
+    $full_qr_url = $base_url . 'backend/get_qr.php?matricule=' . urlencode($mat_mil);
 
     // Fournir à la fois les clés Base64 directes et les clés URLs pour compatibilité totale SIADOC
     $carte['qr_code_base64'] = $base64_qr;
