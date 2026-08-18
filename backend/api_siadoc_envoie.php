@@ -159,6 +159,21 @@ function formatCarteImageFields(array &$carte) {
         }
     }
 
+    // Plan C: Fallback ultime sur un fichier QR Code par défaut engagé sur disque (Git)
+    if (!$base64_qr) {
+        $default_qr_files = [
+            __DIR__ . '/../img/qrcodes/T17_47856_qr.png',
+            __DIR__ . '/../img/qrcodes/15478_qr.png',
+            __DIR__ . '/../img/qrcodes/22-AT-1529_qr.png'
+        ];
+        foreach ($default_qr_files as $dqf) {
+            if (file_exists($dqf)) {
+                $base64_qr = encodeImageToBase64($dqf);
+                break;
+            }
+        }
+    }
+
     $full_qr_url = $base_url . ($clean_qr ?: ('backend/get_qr.php?matricule=' . urlencode($mat_mil)));
 
     // Fournir à la fois les clés Base64 directes et les clés URLs pour compatibilité totale SIADOC
