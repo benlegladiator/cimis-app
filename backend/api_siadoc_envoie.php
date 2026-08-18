@@ -134,15 +134,27 @@ function formatCarteImageFields(array &$carte) {
         $base64_qr = encodeImageToBase64($local_qr_path);
     }
 
-    // Deuxième tentative si le chemin n'a pas pu être résolu
+    // Si la lecture disque échoue sur Render (stockage éphémère), générer le QR Code directement en mémoire !
     if (!$base64_qr && !empty($mat_mil)) {
-        require_once __DIR__ . '/qrcode_generator.php';
-        $generated_qr = generateQRCodeForMatricule($mat_mil);
-        if ($generated_qr) {
-            $clean_qr = ltrim(str_replace('../', '', $generated_qr), '/');
-            $local_qr_path = resolveImagePath($clean_qr);
-            if ($local_qr_path && file_exists($local_qr_path)) {
-                $base64_qr = encodeImageToBase64($local_qr_path);
+        require_once __DIR__ . '/phpqrcode/qrlib.php';
+        $host = isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== 'localhost' ? $_SERVER['HTTP_HOST'] : 'cimis-app.onrender.com';
+        $qr_url = 'https://' . $host . '/Frontend/securite.php?matricule=' . urlencode($mat_mil);
+        
+        if (class_exists('QRcode')) {
+            ob_start();
+            QRcode::png($qr_url, null, QR_ECLEVEL_M, 8, 2);
+            $raw_qr_data = ob_get_clean();
+            if (!empty($raw_qr_data)) {
+                $base64_qr = 'data:image/png;base64,' . base64_encode($raw_qr_data);
+            }
+        }
+        
+        // Secours si la classe QRcode n'a pas pu être instanciée
+        if (!$base64_qr) {
+            $api_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=2&data=" . urlencode($qr_url);
+            $img_data = @file_get_contents($api_url);
+            if (!empty($img_data)) {
+                $base64_qr = 'data:image/png;base64,' . base64_encode($img_data);
             }
         }
     }
