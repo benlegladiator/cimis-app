@@ -132,14 +132,28 @@ function formatCarteImageFields(array &$carte) {
     $base64_qr = null;
     if ($local_qr_path && file_exists($local_qr_path)) {
         $base64_qr = encodeImageToBase64($local_qr_path);
-        $full_qr_url = $base_url . $clean_qr;
-    } else {
-        $full_qr_url = $base_url . 'backend/get_qr.php?matricule=' . urlencode($mat_mil);
     }
+
+    // Deuxième tentative si le chemin n'a pas pu être résolu
+    if (!$base64_qr && !empty($mat_mil)) {
+        require_once __DIR__ . '/qrcode_generator.php';
+        $generated_qr = generateQRCodeForMatricule($mat_mil);
+        if ($generated_qr) {
+            $clean_qr = ltrim(str_replace('../', '', $generated_qr), '/');
+            $local_qr_path = resolveImagePath($clean_qr);
+            if ($local_qr_path && file_exists($local_qr_path)) {
+                $base64_qr = encodeImageToBase64($local_qr_path);
+            }
+        }
+    }
+
+    $full_qr_url = $base_url . ($clean_qr ?: ('backend/get_qr.php?matricule=' . urlencode($mat_mil)));
 
     // Fournir à la fois les clés Base64 directes et les clés URLs pour compatibilité totale SIADOC
     $carte['qr_code_base64'] = $base64_qr;
+    $carte['code_qr_base64'] = $base64_qr;
     $carte['qr_code_data']   = $base64_qr;
+    $carte['qr_code_image']  = $base64_qr ?: $full_qr_url;
     $carte['qr_code_url']    = $full_qr_url;
     $carte['qr_code']        = $full_qr_url;
     $carte['code_qr']        = $full_qr_url;
