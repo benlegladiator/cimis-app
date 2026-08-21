@@ -122,7 +122,7 @@ function formatCarteImageFields(array &$carte) {
     // S'assurer que le fichier QR physique existe ou le générer à la volée
     if ((!$local_qr_path || !file_exists($local_qr_path)) && !empty($mat_mil)) {
         require_once __DIR__ . '/qrcode_generator.php';
-        $generated_qr = generateQRCodeForMatricule($mat_mil);
+        $generated_qr = generateQRCodeForMatricule($mat_mil, $carte);
         if ($generated_qr) {
             $clean_qr = ltrim(str_replace('../', '', $generated_qr), '/');
             $local_qr_path = resolveImagePath($clean_qr);
