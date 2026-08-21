@@ -1073,6 +1073,9 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <button class="btn btn-sm" onclick="toggleView('list')" id="listViewBtn" title="Vue liste horizontale">
                                 <i class="fa-solid fa-list"></i>
                             </button>
+                            <button class="btn btn-sm" onclick="toggleView('table')" id="tableViewBtn" title="Vue Tableau Compact Ministériel" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:white;">
+                                <i class="fa-solid fa-table"></i> <span style="font-size:10px;font-weight:700;">TABLEAU</span>
+                            </button>
                             <button class="btn btn-sm" onclick="toggleView('plateau')" id="plateauViewBtn" title="Plateau d'impression (max 50 cartes)" style="background:linear-gradient(135deg,#6f42c1,#5a32a3);color:white;">
                                 <i class="fa-solid fa-border-all"></i> <span style="font-size:10px;font-weight:700;">50</span>
                             </button>
@@ -1630,39 +1633,41 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             const container = document.getElementById('personnelsContainer');
             const gridBtn   = document.getElementById('gridViewBtn');
             const listBtn   = document.getElementById('listViewBtn');
+            const tableBtn  = document.getElementById('tableViewBtn');
             const platBtn   = document.getElementById('plateauViewBtn');
             const infoBar   = document.getElementById('plateau-info-bar');
             const pagBar    = document.getElementById('plateau-pagination');
 
+            // Réinitialiser l'affichage de tous les items si on quitte le plateau
+            if (view !== 'plateau') {
+                const allItems = container.querySelectorAll('.personnel-item');
+                allItems.forEach(item => item.style.display = '');
+            }
+
             // Réinitialiser boutons
-            [gridBtn, listBtn, platBtn].forEach(b => { if(b) { b.style.opacity='0.65'; b.style.transform=''; } });
+            [gridBtn, listBtn, tableBtn, platBtn].forEach(b => { if(b) { b.style.opacity='0.65'; b.style.transform=''; b.classList.remove('active'); } });
 
             if (view === 'grid') {
                 container.className = 'personnels-grid-cards';
-                gridBtn.classList.add('active');
-                gridBtn.style.opacity = '1';
-                listBtn.classList.remove('active');
-                platBtn.classList.remove('active');
+                if (gridBtn) { gridBtn.classList.add('active'); gridBtn.style.opacity = '1'; }
                 if (infoBar) infoBar.classList.remove('show');
                 if (pagBar)  pagBar.classList.remove('show');
 
             } else if (view === 'list') {
                 container.className = 'personnels-grid';
-                listBtn.classList.add('active');
-                listBtn.style.opacity = '1';
-                gridBtn.classList.remove('active');
-                platBtn.classList.remove('active');
+                if (listBtn) { listBtn.classList.add('active'); listBtn.style.opacity = '1'; }
+                if (infoBar) infoBar.classList.remove('show');
+                if (pagBar)  pagBar.classList.remove('show');
+
+            } else if (view === 'table') {
+                container.className = 'personnels-table-view';
+                if (tableBtn) { tableBtn.classList.add('active'); tableBtn.style.opacity = '1'; }
                 if (infoBar) infoBar.classList.remove('show');
                 if (pagBar)  pagBar.classList.remove('show');
 
             } else if (view === 'plateau') {
                 container.className = 'personnels-plateau';
-                platBtn.classList.add('active');
-                platBtn.style.opacity = '1';
-                gridBtn.classList.remove('active');
-                listBtn.classList.remove('active');
-
-                // Appliquer la pagination côté client (max 50 par page)
+                if (platBtn) { platBtn.classList.add('active'); platBtn.style.opacity = '1'; }
                 applyPlateauPagination();
             }
         }
@@ -2228,6 +2233,74 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             max-height: 600px;
             overflow-y: auto;
             padding-right: 4px;
+        }
+
+        /* === VUE TABLEAU COMPACT MINISTÉRIEL === */
+        .personnels-table-view {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-height: 680px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .personnels-table-view .personnel-item {
+            display: grid;
+            grid-template-columns: 32px 42px minmax(160px, 1.2fr) minmax(140px, 1fr) minmax(160px, 1.2fr) auto;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .personnels-table-view .personnel-item:hover {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(13, 148, 136, 0.5);
+            transform: translateX(2px);
+        }
+
+        .personnels-table-view .personnel-photo {
+            width: 36px;
+            height: 42px;
+            border-radius: 4px;
+        }
+
+        .personnels-table-view .personnel-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #f8fafc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .personnels-table-view .personnel-details {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0;
+        }
+
+        .personnels-table-view .personnel-grade {
+            font-size: 0.78rem;
+            color: #a78bfa;
+            font-weight: 600;
+        }
+
+        .personnels-table-view .personnel-actions {
+            justify-content: flex-end;
+            gap: 0.25rem;
+        }
+
+        .personnels-table-view .personnel-actions .btn {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.75rem !important;
+            min-width: auto;
+            border-radius: 4px !important;
         }
 
         /* === VUE GRILLE COMPACTE ET CARRÉE === */
