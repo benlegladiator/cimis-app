@@ -120,23 +120,18 @@ function renderMicrotextDemo($candidat) {
 
 // Fonction démo QR Code crypté
 function renderQRCodeDemo($candidat) {
-    require_once __DIR__ . '/../backend/qrcode_generator.php';
-    $local_qr_rel = generateQRCodeForMatricule($candidat['matricule'], $candidat);
-    $local_file_path = __DIR__ . '/../' . ltrim($local_qr_rel, '/');
+    // Données cryptées pour le QR Code (identique au prototype d'origine)
+    $qr_data = [
+        'matricule' => $candidat['matricule'],
+        'nom' => $candidat['nom'],
+        'prenom' => $candidat['prenom'],
+        'unite' => $candidat['unite'],
+        'grade' => $candidat['grade'],
+        'timestamp' => time(),
+        'signature' => hash('sha256', $candidat['matricule'] . 'CIMIS2026')
+    ];
     
-    if (file_exists($local_file_path)) {
-        $qr_src = '../' . ltrim($local_qr_rel, '/');
-    } else {
-        $qr_data = [
-            'matricule' => $candidat['matricule'],
-            'nom' => $candidat['nom'],
-            'prenom' => $candidat['prenom'],
-            'unite' => $candidat['unite'],
-            'grade' => $candidat['grade'],
-            'signature' => hash('sha256', $candidat['matricule'] . 'CIMIS2026')
-        ];
-        $qr_src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode(json_encode($qr_data));
-    }
+    $qr_src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode(json_encode($qr_data));
     
     ob_start(); ?>
     <div class="card-subsection">
