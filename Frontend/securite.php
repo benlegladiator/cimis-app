@@ -120,7 +120,9 @@ function renderMicrotextDemo($candidat) {
 
 // Fonction démo QR Code crypté
 function renderQRCodeDemo($candidat) {
-    // Données cryptées pour le QR Code (identique au prototype d'origine)
+    // Génération directe en mémoire Base64 Data URI (Zero sous-requête, Zero image cassée)
+    require_once __DIR__ . '/../backend/phpqrcode/qrlib.php';
+    
     $qr_data = [
         'matricule' => $candidat['matricule'],
         'nom' => $candidat['nom'],
@@ -131,7 +133,19 @@ function renderQRCodeDemo($candidat) {
         'signature' => hash('sha256', $candidat['matricule'] . 'CIMIS2026')
     ];
     
-    $qr_src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode(json_encode($qr_data));
+    $json_payload = json_encode($qr_data);
+    
+    ob_start();
+    if (class_exists('QRcode')) {
+        QRcode::png($json_payload, null, QR_ECLEVEL_M, 6, 2);
+    }
+    $raw_png = ob_get_clean();
+    
+    if (!empty($raw_png)) {
+        $qr_src = 'data:image/png;base64,' . base64_encode($raw_png);
+    } else {
+        $qr_src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode($json_payload);
+    }
     
     ob_start(); ?>
     <div class="card-subsection">
