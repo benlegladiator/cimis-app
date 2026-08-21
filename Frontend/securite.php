@@ -1,7 +1,7 @@
 <?php
 // Inclure les configurations et fonctions
-require_once '../backend/config.php';
-require_once '../Carte/confection_carte.php'; 
+require_once __DIR__ . '/../backend/config.php';
+require_once __DIR__ . '/../Carte/confection_carte.php'; 
 
 // Détection d'un scan QR Code smartphone via l'URL (?matricule=...)
 $scanned_matricule = $_GET['matricule'] ?? $_GET['m'] ?? null;
