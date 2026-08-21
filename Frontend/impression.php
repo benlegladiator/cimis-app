@@ -1073,6 +1073,9 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <button class="btn btn-sm" onclick="toggleView('list')" id="listViewBtn" title="Vue liste horizontale">
                                 <i class="fa-solid fa-list"></i>
                             </button>
+                            <button class="btn btn-sm" onclick="toggleView('grid')" id="gridViewBtn" title="Vue Grille Bloc Carré (4 à 6 par ligne)" style="background:linear-gradient(135deg,#eab308,#ca8a04);color:white;">
+                                <i class="fa-solid fa-th-large"></i> <span style="font-size:10px;font-weight:700;">CARRÉS</span>
+                            </button>
                             <button class="btn btn-sm" onclick="toggleView('table')" id="tableViewBtn" title="Vue Tableau Compact Ministériel" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:white;">
                                 <i class="fa-solid fa-table"></i> <span style="font-size:10px;font-weight:700;">TABLEAU</span>
                             </button>
@@ -2303,12 +2306,12 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             border-radius: 4px !important;
         }
 
-        /* === VUE GRILLE COMPACTE ET CARRÉE === */
+        /* === VUE GRILLE BLOCS CARRÉS (4 À 6 PAR LIGNE) === */
         .personnels-grid-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
-            gap: 1rem;
-            max-height: 680px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.9rem;
+            max-height: 700px;
             overflow-y: auto;
             padding-right: 4px;
         }
