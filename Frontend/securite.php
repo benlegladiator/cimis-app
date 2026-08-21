@@ -485,6 +485,8 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
                 align-items: center;
             }
         }
+    </style>
+</head>
 <body>
 <?php if (!empty($scanned_matricule)): ?>
     <div class="scan-verification-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 1rem;">
