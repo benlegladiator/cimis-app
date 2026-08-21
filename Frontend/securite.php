@@ -120,9 +120,7 @@ function renderMicrotextDemo($candidat) {
 
 // Fonction démo QR Code crypté
 function renderQRCodeDemo($candidat) {
-    // Génération directe en mémoire Base64 Data URI (Zero sous-requête, Zero image cassée)
-    require_once __DIR__ . '/../backend/phpqrcode/qrlib.php';
-    
+    // Données cryptées pour le QR Code
     $qr_data = [
         'matricule' => $candidat['matricule'],
         'nom' => $candidat['nom'],
@@ -133,19 +131,7 @@ function renderQRCodeDemo($candidat) {
         'signature' => hash('sha256', $candidat['matricule'] . 'CIMIS2026')
     ];
     
-    $json_payload = json_encode($qr_data);
-    
-    ob_start();
-    if (class_exists('QRcode')) {
-        QRcode::png($json_payload, null, QR_ECLEVEL_M, 6, 2);
-    }
-    $raw_png = ob_get_clean();
-    
-    if (!empty($raw_png)) {
-        $qr_src = 'data:image/png;base64,' . base64_encode($raw_png);
-    } else {
-        $qr_src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode($json_payload);
-    }
+    $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode(json_encode($qr_data));
     
     ob_start(); ?>
     <div class="card-subsection">
@@ -171,8 +157,8 @@ function renderQRCodeDemo($candidat) {
                 align-items: center;
                 justify-content: center;
             ">
-                <!-- Vrai QR Code scannable local -->
-                <img src="<?php echo $qr_src; ?>" alt="QR Code Sécurisé" style="
+                <!-- Vrai QR Code scannable -->
+                <img src="<?php echo $qr_url; ?>" alt="QR Code Sécurisé" style="
                     width: 20mm;
                     height: 20mm;
                     border-radius: 0.5mm;
@@ -499,11 +485,9 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
                 align-items: center;
             }
         }
-    </style>
-</head>
-<body style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; min-height: 100vh;">
-<?php if (!empty($scanned_matricule) && trim($scanned_matricule) !== ''): ?>
-    <div class="scan-verification-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+<body>
+<?php if (!empty($scanned_matricule)): ?>
+    <div class="scan-verification-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 1rem;">
         <div class="scan-verification-card" style="background: #1e293b; border: 2px solid #10b981; border-radius: 16px; width: 100%; max-width: 500px; padding: 1.75rem; color: #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; font-family: system-ui, -apple-system, sans-serif;">
             <?php if ($scanned_candidat): ?>
                 <div style="font-size: 3rem; color: #10b981; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-check"></i></div>
