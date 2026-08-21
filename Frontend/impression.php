@@ -1070,11 +1070,8 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="candidats-header">
                         <h3><i class="fa-solid fa-id-card"></i> CARTES DISPONIBLES / AVAILABLE CARDS</h3>
                         <div class="view-options">
-                            <button class="btn btn-sm" onclick="toggleView('list')" id="listViewBtn" title="Vue liste">
+                            <button class="btn btn-sm" onclick="toggleView('list')" id="listViewBtn" title="Vue liste horizontale">
                                 <i class="fa-solid fa-list"></i>
-                            </button>
-                            <button class="btn btn-sm" onclick="toggleView('grid')" id="gridViewBtn" title="Vue grille">
-                                <i class="fa-solid fa-th"></i>
                             </button>
                             <button class="btn btn-sm" onclick="toggleView('plateau')" id="plateauViewBtn" title="Plateau d'impression (max 50 cartes)" style="background:linear-gradient(135deg,#6f42c1,#5a32a3);color:white;">
                                 <i class="fa-solid fa-border-all"></i> <span style="font-size:10px;font-weight:700;">50</span>
