@@ -501,9 +501,9 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
         }
     </style>
 </head>
-<body>
-<?php if (!empty($scanned_matricule)): ?>
-    <div class="scan-verification-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+<body style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; min-height: 100vh;">
+<?php if (!empty($scanned_matricule) && trim($scanned_matricule) !== ''): ?>
+    <div class="scan-verification-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 1rem;">
         <div class="scan-verification-card" style="background: #1e293b; border: 2px solid #10b981; border-radius: 16px; width: 100%; max-width: 500px; padding: 1.75rem; color: #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; font-family: system-ui, -apple-system, sans-serif;">
             <?php if ($scanned_candidat): ?>
                 <div style="font-size: 3rem; color: #10b981; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-check"></i></div>
