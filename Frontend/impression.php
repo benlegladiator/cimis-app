@@ -2146,11 +2146,11 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
         }
 
-        // Initialisation au chargement de la page
+        // Initialisation au chargement de la page (Disposition N°1 Horizontale par défaut)
         document.addEventListener('DOMContentLoaded', function() {
             updateResultCount();
             attachCheckboxListeners();
-            toggleView('grid'); // Vue par défaut
+            toggleView('list'); // Disposition Horizontale N°1 par défaut
         });
 
         // Effacer la recherche
