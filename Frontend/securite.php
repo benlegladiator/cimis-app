@@ -120,18 +120,10 @@ function renderMicrotextDemo($candidat) {
 
 // Fonction démo QR Code crypté
 function renderQRCodeDemo($candidat) {
-    // Données cryptées pour le QR Code
-    $qr_data = [
-        'matricule' => $candidat['matricule'],
-        'nom' => $candidat['nom'],
-        'prenom' => $candidat['prenom'],
-        'unite' => $candidat['unite'],
-        'grade' => $candidat['grade'],
-        'timestamp' => time(),
-        'signature' => hash('sha256', $candidat['matricule'] . 'CIMIS2026')
-    ];
-    
-    $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode(json_encode($qr_data));
+    // Utiliser le générateur de QR Code local et autonome CIMIS
+    require_once __DIR__ . '/../backend/qrcode_generator.php';
+    $local_qr_rel = generateQRCodeForMatricule($candidat['matricule'], $candidat);
+    $qr_src = '../' . ltrim($local_qr_rel, '/');
     
     ob_start(); ?>
     <div class="card-subsection">
@@ -157,8 +149,8 @@ function renderQRCodeDemo($candidat) {
                 align-items: center;
                 justify-content: center;
             ">
-                <!-- Vrai QR Code scannable -->
-                <img src="<?php echo $qr_url; ?>" alt="QR Code Sécurisé" style="
+                <!-- Vrai QR Code scannable local -->
+                <img src="<?php echo $qr_src; ?>" alt="QR Code Sécurisé" style="
                     width: 20mm;
                     height: 20mm;
                     border-radius: 0.5mm;
