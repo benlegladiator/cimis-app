@@ -528,13 +528,13 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
         </div>
         
         <div class="security-menu">
-            <button class="security-btn active" onclick="showSection('hologram')">1. Hologramme 3D</button>
-            <button class="security-btn" onclick="showSection('watermark')">2. Matricule Watermark</button>
-            <button class="security-btn" onclick="showSection('microtext')">3. Signature Microscopique</button>
-            <button class="security-btn" onclick="showSection('qrcode')">4. QR Code Crypté</button>
-            <button class="security-btn" onclick="showSection('guilloches')">5. Guilloches</button>
-            <button class="security-btn" onclick="showSection('holographic-elements')">6. Éléments Holographiques</button>
-            <button class="security-btn" onclick="showSection('photo-security')">7. Zone Sécurité Photo</button>
+            <button class="security-btn active" onclick="showSection('hologram', this)">1. Hologramme 3D</button>
+            <button class="security-btn" onclick="showSection('watermark', this)">2. Matricule Watermark</button>
+            <button class="security-btn" onclick="showSection('microtext', this)">3. Signature Microscopique</button>
+            <button class="security-btn" onclick="showSection('qrcode', this)">4. QR Code Crypté</button>
+            <button class="security-btn" onclick="showSection('guilloches', this)">5. Guilloches</button>
+            <button class="security-btn" onclick="showSection('holographic-elements', this)">6. Éléments Holographiques</button>
+            <button class="security-btn" onclick="showSection('photo-security', this)">7. Zone Sécurité Photo</button>
         </div>
         
         <!-- Section 1: Hologramme 3D -->
@@ -736,22 +736,42 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
     
     <script src="../js/carte.js"></script>
     <script>
-        function showSection(sectionId) {
+        function showSection(sectionId, btn) {
             // Masquer toutes les sections
             document.querySelectorAll('.security-section').forEach(section => {
                 section.classList.remove('active');
             });
             
             // Désactiver tous les boutons
-            document.querySelectorAll('.security-btn').forEach(btn => {
-                btn.classList.remove('active');
+            document.querySelectorAll('.security-btn').forEach(b => {
+                b.classList.remove('active');
             });
             
             // Afficher la section sélectionnée
-            document.getElementById(sectionId).classList.add('active');
+            const target = document.getElementById(sectionId);
+            if (target) target.classList.add('active');
             
             // Activer le bouton correspondant
-            event.target.classList.add('active');
+            if (btn) {
+                btn.classList.add('active');
+            } else if (window.event && window.event.target) {
+                window.event.target.classList.add('active');
+            }
+        }
+
+        function testSecurity(securityType) {
+            const activeSection = document.getElementById(securityType);
+            if (!activeSection) return;
+            const demoCard = activeSection.querySelector('.demo-card');
+            if (demoCard) {
+                demoCard.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease';
+                demoCard.style.transform = 'scale(1.08) rotate(1deg)';
+                demoCard.style.boxShadow = '0 0 30px rgba(212, 175, 55, 0.8)';
+                setTimeout(() => {
+                    demoCard.style.transform = '';
+                    demoCard.style.boxShadow = '';
+                }, 1200);
+            }
         }
     </script>
 </body>
