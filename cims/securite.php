@@ -1,20 +1,6 @@
 <?php
-// Inclure les configurations et fonctions
-require_once '../backend/config.php';
-require_once '../Carte/confection_carte.php'; 
-
-// Détection d'un scan QR Code smartphone via l'URL (?matricule=...)
-$scanned_matricule = $_GET['matricule'] ?? $_GET['m'] ?? null;
-$scanned_candidat = null;
-
-if (!empty($scanned_matricule)) {
-    global $pdo;
-    if (isset($pdo)) {
-        $stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule = :m OR matricule_militaire = :m");
-        $stmt->execute(['m' => $scanned_matricule]);
-        $scanned_candidat = $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-}
+// Inclure le fichier de fonctions
+require_once 'Carte/confection_carte.php'; 
 
 // Données de test pour la démo
 $candidat_test = [
@@ -50,7 +36,7 @@ function renderCarteDemo($candidat) {
                 filter: brightness(2.0) contrast(1.5) saturate(1.5);
                 animation: hologramRotate 4s infinite linear, hologramGlow 2s infinite alternate;
             ">
-                <img src="../img/cameroun.png" class="hologram-image" alt="Hologramme Cameroun" style="
+                <img src="img/cameroun.png" class="hologram-image" alt="Hologramme Cameroun" style="
                     filter: brightness(2.5) contrast(2.0) saturate(2.0);
                 ">
             </div>
@@ -120,23 +106,18 @@ function renderMicrotextDemo($candidat) {
 
 // Fonction démo QR Code crypté
 function renderQRCodeDemo($candidat) {
-    require_once __DIR__ . '/../backend/qrcode_generator.php';
-    $local_qr_rel = generateQRCodeForMatricule($candidat['matricule'], $candidat);
-    $local_file_path = __DIR__ . '/../' . ltrim($local_qr_rel, '/');
+    // Données cryptées pour le QR Code
+    $qr_data = [
+        'matricule' => $candidat['matricule'],
+        'nom' => $candidat['nom'],
+        'prenom' => $candidat['prenom'],
+        'unite' => $candidat['unite'],
+        'grade' => $candidat['grade'],
+        'timestamp' => time(),
+        'signature' => hash('sha256', $candidat['matricule'] . 'CIMIS2026')
+    ];
     
-    if (file_exists($local_file_path)) {
-        $qr_src = '../' . ltrim($local_qr_rel, '/');
-    } else {
-        $qr_data = [
-            'matricule' => $candidat['matricule'],
-            'nom' => $candidat['nom'],
-            'prenom' => $candidat['prenom'],
-            'unite' => $candidat['unite'],
-            'grade' => $candidat['grade'],
-            'signature' => hash('sha256', $candidat['matricule'] . 'CIMIS2026')
-        ];
-        $qr_src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode(json_encode($qr_data));
-    }
+    $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode(json_encode($qr_data));
     
     ob_start(); ?>
     <div class="card-subsection">
@@ -162,8 +143,8 @@ function renderQRCodeDemo($candidat) {
                 align-items: center;
                 justify-content: center;
             ">
-                <!-- Vrai QR Code scannable local -->
-                <img src="<?php echo $qr_src; ?>" alt="QR Code Sécurisé" style="
+                <!-- Vrai QR Code scannable -->
+                <img src="<?php echo $qr_url; ?>" alt="QR Code Sécurisé" style="
                     width: 20mm;
                     height: 20mm;
                     border-radius: 0.5mm;
@@ -354,8 +335,8 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Démonstration Sécurité Cartes Militaires</title>
-    <link rel="stylesheet" href="../css/styles_carte.css">
-    <link rel="stylesheet" href="../css/securite_carte.css">
+    <link rel="stylesheet" href="css/styles_carte.css">
+    <link rel="stylesheet" href="css/securite_carte.css">
     <style>
         body {
             font-family: 'Garamond', serif;
@@ -493,39 +474,6 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
     </style>
 </head>
 <body>
-<?php if (!empty($scanned_matricule)): ?>
-    <div class="scan-verification-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 1rem;">
-        <div class="scan-verification-card" style="background: #1e293b; border: 2px solid #10b981; border-radius: 16px; width: 100%; max-width: 500px; padding: 1.75rem; color: #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; font-family: system-ui, -apple-system, sans-serif;">
-            <?php if ($scanned_candidat): ?>
-                <div style="font-size: 3rem; color: #10b981; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-check"></i></div>
-                <h2 style="color: #34d399; margin: 0 0 0.25rem 0; font-size: 1.4rem;">CARTE AUTHENTIQUE & VALIDE</h2>
-                <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 1.25rem;">MINISTÈRE DE LA DÉFENSE • RÉPUBLIQUE DU CAMEROUN</div>
-                
-                <div style="display: flex; align-items: center; gap: 1rem; background: #0f172a; padding: 1rem; border-radius: 12px; border: 1px solid #334155; text-align: left; margin-bottom: 1.25rem;">
-                    <?php 
-                    $photo_src = !empty($scanned_candidat['photo']) ? '../' . ltrim($scanned_candidat['photo'], '../') : '../img/candidats/default.svg';
-                    ?>
-                    <img src="<?php echo htmlspecialchars($photo_src); ?>" alt="Photo" style="width: 65px; height: 65px; border-radius: 10px; object-fit: cover; border: 2px solid #10b981; background: #1e293b;" onerror="this.src='../img/candidats/default.svg';">
-                    <div>
-                        <div style="font-weight: 700; font-size: 1.1rem; color: #f8fafc;"><?php echo htmlspecialchars(($scanned_candidat['nom'] ?? '') . ' ' . ($scanned_candidat['prenom'] ?? '')); ?></div>
-                        <div style="font-size: 0.85rem; color: #60a5fa; font-weight: 600;"><?php echo htmlspecialchars(($scanned_candidat['grade'] ?? '') . ' • ' . ($scanned_candidat['unite'] ?? '')); ?></div>
-                        <div style="font-size: 0.8rem; color: #34d399; font-weight: 600; margin-top: 2px;">CIMIS: <?php echo htmlspecialchars($scanned_candidat['matricule'] ?? ''); ?></div>
-                    </div>
-                </div>
-                
-                <div style="font-size: 0.8rem; color: #cbd5e1; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.6rem; border-radius: 8px; margin-bottom: 1.25rem;">
-                    <i class="fa-solid fa-shield-halved" style="color: #34d399;"></i> Signature numérique certifiée CIMIS 2.0 • Horodatage: <?php echo date('d/m/Y H:i:s'); ?>
-                </div>
-            <?php else: ?>
-                <div style="font-size: 3rem; color: #ef4444; margin-bottom: 0.5rem;"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                <h2 style="color: #f87171; margin: 0 0 0.5rem 0; font-size: 1.3rem;">MATRICULE INCONNU OU NON VALIDE</h2>
-                <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 1.25rem;">Le matricule <strong><?php echo htmlspecialchars($scanned_matricule); ?></strong> ne correspond à aucun enregistrement actif dans la base de données de la Défense.</p>
-            <?php endif; ?>
-
-            <a href="securite.php" style="display: inline-block; background: #3b82f6; color: #fff; padding: 0.75rem 1.75rem; border-radius: 10px; font-weight: 700; text-decoration: none;">Fermer la vérification</a>
-        </div>
-    </div>
-<?php endif; ?>
     <div class="security-container">
         <div class="security-header">
             <h1>🛡️ Sécurité des Cartes Militaires</h1>
@@ -739,7 +687,7 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
         </div>
     </div>
     
-    <script src="../js/carte.js"></script>
+    <script src="js/carte.js"></script>
     <script>
         function showSection(sectionId) {
             // Masquer toutes les sections
