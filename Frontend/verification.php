@@ -25,22 +25,33 @@ if (!empty($matricule_search)) {
 
     $generated_qr_rel = generateQRCodeForMatricule($matricule_search, $candidat_found);
 
-    $nom      = $candidat_found['nom'] ?? 'CANDIDAT';
-    $prenom   = $candidat_found['prenom'] ?? '';
-    $grade    = $candidat_found['grade'] ?? 'MILITAIRE';
-    $unite    = $candidat_found['unite'] ?? 'MINDEF';
-    $cni      = $candidat_found['numero_cni'] ?? 'N/A';
-    $hash_key = strtoupper(substr(hash('sha256', $matricule_search . $nom . 'MINDEF_CIMIS_2026'), 0, 10));
+    $mat_mil = $candidat_found['matricule_militaire'] ?? $candidat_found['matricule'] ?? $matricule_search;
+    $nom     = $candidat_found['nom'] ?? 'CANDIDAT';
+    $prenom  = $candidat_found['prenom'] ?? '';
+    $sexe    = $candidat_found['sexe'] ?? 'MASCULIN';
+    $dob     = $candidat_found['date_naissance'] ?? '';
+    $cni     = $candidat_found['numero_cni'] ?? '';
+    $grade   = $candidat_found['grade'] ?? 'MILITAIRE';
+    $unite   = $candidat_found['unite'] ?? 'MINDEF';
+    $statut  = (!empty($candidat_found['suspendus']) && $candidat_found['suspendus'] == 1) ? 'SUSPENDU' : 'ACTIF';
+    $time    = time();
+    $sig     = hash('sha256', $mat_mil . $nom . 'MINDEF_CIMIS_2026');
 
-    $qr_payload_text  = "[MINISTÈRE DE LA DÉFENSE - CAMEROUN]\n";
-    $qr_payload_text .= "CARTE D'IDENTITÉ MILITAIRE (CIMIS)\n";
-    $qr_payload_text .= "MATRICULE : " . $matricule_search . "\n";
-    $qr_payload_text .= "NOM & PRÉNOM : " . trim($nom . ' ' . $prenom) . "\n";
-    $qr_payload_text .= "GRADE : " . $grade . "\n";
-    $qr_payload_text .= "CORPS : " . $unite . "\n";
-    $qr_payload_text .= "CNI : " . $cni . "\n";
-    $qr_payload_text .= "STATUT : CERTIFIÉ CONFORME\n";
-    $qr_payload_text .= "SIG-HASH : MINDEF-CIM-" . $hash_key;
+    $qr_payload = [
+        'matricule'      => $mat_mil,
+        'nom'            => $nom,
+        'prenom'         => $prenom,
+        'sexe'           => $sexe,
+        'date_naissance' => $dob,
+        'cni'            => $cni,
+        'grade'          => $grade,
+        'unite'          => $unite,
+        'statut'         => $statut,
+        'timestamp'      => $time,
+        'signature'      => $sig
+    ];
+
+    $qr_payload_text = json_encode($qr_payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 ?>
 <!DOCTYPE html>

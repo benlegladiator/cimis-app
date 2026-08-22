@@ -120,34 +120,29 @@ function renderMicrotextDemo($candidat) {
 
 // Fonction démo QR Code crypté
 function renderQRCodeDemo($candidat) {
+    require_once __DIR__ . '/../backend/qrcode_generator.php';
     $mat = $candidat['matricule_militaire'] ?? $candidat['matricule'] ?? 'CIM-96354';
-    $nom = $candidat['nom'] ?? 'NDONGMO';
-    $prenom = $candidat['prenom'] ?? 'Tejiona';
-    $grade = $candidat['grade'] ?? 'Ingénieur';
-    $unite = $candidat['unite'] ?? 'CIMIS';
+    $qr_rel = generateQRCodeForMatricule($mat, $candidat);
+    $local_path = __DIR__ . '/../' . ltrim($qr_rel, '/');
     
-    // Payload texte binaire propre
-    $qr_text = "[MINISTERE DE LA DEFENSE - CAMEROUN]\n" .
-               "CARTE D'IDENTITE MILITAIRE (CIMIS)\n" .
-               "MATRICULE : " . $mat . "\n" .
-               "NOM : " . $nom . " " . $prenom . "\n" .
-               "GRADE : " . $grade . "\n" .
-               "CORPS : " . $unite . "\n" .
-               "STATUT : CERTIFIE CONFORME\n" .
-               "HASH : MINDEF-CIM-96354SEC";
-
-    require_once __DIR__ . '/../backend/phpqrcode/qrlib.php';
-    
-    ob_start();
-    if (class_exists('QRcode')) {
-        QRcode::png($qr_text, null, QR_ECLEVEL_M, 8, 4);
-    }
-    $raw_png = ob_get_clean();
-
-    if (!empty($raw_png)) {
-        $qr_url = 'data:image/png;base64,' . base64_encode($raw_png);
+    if (file_exists($local_path)) {
+        $qr_url = '../' . ltrim($qr_rel, '/');
     } else {
-        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=4&data=" . urlencode($qr_text);
+        $qr_payload = [
+            'matricule'      => $mat,
+            'nom'            => $candidat['nom'] ?? 'NDONGMO',
+            'prenom'         => $candidat['prenom'] ?? 'Tejiona',
+            'sexe'           => $candidat['sexe'] ?? 'MASCULIN',
+            'date_naissance' => $candidat['date_naissance'] ?? '1999-01-17',
+            'cni'            => $candidat['numero_cni'] ?? 'CNI-CIMIS-96354',
+            'grade'          => $candidat['grade'] ?? 'Ingénieur',
+            'unite'          => $candidat['unite'] ?? 'CIMIS',
+            'statut'         => 'ACTIF',
+            'timestamp'      => time(),
+            'signature'      => hash('sha256', $mat . 'NDONGMOMINDEF_CIMIS_2026')
+        ];
+        $json_text = json_encode($qr_payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=4&data=" . urlencode($json_text);
     }
     
     ob_start(); ?>
