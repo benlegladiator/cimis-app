@@ -158,30 +158,27 @@ function renderQRCodeDemo($candidat) {
             box-shadow: 0 0 20mm rgba(45, 90, 61, 0.4);
             position: relative;
         ">
-            <!-- QR Code sécurisé VRAI (Grand format ultra-net scannable) -->
+            <!-- QR Code sécurisé VRAI -->
             <div class="qr-secure" style="
                 position: absolute;
-                top: 48%;
+                top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                width: 32mm;
-                height: 32mm;
+                width: 25mm;
+                height: 25mm;
                 background: white;
-                border: 1px solid rgba(0, 0, 0, 0.4);
-                border-radius: 2mm;
-                padding: 1.5mm;
+                border: 0.5mm solid rgba(0, 0, 0, 0.3);
+                border-radius: 1mm;
+                padding: 2mm;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             ">
-                <!-- Image QR Code ultra-nette -->
+                <!-- Image QR Code -->
                 <img src="<?php echo $qr_url; ?>" alt="QR Code Sécurisé" style="
-                    width: 29mm;
-                    height: 29mm;
-                    image-rendering: pixelated;
-                    image-rendering: crisp-edges;
-                    object-fit: contain;
+                    width: 20mm;
+                    height: 20mm;
+                    border-radius: 0.5mm;
                 ">
                 
                 <!-- Badge sécurité -->
