@@ -10,9 +10,18 @@ $scanned_candidat = null;
 if (!empty($scanned_matricule)) {
     global $pdo;
     if (isset($pdo)) {
-        $stmt = $pdo->prepare("SELECT * FROM candidat WHERE (matricule = :m OR matricule_militaire = :m) AND supprimer = 1");
-        $stmt->execute(['m' => $scanned_matricule]);
-        $scanned_candidat = $stmt->fetch(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM candidat WHERE (matricule = :m OR matricule_militaire = :m) AND supprimer = 1");
+            $stmt->execute(['m' => $scanned_matricule]);
+            $scanned_candidat = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {}
+    }
+
+    if (!$scanned_candidat && !empty($_GET['payload'])) {
+        $decoded = json_decode($_GET['payload'], true);
+        if (is_array($decoded) && !empty($decoded['matricule'])) {
+            $scanned_candidat = $decoded;
+        }
     }
 }
 
@@ -118,30 +127,19 @@ function renderMicrotextDemo($candidat) {
     <?php return ob_get_clean();
 }
 
-// Fonction démo QR Code crypté (EXACTEMENT COMME CIMS/SECURITE.PHP)
+// Fonction démo QR Code crypté (FORMAT HYBRIDE - HAUTE DENSITÉ & SCAN CAMÉRA GARANTI)
 function renderQRCodeDemo($candidat) {
-    $qr_data = [
-        'matricule' => $candidat['matricule'] ?? 'CIM-96354',
-        'nom' => $candidat['nom'] ?? 'NDONGMO',
-        'prenom' => $candidat['prenom'] ?? 'Tejiona',
-        'unite' => $candidat['unite'] ?? 'CIMIS',
-        'grade' => $candidat['grade'] ?? 'Ingénieur',
-        'timestamp' => time(),
-        'signature' => hash('sha256', ($candidat['matricule'] ?? 'CIM-96354') . 'CIMIS2026')
-    ];
+    require_once __DIR__ . '/../backend/qrcode_generator.php';
+    $mat = $candidat['matricule_militaire'] ?? $candidat['matricule'] ?? 'CIM-96354';
+    $qr_rel = generateQRCodeForMatricule($mat, $candidat);
+    $local_path = __DIR__ . '/../' . ltrim($qr_rel, '/');
     
-    $json_str = json_encode($qr_data);
-    $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode($json_str);
-
-    // Fallback Base64 local si phpqrcode est disponible
-    require_once __DIR__ . '/../backend/phpqrcode/qrlib.php';
-    if (class_exists('QRcode')) {
-        ob_start();
-        QRcode::png($json_str, null, QR_ECLEVEL_M, 6, 2);
-        $raw_png = ob_get_clean();
-        if (!empty($raw_png)) {
-            $qr_url = 'data:image/png;base64,' . base64_encode($raw_png);
-        }
+    if (file_exists($local_path)) {
+        $qr_url = '../' . ltrim($qr_rel, '/') . '?v=' . time();
+    } else {
+        $host = isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== 'localhost' ? $_SERVER['HTTP_HOST'] : 'cimis-app.onrender.com';
+        $qr_hybrid_url = 'https://' . $host . '/Frontend/securite.php?matricule=' . urlencode($mat) . '&payload=' . urlencode(json_encode($candidat));
+        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=4&data=" . urlencode($qr_hybrid_url);
     }
     
     ob_start(); ?>

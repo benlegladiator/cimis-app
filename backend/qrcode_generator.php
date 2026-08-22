@@ -61,7 +61,11 @@ function generateQRCodeForMatricule($matricule, $candidat_data = null) {
         'signature'      => $sig
     ];
 
-    $json_content = json_encode($qr_payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    // Format Hybride: URL HTTPS + Objet JSON complet encodé
+    // Garantit la matrice Haute Densité complexes ET le déclenchement automatique du scan caméra smartphone
+    $host = isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== 'localhost' ? $_SERVER['HTTP_HOST'] : 'cimis-app.onrender.com';
+    $json_encoded = json_encode($qr_payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $qr_hybrid_url = 'https://' . $host . '/Frontend/securite.php?matricule=' . urlencode($mat_mil) . '&payload=' . urlencode($json_encoded);
 
     // Forcer la suppression de l'ancien fichier image en cache s'il existe
     if (file_exists($filepath)) {
@@ -69,9 +73,9 @@ function generateQRCodeForMatricule($matricule, $candidat_data = null) {
     }
 
     if (class_exists('QRcode')) {
-        QRcode::png($json_content, $filepath, QR_ECLEVEL_M, 8, 4);
+        QRcode::png($qr_hybrid_url, $filepath, QR_ECLEVEL_M, 8, 4);
     } else {
-        $api_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=4&data=" . urlencode($json_content);
+        $api_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=4&data=" . urlencode($qr_hybrid_url);
         $img_data = @file_get_contents($api_url);
         if ($img_data) {
             file_put_contents($filepath, $img_data);
