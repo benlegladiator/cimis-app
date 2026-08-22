@@ -120,23 +120,34 @@ function renderMicrotextDemo($candidat) {
 
 // Fonction démo QR Code crypté
 function renderQRCodeDemo($candidat) {
-    require_once __DIR__ . '/../backend/qrcode_generator.php';
     $mat = $candidat['matricule_militaire'] ?? $candidat['matricule'] ?? 'CIM-96354';
-    $qr_rel = generateQRCodeForMatricule($mat, $candidat);
-    $local_path = __DIR__ . '/../' . ltrim($qr_rel, '/');
+    $nom = $candidat['nom'] ?? 'NDONGMO';
+    $prenom = $candidat['prenom'] ?? 'Tejiona';
+    $grade = $candidat['grade'] ?? 'Ingénieur';
+    $unite = $candidat['unite'] ?? 'CIMIS';
     
-    if (file_exists($local_path)) {
-        $qr_url = '../' . ltrim($qr_rel, '/');
+    // Payload texte binaire propre
+    $qr_text = "[MINISTERE DE LA DEFENSE - CAMEROUN]\n" .
+               "CARTE D'IDENTITE MILITAIRE (CIMIS)\n" .
+               "MATRICULE : " . $mat . "\n" .
+               "NOM : " . $nom . " " . $prenom . "\n" .
+               "GRADE : " . $grade . "\n" .
+               "CORPS : " . $unite . "\n" .
+               "STATUT : CERTIFIE CONFORME\n" .
+               "HASH : MINDEF-CIM-96354SEC";
+
+    require_once __DIR__ . '/../backend/phpqrcode/qrlib.php';
+    
+    ob_start();
+    if (class_exists('QRcode')) {
+        QRcode::png($qr_text, null, QR_ECLEVEL_M, 8, 4);
+    }
+    $raw_png = ob_get_clean();
+
+    if (!empty($raw_png)) {
+        $qr_url = 'data:image/png;base64,' . base64_encode($raw_png);
     } else {
-        $qr_data = [
-            'matricule' => $mat,
-            'nom' => $candidat['nom'] ?? '',
-            'prenom' => $candidat['prenom'] ?? '',
-            'unite' => $candidat['unite'] ?? '',
-            'grade' => $candidat['grade'] ?? '',
-            'signature' => hash('sha256', $mat . 'CIMIS2026')
-        ];
-        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode(json_encode($qr_data));
+        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=4&data=" . urlencode($qr_text);
     }
     
     ob_start(); ?>
@@ -147,27 +158,30 @@ function renderQRCodeDemo($candidat) {
             box-shadow: 0 0 20mm rgba(45, 90, 61, 0.4);
             position: relative;
         ">
-            <!-- QR Code sécurisé VRAI -->
+            <!-- QR Code sécurisé VRAI (Grand format ultra-net scannable) -->
             <div class="qr-secure" style="
                 position: absolute;
-                top: 50%;
+                top: 48%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                width: 25mm;
-                height: 25mm;
+                width: 32mm;
+                height: 32mm;
                 background: white;
-                border: 0.5mm solid rgba(0, 0, 0, 0.3);
-                border-radius: 1mm;
-                padding: 2mm;
+                border: 1px solid rgba(0, 0, 0, 0.4);
+                border-radius: 2mm;
+                padding: 1.5mm;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             ">
-                <!-- Vrai QR Code scannable -->
+                <!-- Image QR Code ultra-nette -->
                 <img src="<?php echo $qr_url; ?>" alt="QR Code Sécurisé" style="
-                    width: 20mm;
-                    height: 20mm;
-                    border-radius: 0.5mm;
+                    width: 29mm;
+                    height: 29mm;
+                    image-rendering: pixelated;
+                    image-rendering: crisp-edges;
+                    object-fit: contain;
                 ">
                 
                 <!-- Badge sécurité -->
@@ -185,6 +199,7 @@ function renderQRCodeDemo($candidat) {
                     justify-content: center;
                     font-size: 3mm;
                     font-weight: bold;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
                 ">
                     🔒
                 </div>
