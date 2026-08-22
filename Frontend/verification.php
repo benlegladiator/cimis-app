@@ -55,45 +55,10 @@ if (!empty($matricule_search)) {
 </head>
 <body>
 
-    <!-- Sidebar Toggle Button -->
-    <button class="sidebar-toggle shifted" id="sidebarToggle" onclick="toggleSidebar()">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <img src="../img/cimis.png" alt="CIMIS Logo" class="sidebar-logo">
-            <h3>CIMIS 2.0</h3>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="../dashboard.php" class="nav-item">
-                <i class="fa-solid fa-home"></i>
-                <span>Tableau de bord</span>
-            </a>
-            <a href="../enrolement.php" class="nav-item">
-                <i class="fa-solid fa-user-plus"></i>
-                <span>Enrôlement</span>
-            </a>
-            <a href="../verification.php" class="nav-item active">
-                <i class="fa-solid fa-qrcode"></i>
-                <span>Vérification</span>
-            </a>
-            <a href="../visualiser_carte.php" class="nav-item">
-                <i class="fa-solid fa-id-card"></i>
-                <span>Cartes</span>
-            </a>
-            <a href="logout.php" class="nav-item">
-                <i class="fa-solid fa-sign-out-alt"></i>
-                <span>Déconnexion</span>
-            </a>
-        </nav>
-    </div>
-
-    <nav class="navbar shifted">
+    <nav class="navbar" style="left: 0; width: 100%;">
         <div class="nav-brand">
             <img src="../img/cimis1.png" alt="Logo">
-            <span>CIMIS <small>// POINT DE CONTRÔLE</small></span>
+            <span>CIMIS <small>// POINT DE CONTRÔLE & GÉNÉRATEUR QR</small></span>
         </div>
         <!-- BOUTON RETOUR VERS DASHBOARD -->
         <div class="back-button-container">
@@ -104,7 +69,7 @@ if (!empty($matricule_search)) {
         </div>
     </nav>
 
-    <div class="container shifted">
+    <div class="container" style="margin-left: 0; width: 100%; max-width: 1200px; padding: 2rem 1.5rem;">
         <div class="page-header">
             <h2>Générateur & Vérificateur Biométrique</h2>
             <div class="status-indicator">
