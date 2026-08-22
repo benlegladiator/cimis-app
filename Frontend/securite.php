@@ -1,29 +1,6 @@
 <?php
-// Inclure les configurations et fonctions
-require_once __DIR__ . '/../backend/config.php';
+// Inclure le fichier de fonctions
 require_once __DIR__ . '/../Carte/confection_carte.php'; 
-
-// Détection d'un scan QR Code smartphone via l'URL (?matricule=...)
-$scanned_matricule = isset($_GET['matricule']) && trim($_GET['matricule']) !== '' ? trim($_GET['matricule']) : (isset($_GET['m']) && trim($_GET['m']) !== '' ? trim($_GET['m']) : null);
-$scanned_candidat = null;
-
-if (!empty($scanned_matricule)) {
-    global $pdo;
-    if (isset($pdo)) {
-        try {
-            $stmt = $pdo->prepare("SELECT * FROM candidat WHERE (matricule = :m OR matricule_militaire = :m) AND supprimer = 1");
-            $stmt->execute(['m' => $scanned_matricule]);
-            $scanned_candidat = $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {}
-    }
-
-    if (!$scanned_candidat && !empty($_GET['payload'])) {
-        $decoded = json_decode($_GET['payload'], true);
-        if (is_array($decoded) && !empty($decoded['matricule'])) {
-            $scanned_candidat = $decoded;
-        }
-    }
-}
 
 // Données de test pour la démo
 $candidat_test = [
@@ -68,7 +45,7 @@ function renderCarteDemo($candidat) {
     <?php return ob_get_clean();
 }
 
-// Fonction démo watermark matricule
+// Fonction d├®mo watermark matricule
 function renderWatermarkDemo($candidat) {
     ob_start(); ?>
     <div class="card-subsection">
@@ -86,7 +63,7 @@ function renderWatermarkDemo($candidat) {
     <?php return ob_get_clean();
 }
 
-// Fonction démo signature microscopique
+// Fonction d├®mo signature microscopique
 function renderMicrotextDemo($candidat) {
     ob_start(); ?>
     <div class="card-subsection">
@@ -98,12 +75,12 @@ function renderMicrotextDemo($candidat) {
         ">
             <!-- Bordures avec signature microscopique -->
             <div class="border-signature" style="
-                content: 'Republique du Cameroun - Ministry of Defence 2026 - Ministère de la Défense 2026 - Republic of Cameroon';
+                content: 'Republique du Cameroun - Ministry of Defence 2026 - Minist├¿re de la D├®fense 2026 - Republic of Cameroon';
             "></div>
             
             <!-- Signature microscopique -->
             <div class="micro-signature">
-                Republique du Cameroun - Ministère de la Défense 2026 - Republic of Cameroon - Ministry of Defence 2026
+                Republique du Cameroun - Minist├¿re de la D├®fense 2026 - Republic of Cameroon - Ministry of Defence 2026
             </div>
             
             <!-- Message pour loupe -->
@@ -127,20 +104,20 @@ function renderMicrotextDemo($candidat) {
     <?php return ob_get_clean();
 }
 
-// Fonction démo QR Code crypté (FORMAT HYBRIDE - HAUTE DENSITÉ & SCAN CAMÉRA GARANTI)
+// Fonction d├®mo QR Code crypt├®
 function renderQRCodeDemo($candidat) {
-    require_once __DIR__ . '/../backend/qrcode_generator.php';
-    $mat = $candidat['matricule_militaire'] ?? $candidat['matricule'] ?? 'CIM-96354';
-    $qr_rel = generateQRCodeForMatricule($mat, $candidat);
-    $local_path = __DIR__ . '/../' . ltrim($qr_rel, '/');
+    // Donn├®es crypt├®es pour le QR Code
+    $qr_data = [
+        'matricule' => $candidat['matricule'],
+        'nom' => $candidat['nom'],
+        'prenom' => $candidat['prenom'],
+        'unite' => $candidat['unite'],
+        'grade' => $candidat['grade'],
+        'timestamp' => time(),
+        'signature' => hash('sha256', $candidat['matricule'] . 'CIMIS2026')
+    ];
     
-    if (file_exists($local_path)) {
-        $qr_url = '../' . ltrim($qr_rel, '/') . '?v=' . time();
-    } else {
-        $host = isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== 'localhost' ? $_SERVER['HTTP_HOST'] : 'cimis-app.onrender.com';
-        $qr_hybrid_url = 'https://' . $host . '/Frontend/securite.php?matricule=' . urlencode($mat) . '&payload=' . urlencode(json_encode($candidat));
-        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=4&data=" . urlencode($qr_hybrid_url);
-    }
+    $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode(json_encode($qr_data));
     
     ob_start(); ?>
     <div class="card-subsection">
@@ -150,7 +127,7 @@ function renderQRCodeDemo($candidat) {
             box-shadow: 0 0 20mm rgba(45, 90, 61, 0.4);
             position: relative;
         ">
-            <!-- QR Code sécurisé VRAI -->
+            <!-- QR Code s├®curis├® VRAI -->
             <div class="qr-secure" style="
                 position: absolute;
                 top: 50%;
@@ -167,13 +144,13 @@ function renderQRCodeDemo($candidat) {
                 justify-content: center;
             ">
                 <!-- Vrai QR Code scannable -->
-                <img src="<?php echo $qr_url; ?>" alt="QR Code Sécurisé" style="
+                <img src="<?php echo $qr_url; ?>" alt="QR Code S├®curis├®" style="
                     width: 20mm;
                     height: 20mm;
                     border-radius: 0.5mm;
                 ">
                 
-                <!-- Badge sécurité -->
+                <!-- Badge s├®curit├® -->
                 <div style="
                     position: absolute;
                     top: -3mm;
@@ -189,7 +166,7 @@ function renderQRCodeDemo($candidat) {
                     font-size: 3mm;
                     font-weight: bold;
                 ">
-                    🔒
+                    ­ƒöÆ
                 </div>
             </div>
             
@@ -202,16 +179,17 @@ function renderQRCodeDemo($candidat) {
                     padding: 2mm;
                 ">
                     <p style="color: white; font-size: 2mm; margin: 0;">
-                        Scannez pour vérifier<br>
-                        l'authenticité
+                        Scannez pour v├®rifier<br>
+                        l'authenticit├®
                     </p>
                 </div>
             </div>
         </div>
+    </div>
     <?php return ob_get_clean();
 }
 
-// Fonction démo Guilloches
+// Fonction d├®mo Guilloches
 function renderGuillochesDemo($candidat) {
     ob_start(); ?>
     <div class="card-subsection">
@@ -245,7 +223,7 @@ function renderGuillochesDemo($candidat) {
     <?php return ob_get_clean();
 }
 
-// Fonction démo Éléments Holographiques
+// Fonction d├®mo ├ël├®ments Holographiques
 function renderHolographicDemo($candidat) {
     ob_start(); ?>
     <div class="card-subsection">
@@ -258,7 +236,7 @@ function renderHolographicDemo($candidat) {
             <!-- Motifs de guilloches -->
             <div class="guilloche-pattern"></div>
             
-            <!-- Éléments holographiques -->
+            <!-- ├ël├®ments holographiques -->
             <div class="holographic-element center-star"></div>
             <div class="holographic-element bottom-right-square"></div>
             
@@ -274,8 +252,8 @@ function renderHolographicDemo($candidat) {
                     padding: 2mm;
                 ">
                     <p style="color: white; font-size: 2mm; margin: 0;">
-                        Éléments holographiques<br>
-                        animés
+                        ├ël├®ments holographiques<br>
+                        anim├®s
                     </p>
                 </div>
             </div>
@@ -284,7 +262,7 @@ function renderHolographicDemo($candidat) {
     <?php return ob_get_clean();
 }
 
-// Fonction démo Zone de Sécurité Photo
+// Fonction d├®mo Zone de S├®curit├® Photo
 function renderPhotoSecurityDemo($candidat) {
     ob_start(); ?>
     <div class="card-subsection">
@@ -297,7 +275,7 @@ function renderPhotoSecurityDemo($candidat) {
             <!-- Motifs de guilloches -->
             <div class="guilloche-pattern"></div>
             
-            <!-- Zone de sécurité photo -->
+            <!-- Zone de s├®curit├® photo -->
             <div class="photo-security-zone">
                 <div class="micro-text-security">VALIDE SEULEMENT AVEC PHOTO</div>
             </div>
@@ -331,7 +309,7 @@ function renderPhotoSecurityDemo($candidat) {
                     padding: 2mm;
                 ">
                     <p style="color: white; font-size: 1.8mm; margin: 0;">
-                        Zone sécurité<br>
+                        Zone s├®curit├®<br>
                         photo
                     </p>
                 </div>
@@ -341,7 +319,7 @@ function renderPhotoSecurityDemo($candidat) {
     <?php return ob_get_clean();
 }
 
-// Générer le HTML des cartes de démo
+// G├®n├®rer le HTML des cartes de d├®mo
 $carte_demo_html = renderCarteDemo($candidat_test);
 $watermark_demo_html = renderWatermarkDemo($candidat_test);
 $microtext_demo_html = renderMicrotextDemo($candidat_test);
@@ -356,9 +334,9 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Démonstration Sécurité Cartes Militaires</title>
-    <link rel="stylesheet" href="../css/styles_carte.css">
-    <link rel="stylesheet" href="../css/securite_carte.css">
+    <title>D├®monstration S├®curit├® Cartes Militaires</title>
+    <link rel="stylesheet" href="css/styles_carte.css">
+    <link rel="stylesheet" href="css/securite_carte.css">
     <style>
         body {
             font-family: 'Garamond', serif;
@@ -496,65 +474,32 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
     </style>
 </head>
 <body>
-<?php if (!empty($scanned_matricule)): ?>
-    <div class="scan-verification-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 1rem;">
-        <div class="scan-verification-card" style="background: #1e293b; border: 2px solid #10b981; border-radius: 16px; width: 100%; max-width: 500px; padding: 1.75rem; color: #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; font-family: system-ui, -apple-system, sans-serif;">
-            <?php if ($scanned_candidat): ?>
-                <div style="font-size: 3rem; color: #10b981; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-check"></i></div>
-                <h2 style="color: #34d399; margin: 0 0 0.25rem 0; font-size: 1.4rem;">CARTE AUTHENTIQUE & VALIDE</h2>
-                <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 1.25rem;">MINISTÈRE DE LA DÉFENSE • RÉPUBLIQUE DU CAMEROUN</div>
-                
-                <div style="display: flex; align-items: center; gap: 1rem; background: #0f172a; padding: 1rem; border-radius: 12px; border: 1px solid #334155; text-align: left; margin-bottom: 1.25rem;">
-                    <?php 
-                    $photo_src = !empty($scanned_candidat['photo']) ? '../' . ltrim($scanned_candidat['photo'], '../') : '../img/candidats/default.svg';
-                    ?>
-                    <img src="<?php echo htmlspecialchars($photo_src); ?>" alt="Photo" style="width: 65px; height: 65px; border-radius: 10px; object-fit: cover; border: 2px solid #10b981; background: #1e293b;" onerror="this.src='../img/candidats/default.svg';">
-                    <div>
-                        <div style="font-weight: 700; font-size: 1.1rem; color: #f8fafc;"><?php echo htmlspecialchars(($scanned_candidat['nom'] ?? '') . ' ' . ($scanned_candidat['prenom'] ?? '')); ?></div>
-                        <div style="font-size: 0.85rem; color: #60a5fa; font-weight: 600;"><?php echo htmlspecialchars(($scanned_candidat['grade'] ?? '') . ' • ' . ($scanned_candidat['unite'] ?? '')); ?></div>
-                        <div style="font-size: 0.8rem; color: #34d399; font-weight: 600; margin-top: 2px;">CIMIS: <?php echo htmlspecialchars($scanned_candidat['matricule'] ?? ''); ?></div>
-                    </div>
-                </div>
-                
-                <div style="font-size: 0.8rem; color: #cbd5e1; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.6rem; border-radius: 8px; margin-bottom: 1.25rem;">
-                    <i class="fa-solid fa-shield-halved" style="color: #34d399;"></i> Signature numérique certifiée CIMIS 2.0 • Horodatage: <?php echo date('d/m/Y H:i:s'); ?>
-                </div>
-            <?php else: ?>
-                <div style="font-size: 3rem; color: #ef4444; margin-bottom: 0.5rem;"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                <h2 style="color: #f87171; margin: 0 0 0.5rem 0; font-size: 1.3rem;">MATRICULE INCONNU OU NON VALIDE</h2>
-                <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 1.25rem;">Le matricule <strong><?php echo htmlspecialchars($scanned_matricule); ?></strong> ne correspond à aucun enregistrement actif dans la base de données de la Défense.</p>
-            <?php endif; ?>
-
-            <a href="securite.php" style="display: inline-block; background: #3b82f6; color: #fff; padding: 0.75rem 1.75rem; border-radius: 10px; font-weight: 700; text-decoration: none;">Fermer la vérification</a>
-        </div>
-    </div>
-<?php endif; ?>
     <div class="security-container">
         <div class="security-header">
-            <h1>🛡️ Sécurité des Cartes Militaires</h1>
-            <p>Découvrez les technologies anti-falsification intégrées</p>
+            <h1>­ƒøí´©Å S├®curit├® des Cartes Militaires</h1>
+            <p>D├®couvrez les technologies anti-falsification int├®gr├®es</p>
         </div>
         
         <div class="security-menu">
-            <button class="security-btn active" onclick="showSection('hologram', this)">1. Hologramme 3D</button>
-            <button class="security-btn" onclick="showSection('watermark', this)">2. Matricule Watermark</button>
-            <button class="security-btn" onclick="showSection('microtext', this)">3. Signature Microscopique</button>
-            <button class="security-btn" onclick="showSection('qrcode', this)">4. QR Code Crypté</button>
-            <button class="security-btn" onclick="showSection('guilloches', this)">5. Guilloches</button>
-            <button class="security-btn" onclick="showSection('holographic-elements', this)">6. Éléments Holographiques</button>
-            <button class="security-btn" onclick="showSection('photo-security', this)">7. Zone Sécurité Photo</button>
+            <button class="security-btn active" onclick="showSection('hologram')">1. Hologramme 3D</button>
+            <button class="security-btn" onclick="showSection('watermark')">2. Matricule Watermark</button>
+            <button class="security-btn" onclick="showSection('microtext')">3. Signature Microscopique</button>
+            <button class="security-btn" onclick="showSection('qrcode')">4. QR Code Crypt├®</button>
+            <button class="security-btn" onclick="showSection('guilloches')">5. Guilloches</button>
+            <button class="security-btn" onclick="showSection('holographic-elements')">6. ├ël├®ments Holographiques</button>
+            <button class="security-btn" onclick="showSection('photo-security')">7. Zone S├®curit├® Photo</button>
         </div>
         
         <!-- Section 1: Hologramme 3D -->
         <div id="hologram" class="security-section active">
             <div class="security-content">
                 <div class="security-info">
-                    <h2>🌟 Hologramme 3D</h2>
-                    <p><strong>Protection visuelle immédiate</strong></p>
-                    <p>L'hologramme 3D du Cameroun tourne continuellement et change d'apparence selon l'angle de vue. Cet effet est impossible à reproduire avec une photocopie ou une impression standard.</p>
+                    <h2>­ƒîƒ Hologramme 3D</h2>
+                    <p><strong>Protection visuelle imm├®diate</strong></p>
+                    <p>L'hologramme 3D du Cameroun tourne continuellement et change d'apparence selon l'angle de vue. Cet effet est impossible ├á reproduire avec une photocopie ou une impression standard.</p>
                     
                     <div class="test-instructions">
-                        <h3>📋 Comment vérifier :</h3>
+                        <h3>­ƒôï Comment v├®rifier :</h3>
                         <ul>
                             <li>Inclinez la carte devant vous</li>
                             <li>Observez l'animation 3D continue</li>
@@ -576,17 +521,17 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
         <div id="watermark" class="security-section">
             <div class="security-content">
                 <div class="security-info">
-                    <h2>💧 Matricule Watermark</h2>
-                    <p><strong>Authentification par lumière spécifique</strong></p>
-                    <p>Le matricule est intégré en arrière-plan avec un effet de réfraction similaire aux billets de banque. Visible uniquement sous lumière bleue ou violette et selon l'angle d'inclinaison.</p>
+                    <h2>­ƒÆº Matricule Watermark</h2>
+                    <p><strong>Authentification par lumi├¿re sp├®cifique</strong></p>
+                    <p>Le matricule est int├®gr├® en arri├¿re-plan avec un effet de r├®fraction similaire aux billets de banque. Visible uniquement sous lumi├¿re bleue ou violette et selon l'angle d'inclinaison.</p>
                     
                     <div class="test-instructions">
-                        <h3>📋 Comment vérifier :</h3>
+                        <h3>­ƒôï Comment v├®rifier :</h3>
                         <ul>
-                            <li>Inclinez la carte sous lumière bleue/violette</li>
-                            <li>Le matricule apparaît en transparence</li>
-                            <li>Change d'intensité selon l'angle</li>
-                            <li>Invisible à la photocopie normale</li>
+                            <li>Inclinez la carte sous lumi├¿re bleue/violette</li>
+                            <li>Le matricule appara├«t en transparence</li>
+                            <li>Change d'intensit├® selon l'angle</li>
+                            <li>Invisible ├á la photocopie normale</li>
                         </ul>
                     </div>
                     
@@ -603,20 +548,20 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
         <div id="microtext" class="security-section">
             <div class="security-content">
                 <div class="security-info">
-                    <h2>🔍 Signature Microscopique</h2>
-                    <p><strong>Sécurité de niveau étatique</strong></p>
-                    <p>Les informations officielles "Republique du Cameroun - Ministère de la Défense 2026 - Republic of Cameroon - Ministry of Defence 2026" sont intégrées dans les bordures avec une taille de 0.3mm. Visible uniquement à la loupe, ces mentions officielles bilingues authentifient le document au plus haut niveau étatique.</p>
+                    <h2>­ƒöì Signature Microscopique</h2>
+                    <p><strong>S├®curit├® de niveau ├®tatique</strong></p>
+                    <p>Les informations officielles "Republique du Cameroun - Minist├¿re de la D├®fense 2026 - Republic of Cameroon - Ministry of Defence 2026" sont int├®gr├®es dans les bordures avec une taille de 0.3mm. Visible uniquement ├á la loupe, ces mentions officielles bilingues authentifient le document au plus haut niveau ├®tatique.</p>
                     
                     <div class="test-instructions">
-                        <h3>📋 Comment vérifier :</h3>
+                        <h3>­ƒôï Comment v├®rifier :</h3>
                         <ul>
                             <li>Utilisez une loupe (x10 minimum)</li>
                             <li>Examinez les bordures de la carte</li>
                             <li>Les mentions officielles apparaissent en micro-texte</li>
-                            <li>Texte bilingue français/anglais</li>
-                            <li>Référence à l'année 2026</li>
+                            <li>Texte bilingue fran├ºais/anglais</li>
+                            <li>R├®f├®rence ├á l'ann├®e 2026</li>
                             <li>Flou et illisible sur photocopie</li>
-                            <li>Authentification au niveau étatique</li>
+                            <li>Authentification au niveau ├®tatique</li>
                         </ul>
                     </div>
                     
@@ -629,22 +574,22 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
             </div>
         </div>
         
-        <!-- Section 4: QR Code Crypté -->
+        <!-- Section 4: QR Code Crypt├® -->
         <div id="qrcode" class="security-section">
             <div class="security-content">
                 <div class="security-info">
-                    <h2>📱 QR Code Crypté</h2>
-                    <p><strong>Validation numérique en temps réel</strong></p>
-                    <p>Le QR code contient les données cryptées de la carte avec signature numérique unique. Chaque scan vérifie l'authenticité via une base de données sécurisée et affiche le statut de validation en temps réel.</p>
+                    <h2>­ƒô▒ QR Code Crypt├®</h2>
+                    <p><strong>Validation num├®rique en temps r├®el</strong></p>
+                    <p>Le QR code contient les donn├®es crypt├®es de la carte avec signature num├®rique unique. Chaque scan v├®rifie l'authenticit├® via une base de donn├®es s├®curis├®e et affiche le statut de validation en temps r├®el.</p>
                     
                     <div class="test-instructions">
-                        <h3>📋 Comment vérifier :</h3>
+                        <h3>­ƒôï Comment v├®rifier :</h3>
                         <ul>
                             <li>Scannez le QR code avec un smartphone</li>
-                            <li>La page web affiche les informations sécurisées</li>
+                            <li>La page web affiche les informations s├®curis├®es</li>
                             <li>Statut "VALIDE" si authentique</li>
                             <li>Tentative de copie = invalide</li>
-                            <li>Validation instantanée et traçable</li>
+                            <li>Validation instantan├®e et tra├ºable</li>
                         </ul>
                     </div>
                     
@@ -661,17 +606,17 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
         <div id="guilloches" class="security-section">
             <div class="security-content">
                 <div class="security-info">
-                    <h2>🌀 Motifs de Guilloches</h2>
-                    <p><strong>Protection anti-copie avancée</strong></p>
-                    <p>Les motifs de guilloches sont des lignes complexes entrelacées qui créent une texture de fond unique. Impossible à reproduire parfaitement avec une photocopie ou un scanner, ces motifs protègent contre la falsification par reproduction mécanique.</p>
+                    <h2>­ƒîÇ Motifs de Guilloches</h2>
+                    <p><strong>Protection anti-copie avanc├®e</strong></p>
+                    <p>Les motifs de guilloches sont des lignes complexes entrelac├®es qui cr├®ent une texture de fond unique. Impossible ├á reproduire parfaitement avec une photocopie ou un scanner, ces motifs prot├¿gent contre la falsification par reproduction m├®canique.</p>
                     
                     <div class="test-instructions">
-                        <h3>📋 Comment vérifier :</h3>
+                        <h3>­ƒôï Comment v├®rifier :</h3>
                         <ul>
-                            <li>Observez les lignes croisées en arrière-plan</li>
-                            <li>Motifs or et vert entrelacés à 45°</li>
-                            <li>Une photocopie perdra la netteté des motifs</li>
-                            <li>Texture complexe impossible à recopier</li>
+                            <li>Observez les lignes crois├®es en arri├¿re-plan</li>
+                            <li>Motifs or et vert entrelac├®s ├á 45┬░</li>
+                            <li>Une photocopie perdra la nettet├® des motifs</li>
+                            <li>Texture complexe impossible ├á recopier</li>
                             <li>Protection invisible mais efficace</li>
                         </ul>
                     </div>
@@ -685,22 +630,22 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
             </div>
         </div>
         
-        <!-- Section 6: Éléments Holographiques -->
+        <!-- Section 6: ├ël├®ments Holographiques -->
         <div id="holographic-elements" class="security-section">
             <div class="security-content">
                 <div class="security-info">
-                    <h2>✨ Éléments Holographiques</h2>
-                    <p><strong>Sécurité visuelle animée</strong></p>
-                    <p>Les éléments holographiques animés (étoile rotative et carré pulsant) créent des effets de brillance et de mouvement impossibles à reproduire. Ces animations continues ajoutent une couche de sécurité dynamique et moderne.</p>
+                    <h2>Ô£¿ ├ël├®ments Holographiques</h2>
+                    <p><strong>S├®curit├® visuelle anim├®e</strong></p>
+                    <p>Les ├®l├®ments holographiques anim├®s (├®toile rotative et carr├® pulsant) cr├®ent des effets de brillance et de mouvement impossibles ├á reproduire. Ces animations continues ajoutent une couche de s├®curit├® dynamique et moderne.</p>
                     
                     <div class="test-instructions">
-                        <h3>📋 Comment vérifier :</h3>
+                        <h3>­ƒôï Comment v├®rifier :</h3>
                         <ul>
-                            <li>Étoile au centre avec rotation continue</li>
-                            <li>Petit carré en bas à droite avec pulsation</li>
+                            <li>├ëtoile au centre avec rotation continue</li>
+                            <li>Petit carr├® en bas ├á droite avec pulsation</li>
                             <li>Effets de brillance et changement de couleurs</li>
                             <li>Animation impossible sur photocopie</li>
-                            <li>Éléments uniques par carte</li>
+                            <li>├ël├®ments uniques par carte</li>
                         </ul>
                     </div>
                     
@@ -713,22 +658,22 @@ $photo_security_demo_html = renderPhotoSecurityDemo($candidat_test);
             </div>
         </div>
         
-        <!-- Section 7: Zone Sécurité Photo -->
+        <!-- Section 7: Zone S├®curit├® Photo -->
         <div id="photo-security" class="security-section">
             <div class="security-content">
                 <div class="security-info">
-                    <h2>🛡️ Zone Sécurité Photo</h2>
-                    <p><strong>Protection de l'identité visuelle</strong></p>
-                    <p>La zone de sécurité autour de la photo avec micro-texte "VALIDE SEULEMENT AVEC PHOTO" garantit que la photo ne peut être remplacée. Cette protection empêche les falsifications d'identité visuelle.</p>
+                    <h2>­ƒøí´©Å Zone S├®curit├® Photo</h2>
+                    <p><strong>Protection de l'identit├® visuelle</strong></p>
+                    <p>La zone de s├®curit├® autour de la photo avec micro-texte "VALIDE SEULEMENT AVEC PHOTO" garantit que la photo ne peut ├¬tre remplac├®e. Cette protection emp├¬che les falsifications d'identit├® visuelle.</p>
                     
                     <div class="test-instructions">
-                        <h3>📋 Comment vérifier :</h3>
+                        <h3>­ƒôï Comment v├®rifier :</h3>
                         <ul>
-                            <li>Zone dorée autour de la photo</li>
+                            <li>Zone dor├®e autour de la photo</li>
                             <li>Micro-texte en haut de la zone</li>
                             <li>Lisible uniquement avec une loupe</li>
-                            <li>Impossible à modifier sans détérioration</li>
-                            <li>Garantie d'authenticité de la photo</li>
+                            <li>Impossible ├á modifier sans d├®t├®rioration</li>
+                            <li>Garantie d'authenticit├® de la photo</li>
                         </ul>
                     </div>
                     
