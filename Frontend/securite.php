@@ -4,13 +4,13 @@ require_once __DIR__ . '/../backend/config.php';
 require_once __DIR__ . '/../Carte/confection_carte.php'; 
 
 // Détection d'un scan QR Code smartphone via l'URL (?matricule=...)
-$scanned_matricule = $_GET['matricule'] ?? $_GET['m'] ?? null;
+$scanned_matricule = isset($_GET['matricule']) && trim($_GET['matricule']) !== '' ? trim($_GET['matricule']) : (isset($_GET['m']) && trim($_GET['m']) !== '' ? trim($_GET['m']) : null);
 $scanned_candidat = null;
 
 if (!empty($scanned_matricule)) {
     global $pdo;
     if (isset($pdo)) {
-        $stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule = :m OR matricule_militaire = :m");
+        $stmt = $pdo->prepare("SELECT * FROM candidat WHERE (matricule = :m OR matricule_militaire = :m) AND supprimer = 1");
         $stmt->execute(['m' => $scanned_matricule]);
         $scanned_candidat = $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -118,31 +118,30 @@ function renderMicrotextDemo($candidat) {
     <?php return ob_get_clean();
 }
 
-// Fonction démo QR Code crypté
+// Fonction démo QR Code crypté (EXACTEMENT COMME CIMS/SECURITE.PHP)
 function renderQRCodeDemo($candidat) {
-    require_once __DIR__ . '/../backend/qrcode_generator.php';
-    $mat = $candidat['matricule_militaire'] ?? $candidat['matricule'] ?? 'CIM-96354';
-    $qr_rel = generateQRCodeForMatricule($mat, $candidat);
-    $local_path = __DIR__ . '/../' . ltrim($qr_rel, '/');
+    $qr_data = [
+        'matricule' => $candidat['matricule'] ?? 'CIM-96354',
+        'nom' => $candidat['nom'] ?? 'NDONGMO',
+        'prenom' => $candidat['prenom'] ?? 'Tejiona',
+        'unite' => $candidat['unite'] ?? 'CIMIS',
+        'grade' => $candidat['grade'] ?? 'Ingénieur',
+        'timestamp' => time(),
+        'signature' => hash('sha256', ($candidat['matricule'] ?? 'CIM-96354') . 'CIMIS2026')
+    ];
     
-    if (file_exists($local_path)) {
-        $qr_url = '../' . ltrim($qr_rel, '/');
-    } else {
-        $qr_payload = [
-            'matricule'      => $mat,
-            'nom'            => $candidat['nom'] ?? 'NDONGMO',
-            'prenom'         => $candidat['prenom'] ?? 'Tejiona',
-            'sexe'           => $candidat['sexe'] ?? 'MASCULIN',
-            'date_naissance' => $candidat['date_naissance'] ?? '1999-01-17',
-            'cni'            => $candidat['numero_cni'] ?? 'CNI-CIMIS-96354',
-            'grade'          => $candidat['grade'] ?? 'Ingénieur',
-            'unite'          => $candidat['unite'] ?? 'CIMIS',
-            'statut'         => 'ACTIF',
-            'timestamp'      => time(),
-            'signature'      => hash('sha256', $mat . 'NDONGMOMINDEF_CIMIS_2026')
-        ];
-        $json_text = json_encode($qr_payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=4&data=" . urlencode($json_text);
+    $json_str = json_encode($qr_data);
+    $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode($json_str);
+
+    // Fallback Base64 local si phpqrcode est disponible
+    require_once __DIR__ . '/../backend/phpqrcode/qrlib.php';
+    if (class_exists('QRcode')) {
+        ob_start();
+        QRcode::png($json_str, null, QR_ECLEVEL_M, 6, 2);
+        $raw_png = ob_get_clean();
+        if (!empty($raw_png)) {
+            $qr_url = 'data:image/png;base64,' . base64_encode($raw_png);
+        }
     }
     
     ob_start(); ?>
@@ -169,7 +168,7 @@ function renderQRCodeDemo($candidat) {
                 align-items: center;
                 justify-content: center;
             ">
-                <!-- Image QR Code -->
+                <!-- Vrai QR Code scannable -->
                 <img src="<?php echo $qr_url; ?>" alt="QR Code Sécurisé" style="
                     width: 20mm;
                     height: 20mm;
@@ -191,7 +190,6 @@ function renderQRCodeDemo($candidat) {
                     justify-content: center;
                     font-size: 3mm;
                     font-weight: bold;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
                 ">
                     🔒
                 </div>
@@ -212,7 +210,6 @@ function renderQRCodeDemo($candidat) {
                 </div>
             </div>
         </div>
-    </div>
     <?php return ob_get_clean();
 }
 
