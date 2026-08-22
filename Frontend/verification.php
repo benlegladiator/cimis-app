@@ -109,7 +109,7 @@ if (!empty($matricule_search)) {
                     <!-- COLONNE CODE QR -->
                     <div style="text-align: center;">
                         <div style="background: white; padding: 12px; border-radius: 12px; display: inline-block; box-shadow: 0 8px 25px rgba(0,0,0,0.5);">
-                            <img src="../<?php echo ltrim($generated_qr_rel, '/'); ?>" alt="Code QR Généré" style="width: 200px; height: 200px; object-fit: contain; display: block;" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=2&data=<?php echo urlencode($qr_payload_text); ?>';">
+                            <img src="../<?php echo ltrim($generated_qr_rel, '/'); ?>?v=<?php echo time(); ?>" alt="Code QR Généré" style="width: 220px; height: 220px; object-fit: contain; display: block;" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=4&data=<?php echo urlencode($qr_payload_text); ?>';">
                         </div>
                         <div style="margin-top: 0.75rem;">
                             <a href="../<?php echo ltrim($generated_qr_rel, '/'); ?>" download="<?php echo htmlspecialchars($matricule_search); ?>_qr.png" target="_blank" style="color: #38bdf8; font-size: 0.85rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">

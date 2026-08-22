@@ -63,8 +63,13 @@ function generateQRCodeForMatricule($matricule, $candidat_data = null) {
 
     $json_content = json_encode($qr_payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
+    // Forcer la suppression de l'ancien fichier image en cache s'il existe
+    if (file_exists($filepath)) {
+        @unlink($filepath);
+    }
+
     if (class_exists('QRcode')) {
-        QRcode::png($json_content, $filepath, QR_ECLEVEL_M, 10, 4);
+        QRcode::png($json_content, $filepath, QR_ECLEVEL_M, 8, 4);
     } else {
         $api_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=4&data=" . urlencode($json_content);
         $img_data = @file_get_contents($api_url);
