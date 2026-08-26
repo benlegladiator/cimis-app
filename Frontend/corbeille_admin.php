@@ -19,15 +19,33 @@ if (isset($_POST['action']) && $_POST['action'] == 'restore') {
 
         $ids = $_POST['ids'] ?? [];
         if (!empty($ids) && is_array($ids)) {
-            $placeholders = str_repeat('?,', count($ids));
-            $placeholders = rtrim($placeholders, ',');
-            
-            // Restaurer les cartes
-            $sql = "UPDATE candidat SET supprimer = 1, supprimer_par = NULL, date_suppression = NULL WHERE id IN ($placeholders)";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute($ids);
-            
-            $_SESSION['success'] = count($ids) . " carte(s) restaurée(s) avec succès";
+            $ids = array_filter(array_map('intval', $ids));
+            if (!empty($ids)) {
+                $placeholders = implode(',', array_fill(0, count($ids), '?'));
+                
+                // Notifier SIADOC lors de la restauration
+                try {
+                    require_once __DIR__ . '/../backend/notify_siadoc.php';
+                    $stmt_mats = $pdo->prepare("SELECT matricule_militaire, matricule FROM candidat WHERE id IN ($placeholders)");
+                    $stmt_mats->execute($ids);
+                    $restored_cands = $stmt_mats->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($restored_cands as $rc) {
+                        $m = $rc['matricule_militaire'] ?? $rc['matricule'];
+                        if (!empty($m)) {
+                            notifierSiadocStatutCarte($m, 'ACTIVE', 'Restauration depuis la corbeille admin');
+                        }
+                    }
+                } catch (Exception $ex_siadoc) {}
+
+                // Restaurer les cartes
+                $sql = "UPDATE candidat SET supprimer = 1, supprimer_par = NULL, date_suppression = NULL WHERE id IN ($placeholders)";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($ids);
+                
+                $_SESSION['success'] = count($ids) . " carte(s) restaurée(s) avec succès";
+            } else {
+                $_SESSION['error'] = "Aucune carte valide sélectionnée pour la restauration";
+            }
         } else {
             $_SESSION['error'] = "Aucune carte sélectionnée pour la restauration";
         }
@@ -866,14 +884,10 @@ try {
                             <i class="fa-solid fa-check-square"></i>
                             <span>Sélectionner tout</span>
                         </button>
-                        <form method="POST" id="restoreForm" style="display: contents;">
-                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-                            <input type="hidden" name="action" value="restore">
-                            <button type="submit" class="premium-btn btn-restore">
-                                <i class="fa-solid fa-undo"></i>
-                                <span>Restaurer</span>
-                            </button>
-                        </form>
+                        <button type="button" class="premium-btn btn-restore" onclick="submitBatchRestore()">
+                            <i class="fa-solid fa-undo"></i>
+                            <span>Restaurer</span>
+                        </button>
                         <form method="POST" id="emptyTrashForm" style="display: contents;" onsubmit="return confirmEmptyTrash()">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <input type="hidden" name="action" value="empty_trash">
@@ -979,6 +993,42 @@ try {
             }
         }
         
+        // Fonction pour restaurer les cartes sélectionnées en lot
+        function submitBatchRestore() {
+            const checkedBoxes = document.querySelectorAll('input[name="ids[]"]:checked');
+            if (checkedBoxes.length === 0) {
+                alert('Veuillez sélectionner au moins une carte à restaurer.');
+                return;
+            }
+            if (confirm('Voulez-vous restaurer les ' + checkedBoxes.length + ' carte(s) sélectionnée(s) ?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrf_token';
+                csrfInput.value = '<?php echo $_SESSION['csrf_token']; ?>';
+                form.appendChild(csrfInput);
+
+                const actionInput = document.createElement('input');
+                actionInput.type = 'hidden';
+                actionInput.name = 'action';
+                actionInput.value = 'restore';
+                form.appendChild(actionInput);
+
+                checkedBoxes.forEach(cb => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ids[]';
+                    input.value = cb.value;
+                    form.appendChild(input);
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
         // Fonction pour restaurer une carte spécifique
         function restoreCard(id) {
             if (confirm('Voulez-vous restaurer cette carte ?')) {
