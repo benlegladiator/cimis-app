@@ -240,8 +240,8 @@ if (isset($_POST['ajax_search'])) {
                     
                     // Indicateur de suspension
                     if ($personnel['suspendus'] == 1) {
-                        echo '<div class="suspension-indicator" title="Membre suspendu">
-                                <i class="fa-solid fa-pause"></i>
+                        echo '<div class="suspension-indicator" title="Carte militaire suspendue / désactivée">
+                                <i class="fa-solid fa-ban"></i>
                               </div>';
                     }
                     
@@ -270,8 +270,11 @@ if (isset($_POST['ajax_search'])) {
             }
             echo '</div>
                     <div class="personnel-info">
-                        <div class="personnel-name">' . htmlspecialchars($personnel['nom'] . ' ' . $personnel['prenom']) . '</div>
-                        <div class="personnel-details">
+                        <div class="personnel-name">' . htmlspecialchars($personnel['nom'] . ' ' . $personnel['prenom']) . '</div>';
+            if ($personnel['suspendus'] == 1) {
+                echo '<div style="margin: 2px 0;"><span class="suspension-badge-tag"><i class="fa-solid fa-ban"></i> CARTE SUSPENDUE</span></div>';
+            }
+            echo '<div class="personnel-details">
                             <span class="badge badge-' . strtolower(str_replace(' ', '-', $personnel['unite'])) . '">
                                 ' . htmlspecialchars($personnel['unite']) . '
                             </span>
@@ -511,14 +514,34 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             z-index: 10;
         }
         
-        .candidat-item.suspended .candidat-photo {
-            opacity: 0.7;
-            filter: grayscale(50%);
+        .personnel-item.suspended {
+            border: 2px solid #ef4444 !important;
+            background: rgba(239, 68, 68, 0.08) !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3) !important;
+        }
+
+        .personnel-item.suspended .personnel-photo img {
+            filter: grayscale(85%);
+            opacity: 0.75;
         }
         
-        .candidat-item.suspended .candidat-name {
-            color: #dc3545;
-            font-weight: bold;
+        .personnel-item.suspended .personnel-name {
+            color: #ef4444 !important;
+            font-weight: 800;
+        }
+
+        .suspension-badge-tag {
+            background: #dc2626;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         /* ──── STYLES RESPONSIFS AVANCÉS (MOBILE / TABLETTE / DESKTOP) ──── */
