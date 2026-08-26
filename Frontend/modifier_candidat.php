@@ -137,6 +137,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
             $annee_galon_val = date('Y', strtotime($annee_galon_raw));
         }
 
+        $old_suspendus = (int)($candidat['suspendus'] ?? 0);
+        $new_suspendus = (int)($_POST['suspendus'] ?? 0);
+        $status_changed = ($old_suspendus !== $new_suspendus) || ($_POST['statut_militaire'] !== ($candidat['statut_militaire'] ?? 'ACTIF'));
+        
+        $date_change = $status_changed ? date('Y-m-d H:i:s') : ($candidat['date_changement_statut'] ?? date('Y-m-d H:i:s'));
+        $autorite    = $status_changed ? ($_SESSION['username'] ?? 'ADMIN') : ($candidat['autorite_changement_statut'] ?? ($_SESSION['username'] ?? 'ADMIN'));
+        $motif_val   = !empty($_POST['motif_changement_statut']) ? trim($_POST['motif_changement_statut']) : ($new_suspendus == 1 ? 'Suspension administrative de la carte' : 'Changement de statut');
+
         // Préparation des données pour la mise à jour
         $data = [
             'nom' => strtoupper(trim($_POST['nom'])),
@@ -153,10 +161,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
             'grade' => $_POST['grade'] ?? '',
             'categorie_civil' => $_POST['categorie_civil'] ?? '',
             'annee_dernier_galon' => $annee_galon_val,
-            'suspendus' => $_POST['suspendus'] ?? 0,
+            'suspendus' => $new_suspendus,
             'statut_militaire' => $_POST['statut_militaire'] ?? 'ACTIF',
-            'date_changement_statut' => $_POST['statut_militaire'] !== ($candidat['statut_militaire'] ?? 'ACTIF') ? date('Y-m-d') : null,
-            'motif_changement_statut' => $_POST['motif_changement_statut'] ?? null,
+            'date_changement_statut' => $date_change,
+            'motif_changement_statut' => $motif_val,
+            'autorite_changement_statut' => $autorite,
             'photo' => $photo_path,
             'id' => $id
         ];
@@ -181,11 +190,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
             statut_militaire = :statut_militaire,
             date_changement_statut = :date_changement_statut,
             motif_changement_statut = :motif_changement_statut,
+            autorite_changement_statut = :autorite_changement_statut,
             photo = :photo 
             WHERE id = :id";
         
         $stmt = $pdo->prepare($sql);
         $stmt->execute($data);
+
+        // Journalisation de l'audit dans activity_log
+        if ($status_changed) {
+            try {
+                $action_label = ($new_suspendus == 1) ? 'SUSPENSION_CARTE' : 'REACTIVATION_CARTE';
+                $log_desc = "Carte du matricule " . $matricule_militaire . " (" . $data['nom'] . " " . $data['prenom'] . ") " . ($new_suspendus == 1 ? 'SUSPENDUE' : 'RÉACTIVÉE') . " par " . $autorite . " le " . date('d/m/Y à H:i:s') . ". Motif: " . $motif_val;
+                $stmt_act = $pdo->prepare("INSERT INTO activity_log (user_id, action, description, ip_address) VALUES (NULL, :act, :desc, :ip)");
+                $stmt_act->execute([
+                    'act' => $action_label,
+                    'desc' => $log_desc,
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'
+                ]);
+            } catch (Exception $e) {}
+        }
 
         // Notification Webhook SIADOC (Activation / Désactivation en temps réel)
         try {

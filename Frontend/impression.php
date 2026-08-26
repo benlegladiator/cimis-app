@@ -210,7 +210,7 @@ if (isset($_POST['ajax_search'])) {
     }
 
     // Construire la requête
-    $sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus FROM candidat WHERE supprimer = 1";
+    $sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus, date_changement_statut, motif_changement_statut, autorite_changement_statut FROM candidat WHERE supprimer = 1";
     if (!empty($where)) {
         $sql .= " AND " . implode(' AND ', $where);
     }
@@ -272,7 +272,16 @@ if (isset($_POST['ajax_search'])) {
                     <div class="personnel-info">
                         <div class="personnel-name">' . htmlspecialchars($personnel['nom'] . ' ' . $personnel['prenom']) . '</div>';
             if ($personnel['suspendus'] == 1) {
-                echo '<div style="margin: 2px 0;"><span class="suspension-badge-tag"><i class="fa-solid fa-ban"></i> CARTE SUSPENDUE</span></div>';
+                $date_susp = !empty($personnel['date_changement_statut']) ? date('d/m/Y à H:i', strtotime($personnel['date_changement_statut'])) : date('d/m/Y');
+                $op_susp   = !empty($personnel['autorite_changement_statut']) ? htmlspecialchars($personnel['autorite_changement_statut']) : 'SUPER_ADMIN';
+                $mo_susp   = !empty($personnel['motif_changement_statut']) ? htmlspecialchars($personnel['motif_changement_statut']) : 'Suspension administrative';
+                echo '<div style="margin: 3px 0;">
+                        <span class="suspension-badge-tag"><i class="fa-solid fa-ban"></i> CARTE SUSPENDUE</span>
+                        <div style="font-size: 0.7rem; color: #f87171; margin-top: 2px; line-height: 1.2;">
+                            <i class="fa-solid fa-user-shield"></i> Par: <strong>' . $op_susp . '</strong> (' . $date_susp . ')<br>
+                            <i class="fa-solid fa-circle-info"></i> Motif: ' . $mo_susp . '
+                        </div>
+                      </div>';
             }
             echo '<div class="personnel-details">
                             <span class="badge badge-' . strtolower(str_replace(' ', '-', $personnel['unite'])) . '">
@@ -456,7 +465,7 @@ if (!empty($_GET['search_cni'])) {
 }
 
 // Construire la requête
-$sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus FROM candidat WHERE supprimer = 1";
+$sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus, date_changement_statut, motif_changement_statut, autorite_changement_statut FROM candidat WHERE supprimer = 1";
 if (!empty($where)) {
     $sql .= " AND " . implode(' AND ', $where);
 }
@@ -1187,9 +1196,20 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     </div>
                                     <div class="personnel-info">
                                         <div class="personnel-name"><?php echo htmlspecialchars($personnel['nom'] . ' ' . $personnel['prenom']); ?></div>
-                                        <?php if ($personnel['suspendus'] == 1): ?>
-                                            <div style="margin: 2px 0;"><span class="suspension-badge-tag"><i class="fa-solid fa-ban"></i> CARTE SUSPENDUE</span></div>
-                                        <?php endif; ?>
+                                         <?php if ($personnel['suspendus'] == 1): ?>
+                                             <?php 
+                                             $date_susp_st = !empty($personnel['date_changement_statut']) ? date('d/m/Y à H:i', strtotime($personnel['date_changement_statut'])) : date('d/m/Y');
+                                             $op_susp_st   = !empty($personnel['autorite_changement_statut']) ? htmlspecialchars($personnel['autorite_changement_statut']) : 'SUPER_ADMIN';
+                                             $mo_susp_st   = !empty($personnel['motif_changement_statut']) ? htmlspecialchars($personnel['motif_changement_statut']) : 'Suspension administrative';
+                                             ?>
+                                             <div style="margin: 3px 0;">
+                                                 <span class="suspension-badge-tag"><i class="fa-solid fa-ban"></i> CARTE SUSPENDUE</span>
+                                                 <div style="font-size: 0.7rem; color: #f87171; margin-top: 2px; line-height: 1.2;">
+                                                     <i class="fa-solid fa-user-shield"></i> Par: <strong><?php echo $op_susp_st; ?></strong> (<?php echo $date_susp_st; ?>)<br>
+                                                     <i class="fa-solid fa-circle-info"></i> Motif: <?php echo $mo_susp_st; ?>
+                                                 </div>
+                                             </div>
+                                         <?php endif; ?>
                                         <div class="personnel-details">
                                             <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $personnel['unite'])); ?>">
                                                 <?php echo htmlspecialchars($personnel['unite']); ?>
