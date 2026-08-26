@@ -210,7 +210,7 @@ if (isset($_POST['ajax_search'])) {
     }
 
     // Construire la requête
-    $sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus, date_changement_statut, motif_changement_statut, autorite_changement_statut FROM candidat WHERE supprimer = 1";
+    $sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus, statut_militaire, date_changement_statut, motif_changement_statut, autorite_changement_statut FROM candidat WHERE supprimer = 1";
     if (!empty($where)) {
         $sql .= " AND " . implode(' AND ', $where);
     }
@@ -230,7 +230,9 @@ if (isset($_POST['ajax_search'])) {
               </div>';
     } else {
         foreach ($personnels as $personnel) {
-            echo '<div class="personnel-item' . ($personnel['suspendus'] == 1 ? ' suspended' : '') . '">
+            $st_mil = strtoupper($personnel['statut_militaire'] ?? '');
+            $is_suspended = ($personnel['suspendus'] == 1) || str_contains($st_mil, 'SUSPENDU') || in_array($st_mil, ['DESERTEUR', 'REVOQUE']);
+            echo '<div class="personnel-item' . ($is_suspended ? ' suspended' : '') . '">
                     <div class="personnel-checkbox-wrapper">
                         <input type="checkbox" name="ids[]" value="' . htmlspecialchars($personnel['id']) . '" 
                                data-matricule="' . htmlspecialchars($personnel['matricule']) . '" 
@@ -239,7 +241,7 @@ if (isset($_POST['ajax_search'])) {
                     </div>';
                     
                     // Indicateur de suspension
-                    if ($personnel['suspendus'] == 1) {
+                    if ($is_suspended) {
                         echo '<div class="suspension-indicator" title="Carte militaire suspendue / désactivée">
                                 <i class="fa-solid fa-ban"></i>
                               </div>';
@@ -271,12 +273,12 @@ if (isset($_POST['ajax_search'])) {
             echo '</div>
                     <div class="personnel-info">
                         <div class="personnel-name">' . htmlspecialchars($personnel['nom'] . ' ' . $personnel['prenom']) . '</div>';
-            if ($personnel['suspendus'] == 1) {
+            if ($is_suspended) {
                 $date_susp = !empty($personnel['date_changement_statut']) ? date('d/m/Y à H:i', strtotime($personnel['date_changement_statut'])) : date('d/m/Y');
                 $op_susp   = !empty($personnel['autorite_changement_statut']) ? htmlspecialchars($personnel['autorite_changement_statut']) : 'SUPER_ADMIN';
-                $mo_susp   = !empty($personnel['motif_changement_statut']) ? htmlspecialchars($personnel['motif_changement_statut']) : 'Suspension administrative';
+                $mo_susp   = !empty($personnel['motif_changement_statut']) ? htmlspecialchars($personnel['motif_changement_statut']) : 'Suspension administrative (' . $st_mil . ')';
                 echo '<div style="margin: 3px 0;">
-                        <span class="suspension-badge-tag"><i class="fa-solid fa-ban"></i> CARTE SUSPENDUE</span>
+                        <span class="suspension-badge-tag"><i class="fa-solid fa-ban"></i> CARTE SUSPENDUE (' . $st_mil . ')</span>
                         <div style="font-size: 0.7rem; color: #f87171; margin-top: 2px; line-height: 1.2;">
                             <i class="fa-solid fa-user-shield"></i> Par: <strong>' . $op_susp . '</strong> (' . $date_susp . ')<br>
                             <i class="fa-solid fa-circle-info"></i> Motif: ' . $mo_susp . '
@@ -465,7 +467,7 @@ if (!empty($_GET['search_cni'])) {
 }
 
 // Construire la requête
-$sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus, date_changement_statut, motif_changement_statut, autorite_changement_statut FROM candidat WHERE supprimer = 1";
+$sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus, statut_militaire, date_changement_statut, motif_changement_statut, autorite_changement_statut FROM candidat WHERE supprimer = 1";
 if (!empty($where)) {
     $sql .= " AND " . implode(' AND ', $where);
 }
@@ -1176,34 +1178,38 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     $photo_src = '../' . $random_photo_default;
                                 }
                                 ?>
-                                <div class="personnel-item<?php echo $personnel['suspendus'] == 1 ? ' suspended' : ''; ?>">
-                                    <div class="personnel-checkbox-wrapper">
-                                        <input type="checkbox" name="selected_personnels[]"
-                                               value="<?php echo $personnel['id']; ?>"
-                                               data-matricule="<?php echo htmlspecialchars($personnel['matricule']); ?>"
-                                               class="personnel-checkbox" id="personnel_<?php echo $personnel['id']; ?>">
-                                        <label for="personnel_<?php echo $personnel['id']; ?>" class="checkbox-label"></label>
-                                    </div>
+                                 <?php
+                                 $st_mil_st = strtoupper($personnel['statut_militaire'] ?? '');
+                                 $is_suspended_st = ($personnel['suspendus'] == 1) || str_contains($st_mil_st, 'SUSPENDU') || in_array($st_mil_st, ['DESERTEUR', 'REVOQUE']);
+                                 ?>
+                                 <div class="personnel-item<?php echo $is_suspended_st ? ' suspended' : ''; ?>">
+                                     <div class="personnel-checkbox-wrapper">
+                                         <input type="checkbox" name="selected_personnels[]"
+                                                value="<?php echo $personnel['id']; ?>"
+                                                data-matricule="<?php echo htmlspecialchars($personnel['matricule']); ?>"
+                                                class="personnel-checkbox" id="personnel_<?php echo $personnel['id']; ?>">
+                                         <label for="personnel_<?php echo $personnel['id']; ?>" class="checkbox-label"></label>
+                                     </div>
 
-                                    <?php if ($personnel['suspendus'] == 1): ?>
-                                        <div class="suspension-indicator" title="Carte militaire suspendue / désactivée">
-                                            <i class="fa-solid fa-ban"></i>
-                                        </div>
-                                    <?php endif; ?>
+                                     <?php if ($is_suspended_st): ?>
+                                         <div class="suspension-indicator" title="Carte militaire suspendue / désactivée">
+                                             <i class="fa-solid fa-ban"></i>
+                                         </div>
+                                     <?php endif; ?>
 
-                                    <div class="personnel-photo">
-                                        <img src="<?php echo $photo_src; ?>" alt="Photo" onerror="this.src='../<?php echo $random_photo_default; ?>'">
-                                    </div>
-                                    <div class="personnel-info">
-                                        <div class="personnel-name"><?php echo htmlspecialchars($personnel['nom'] . ' ' . $personnel['prenom']); ?></div>
-                                         <?php if ($personnel['suspendus'] == 1): ?>
+                                     <div class="personnel-photo">
+                                         <img src="<?php echo $photo_src; ?>" alt="Photo" onerror="this.src='../<?php echo $random_photo_default; ?>'">
+                                     </div>
+                                     <div class="personnel-info">
+                                         <div class="personnel-name"><?php echo htmlspecialchars($personnel['nom'] . ' ' . $personnel['prenom']); ?></div>
+                                         <?php if ($is_suspended_st): ?>
                                              <?php 
                                              $date_susp_st = !empty($personnel['date_changement_statut']) ? date('d/m/Y à H:i', strtotime($personnel['date_changement_statut'])) : date('d/m/Y');
                                              $op_susp_st   = !empty($personnel['autorite_changement_statut']) ? htmlspecialchars($personnel['autorite_changement_statut']) : 'SUPER_ADMIN';
-                                             $mo_susp_st   = !empty($personnel['motif_changement_statut']) ? htmlspecialchars($personnel['motif_changement_statut']) : 'Suspension administrative';
+                                             $mo_susp_st   = !empty($personnel['motif_changement_statut']) ? htmlspecialchars($personnel['motif_changement_statut']) : 'Suspension administrative (' . $st_mil_st . ')';
                                              ?>
                                              <div style="margin: 3px 0;">
-                                                 <span class="suspension-badge-tag"><i class="fa-solid fa-ban"></i> CARTE SUSPENDUE</span>
+                                                 <span class="suspension-badge-tag"><i class="fa-solid fa-ban"></i> CARTE SUSPENDUE (<?php echo $st_mil_st; ?>)</span>
                                                  <div style="font-size: 0.7rem; color: #f87171; margin-top: 2px; line-height: 1.2;">
                                                      <i class="fa-solid fa-user-shield"></i> Par: <strong><?php echo $op_susp_st; ?></strong> (<?php echo $date_susp_st; ?>)<br>
                                                      <i class="fa-solid fa-circle-info"></i> Motif: <?php echo $mo_susp_st; ?>
