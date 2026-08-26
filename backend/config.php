@@ -34,10 +34,11 @@ define('DB_USER',   $user_env);
 define('DB_PASS',   $pass_env);
 
 // Codes secrets de l'application
-define('ACCESS_CODE',    getenv('ACCESS_CODE')    ?: 'CIMIS2.02026');
-define('RESET_CODE',     getenv('RESET_CODE')     ?: 'RESETRESET');
-define('SIADOC_API_KEY', getenv('SIADOC_API_KEY') ?: 'siadoc-2026-cimis-integration');
-define('SIADOC_API_URL', getenv('SIADOC_API_URL') ?: 'https://siadoc.onrender.com');
+define('ACCESS_CODE',         getenv('ACCESS_CODE')         ?: 'CIMIS2.02026');
+define('RESET_CODE',          getenv('RESET_CODE')          ?: 'RESETRESET');
+define('SIADOC_API_KEY',      getenv('SIADOC_API_KEY')      ?: 'cimis-demo-token-2026');
+define('SIADOC_API_URL',      getenv('SIADOC_API_URL')      ?: 'https://siadoc.onrender.com');
+define('SIADOC_WEBHOOK_URL',  getenv('SIADOC_WEBHOOK_URL')  ?: 'https://siadoc.onrender.com/api/cimis/webhook/statut-carte');
 
 // Connexion à la base de données via PDO (avec fallback automatique vers MySQL)
 try {

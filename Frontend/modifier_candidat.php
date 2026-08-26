@@ -187,6 +187,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_submit'])) {
         $stmt = $pdo->prepare($sql);
         $stmt->execute($data);
 
+        // Notification Webhook SIADOC (Activation / Désactivation en temps réel)
+        try {
+            require_once __DIR__ . '/../backend/notify_siadoc.php';
+            $old_suspendus = (int)($candidat['suspendus'] ?? 0);
+            $new_suspendus = (int)($data['suspendus']);
+            $motif_siadoc  = !empty($data['motif_changement_statut']) ? $data['motif_changement_statut'] : ($new_suspendus == 1 ? 'Suspension de la carte' : 'Réactivation de la carte');
+            
+            if ($old_suspendus !== $new_suspendus || isset($_POST['force_siadoc_notify'])) {
+                $siadoc_statut = ($new_suspendus == 1) ? 'DESACTIVE' : 'ACTIVE';
+                notifierSiadocStatutCarte($matricule_militaire, $siadoc_statut, $motif_siadoc);
+            }
+        } catch (Exception $ex_siadoc) {}
+
         header('Content-Type: application/json');
         echo json_encode([
             'success' => true,

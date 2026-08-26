@@ -934,6 +934,44 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 <?php endif; ?>
 
+                <!-- BANDEAU NOTIFICATION PRIORITAIRE IMPRESSION REÇUS A4 -->
+                <?php 
+                $pending_count = count($_SESSION['pending_receipts'] ?? []);
+                $pending_ids_str = implode(',', $_SESSION['pending_receipts'] ?? []);
+                ?>
+                <div id="recu-notification-banner" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #10b981; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: <?php echo $pending_count > 0 ? 'flex' : 'none'; ?>; align-items: center; justify-content: space-between; gap: 1rem; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);">
+                    <div style="display: flex; align-items: center; gap: 1rem; color: #fff;">
+                        <div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                            <i class="fa-solid fa-print"></i>
+                        </div>
+                        <div>
+                            <h4 style="margin: 0; color: #34d399; font-size: 1.05rem;"><i class="fa-solid fa-bell warning-flash"></i> REÇUS PAPIER A4 EN ATTENTE D'IMPRESSION</h4>
+                            <p style="margin: 3px 0 0 0; color: #94a3b8; font-size: 0.85rem;"><span id="recu-count-badge" style="font-weight: bold; color: #fff;"><?php echo $pending_count; ?></span> carte(s) PVC imprimée(s) nécessitant la délivrance du reçu A4 signé.</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <a id="btn-print-recu-batch" href="../backend/generer_recu.php?mode=batch&ids=<?php echo $pending_ids_str; ?>" target="_blank" class="btn" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; font-weight: 700; text-decoration: none; padding: 0.65rem 1.2rem; border-radius: 8px; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-file-invoice"></i> IMPRIMER PLANCHE A4 (4 REÇUS/PAGE)
+                        </a>
+                        <button onclick="viderQueueRecus()" class="btn" style="background: #334155; color: #cbd5e1; border: 1px solid #475569; font-weight: 600; padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.85rem; cursor: pointer;">
+                            Vider la file
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MODULE DE RECHERCHE ET RE-DÉLIVRANCE RAPIDE DE REÇU -->
+                <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid #334155; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                    <div style="color: #cbd5e1; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-file-signature" style="color: #60a5fa;"></i> RE-DÉLIVRANCE RAPIDE DE REÇU INDIVIDUEL :
+                    </div>
+                    <form method="GET" action="../backend/generer_recu.php" target="_blank" style="display: flex; gap: 0.5rem; flex: 1; min-width: 300px; max-width: 500px;">
+                        <input type="text" name="matricule" placeholder="Saisir matricule militaire (ex: T14/5748)..." required style="flex: 1; padding: 0.5rem 0.85rem; border-radius: 6px; background: #0f172a; border: 1px solid #475569; color: white; font-family: monospace;">
+                        <button type="submit" style="background: #2563eb; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                            <i class="fa-solid fa-search"></i> GÉNÉRER REÇU
+                        </button>
+                    </form>
+                </div>
+
                 <!-- SEARCH AND FILTER SECTION -->
                 <div class="search-section">
                     <div class="search-header" style="text-align: center;">
@@ -2704,6 +2742,35 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             100% { transform: rotate(360deg); }
         }
     </style>
+    <script>
+        function ajouterQueueRecus(ids) {
+            fetch('../backend/queue_recu.php?action=add&ids=' + encodeURIComponent(ids))
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const banner = document.getElementById('recu-notification-banner');
+                        const badge = document.getElementById('recu-count-badge');
+                        const btnBatch = document.getElementById('btn-print-recu-batch');
+                        if (banner) banner.style.display = 'flex';
+                        if (badge) badge.innerText = data.count;
+                        if (btnBatch && data.ids) btnBatch.href = '../backend/generer_recu.php?mode=batch&ids=' + data.ids.join(',');
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+
+        function viderQueueRecus() {
+            fetch('../backend/queue_recu.php?action=clear')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const banner = document.getElementById('recu-notification-banner');
+                        if (banner) banner.style.display = 'none';
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+    </script>
 </body>
 </html>
 
