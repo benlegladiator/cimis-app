@@ -552,13 +552,13 @@ $form_data = $form_data ?? $candidat;
                             </div>
                             <div class="form-group">
                                 <label><i class="fa-solid fa-credit-card"></i> Statut de la carte (active/suspendu) / Card Status (active/suspended)</label>
-                                <select name="suspendus" id="suspendus" class="form-control" disabled>
-                                    <option value="0" <?php echo ($form_data['suspendus'] ?? 0) == 0 ? 'selected' : ''; ?>>ACTIF</option>
-                                    <option value="1" <?php echo ($form_data['suspendus'] ?? 0) == 1 ? 'selected' : ''; ?>>SUSPENDU</option>
+                                <select name="suspendus" id="suspendus" class="form-control">
+                                    <option value="0" <?php echo ($form_data['suspendus'] ?? 0) == 0 ? 'selected' : ''; ?>>ACTIF (Carte Déverrouillée)</option>
+                                    <option value="1" <?php echo ($form_data['suspendus'] ?? 0) == 1 ? 'selected' : ''; ?>>SUSPENDU (Carte Bloquée)</option>
                                 </select>
-                                <small style="color: var(--neon-orange); font-size: 0.8rem;">
+                                <small style="color: var(--neon-green); font-size: 0.8rem;">
                                     <i class="fa-solid fa-info-circle"></i> 
-                                    Géré automatiquement selon le statut militaire / Automatically managed according to military status
+                                    Sélectionner SUSPENDU pour bloquer la carte et notifier SIADOC en temps réel
                                 </small>
                             </div>
                             <div class="form-group" id="motif_group" style="display: none;">
@@ -1207,6 +1207,31 @@ $form_data = $form_data ?? $candidat;
             // Faire défiler vers la notification
             notificationDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+        document.addEventListener('DOMContentLoaded', function() {
+            const statutMilSelect = document.getElementById('statut_militaire');
+            const suspendusSelect = document.getElementById('suspendus');
+            const motifGroup = document.getElementById('motif_group');
+
+            function syncStatus() {
+                if (!statutMilSelect || !suspendusSelect) return;
+                const val = statutMilSelect.value;
+                if (val.startsWith('SUSPENDU') || val === 'DESERTEUR' || val === 'REVOQUE') {
+                    suspendusSelect.value = '1';
+                    if (motifGroup) motifGroup.style.display = 'block';
+                }
+            }
+
+            if (statutMilSelect) {
+                statutMilSelect.addEventListener('change', syncStatus);
+            }
+            if (suspendusSelect) {
+                suspendusSelect.addEventListener('change', function() {
+                    if (this.value === '1' && motifGroup) {
+                        motifGroup.style.display = 'block';
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
