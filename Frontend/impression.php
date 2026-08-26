@@ -1177,8 +1177,8 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     </div>
 
                                     <?php if ($personnel['suspendus'] == 1): ?>
-                                        <div class="suspension-indicator" title="Membre suspendu">
-                                            <i class="fa-solid fa-pause"></i>
+                                        <div class="suspension-indicator" title="Carte militaire suspendue / désactivée">
+                                            <i class="fa-solid fa-ban"></i>
                                         </div>
                                     <?php endif; ?>
 
@@ -1187,6 +1187,9 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     </div>
                                     <div class="personnel-info">
                                         <div class="personnel-name"><?php echo htmlspecialchars($personnel['nom'] . ' ' . $personnel['prenom']); ?></div>
+                                        <?php if ($personnel['suspendus'] == 1): ?>
+                                            <div style="margin: 2px 0;"><span class="suspension-badge-tag"><i class="fa-solid fa-ban"></i> CARTE SUSPENDUE</span></div>
+                                        <?php endif; ?>
                                         <div class="personnel-details">
                                             <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $personnel['unite'])); ?>">
                                                 <?php echo htmlspecialchars($personnel['unite']); ?>
