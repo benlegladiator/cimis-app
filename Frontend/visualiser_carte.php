@@ -481,10 +481,15 @@ if (empty($cartes_confectionnees)) {
                         </div>
                     <?php else: ?>
                         <?php foreach ($cartes_confectionnees as $index => $carte_data): ?>
-                            <div class="candidat-header">
-                                <?php echo htmlspecialchars($carte_data['candidat']['nom'] . ' ' . $carte_data['candidat']['prenom']); ?> - 
-                                Matricule: <?php echo htmlspecialchars($carte_data['candidat']['matricule']); ?> - 
-                                <?php echo htmlspecialchars($carte_data['candidat']['unite']); ?>
+                            <div class="candidat-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>
+                                    <?php echo htmlspecialchars($carte_data['candidat']['nom'] . ' ' . $carte_data['candidat']['prenom']); ?> - 
+                                    Matricule: <?php echo htmlspecialchars($carte_data['candidat']['matricule_militaire'] ?? $carte_data['candidat']['matricule']); ?> - 
+                                    <?php echo htmlspecialchars($carte_data['candidat']['unite']); ?>
+                                </span>
+                                <a href="../backend/generer_recu.php?matricule=<?php echo urlencode($carte_data['candidat']['matricule_militaire'] ?? $carte_data['candidat']['matricule']); ?>" target="_blank" style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; text-decoration: none; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
+                                    <i class="fa-solid fa-file-invoice"></i> Reçu A4
+                                </a>
                             </div>
                             <?php echo $carte_data['carte_html']; ?>
                         <?php endforeach; ?>
@@ -516,12 +521,27 @@ if (empty($cartes_confectionnees)) {
                     <?php endif; ?>
 
                     <!-- 3. Bouton Imprimer PVC -->
-                    <button class="btn-action-custom btn-action-print" onclick="window.print()" title="Imprimer la carte au format PVC">
+                    <?php 
+                    $all_ids = [];
+                    foreach ($cartes_confectionnees as $item) {
+                        if (!empty($item['candidat']['id'])) $all_ids[] = $item['candidat']['id'];
+                    }
+                    $ids_str_visu = implode(',', $all_ids);
+                    $first_mat_visu = !empty($cartes_confectionnees[0]['candidat']['matricule_militaire']) ? $cartes_confectionnees[0]['candidat']['matricule_militaire'] : (!empty($cartes_confectionnees[0]['candidat']['matricule']) ? $cartes_confectionnees[0]['candidat']['matricule'] : '');
+                    $recu_link_visu = count($all_ids) > 1 ? "../backend/generer_recu.php?mode=batch&ids=" . $ids_str_visu : "../backend/generer_recu.php?matricule=" . urlencode($first_mat_visu);
+                    ?>
+                    <button class="btn-action-custom btn-action-print" onclick="imprimerPVCEtQueueRecu('<?php echo $ids_str_visu; ?>')" title="Imprimer la carte au format PVC">
                         <i class="fa-solid fa-print"></i>
                         <span>IMPRIMER LA CARTE PVC / PRINT PVC</span>
                     </button>
 
-                    <!-- 4. Bouton Retour à la Liste -->
+                    <!-- 4. Bouton Imprimer le Reçu A4 -->
+                    <a href="<?php echo $recu_link_visu; ?>" target="_blank" class="btn-action-custom" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; text-decoration: none;" title="Générer et imprimer le reçu A4 de délivrance signé">
+                        <i class="fa-solid fa-file-invoice"></i>
+                        <span>IMPRIMER LE REÇU / PRINT RECEIPT</span>
+                    </a>
+
+                    <!-- 5. Bouton Retour à la Liste -->
                     <a href="impression.php" class="btn-action-custom btn-action-back" title="Retourner à la liste de sélection des cartes">
                         <i class="fa-solid fa-arrow-left"></i>
                         <span>RETOUR À LA LISTE / BACK TO LIST</span>
@@ -544,6 +564,13 @@ if (empty($cartes_confectionnees)) {
     </div>
 
     <script>
+        function imprimerPVCEtQueueRecu(ids) {
+            if (ids) {
+                fetch('../backend/queue_recu.php?action=add&ids=' + encodeURIComponent(ids)).catch(err => console.error(err));
+            }
+            window.print();
+        }
+
         function clearSession() {
             if (confirm('Êtes-vous sûr de vouloir vider la session des cartes confectionnées ? / Are you sure you want to clear the created cards session?')) {
                 fetch('../visualiser_carte.php', {
