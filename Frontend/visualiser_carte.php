@@ -522,17 +522,22 @@ if (empty($cartes_confectionnees)) {
 
                     <!-- 3. Bouton Imprimer PVC -->
                     <?php 
-                    $all_ids = [];
+                    $all_ids  = [];
+                    $all_mats = [];
                     foreach ($cartes_confectionnees as $item) {
                         if (!empty($item['candidat']['id'])) $all_ids[] = $item['candidat']['id'];
+                        $m = !empty($item['candidat']['matricule']) ? $item['candidat']['matricule'] : (!empty($item['candidat']['matricule_militaire']) ? $item['candidat']['matricule_militaire'] : '');
+                        if (!empty($m)) $all_mats[] = $m;
                     }
-                    $ids_str_visu = implode(',', $all_ids);
-                    $first_mat_visu = !empty($cartes_confectionnees[0]['candidat']['matricule_militaire']) ? $cartes_confectionnees[0]['candidat']['matricule_militaire'] : (!empty($cartes_confectionnees[0]['candidat']['matricule']) ? $cartes_confectionnees[0]['candidat']['matricule'] : '');
+                    $ids_str_visu  = implode(',', $all_ids);
+                    $mats_str_visu = implode(',', array_unique($all_mats));
+                    $pvc_link_visu = "impression_pvc.php?matricules=" . urlencode($mats_str_visu) . "&mode=recto-verso";
+                    $first_mat_visu = !empty($all_mats[0]) ? $all_mats[0] : '';
                     $recu_link_visu = count($all_ids) > 1 ? "../backend/generer_recu.php?mode=batch&ids=" . $ids_str_visu : "../backend/generer_recu.php?matricule=" . urlencode($first_mat_visu);
                     ?>
-                    <button class="btn-action-custom btn-action-print" onclick="imprimerPVCEtQueueRecu('<?php echo $ids_str_visu; ?>')" title="Imprimer la carte au format PVC">
-                        <i class="fa-solid fa-print"></i>
-                        <span>IMPRIMER LA CARTE PVC / PRINT PVC</span>
+                    <button class="btn-action-custom btn-action-print" onclick="imprimerPVCEtQueueRecu('<?php echo $ids_str_visu; ?>', '<?php echo $pvc_link_visu; ?>')" title="Imprimer la carte au format PVC optimisé (85.60×53.98mm - 0 marge)">
+                        <i class="fa-solid fa-credit-card"></i>
+                        <span>IMPRIMER CARTE PVC (ISO CR-80) / PRINT PVC</span>
                     </button>
 
                     <!-- 4. Bouton Imprimer le Reçu A4 -->
@@ -564,11 +569,15 @@ if (empty($cartes_confectionnees)) {
     </div>
 
     <script>
-        function imprimerPVCEtQueueRecu(ids) {
+        function imprimerPVCEtQueueRecu(ids, pvcUrl) {
             if (ids) {
                 fetch('../backend/queue_recu.php?action=add&ids=' + encodeURIComponent(ids)).catch(err => console.error(err));
             }
-            window.print();
+            if (pvcUrl) {
+                window.open(pvcUrl, '_blank');
+            } else {
+                window.print();
+            }
         }
 
         function clearSession() {
