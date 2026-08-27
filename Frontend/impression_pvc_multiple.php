@@ -338,6 +338,40 @@ $config_unites = include '../Carte/config_unites.php';
         
     </div>
     
+    <!-- Modal de confirmation post-impression -->
+    <div id="modalConfirmImpression" style="
+        display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+        background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center;">
+        <div style="
+            background:#1a1a2e; border:2px solid #4ade80; border-radius:16px; 
+            padding:2rem; max-width:460px; width:90%; text-align:center; box-shadow:0 0 40px rgba(74,222,128,0.3);">
+            <div style="font-size:3rem; margin-bottom:0.5rem;">✅</div>
+            <h4 style="color:#4ade80; margin-bottom:0.5rem;">Impression PVC lancée !</h4>
+            <p style="color:#ccc; margin-bottom:1.5rem; font-size:0.9rem;">
+                <?php echo count($candidats); ?> carte(s) envoyée(s) à l'imprimante.<br>
+                Les cartes sont enregistrées pour la délivrance du reçu officiel signé.
+            </p>
+            <div style="display:flex; flex-direction:column; gap:0.6rem;">
+                <?php
+                $ids_candidats = array_column($candidats, 'id');
+                $ids_str = implode(',', $ids_candidats);
+                ?>
+                <a href="../backend/generer_recu.php?mode=batch&ids=<?php echo $ids_str; ?>" target="_blank" 
+                   style="background:linear-gradient(135deg,#28a745,#20c997); color:white; padding:0.6rem 1rem; border-radius:8px; text-decoration:none; font-weight:bold;">
+                    <i class="fas fa-file-alt"></i> Imprimer le Reçu A4 maintenant
+                </a>
+                <a href="impression.php" 
+                   style="background:linear-gradient(135deg,#007bff,#0056b3); color:white; padding:0.6rem 1rem; border-radius:8px; text-decoration:none; font-weight:bold;">
+                    <i class="fas fa-list"></i> Retour à la liste des cartes
+                </a>
+                <button onclick="document.getElementById('modalConfirmImpression').style.display='none'" 
+                   style="background:transparent; border:1px solid #666; color:#aaa; padding:0.5rem 1rem; border-radius:8px; cursor:pointer;">
+                    <i class="fas fa-times"></i> Fermer ce message
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function printCards() {
             const count = <?php echo count($candidats); ?>;
@@ -375,7 +409,10 @@ $config_unites = include '../Carte/config_unites.php';
         
         window.addEventListener('afterprint', function() {
             document.body.classList.remove('printing');
+            // Afficher le modal de confirmation
+            document.getElementById('modalConfirmImpression').style.display = 'flex';
         });
     </script>
 </body>
 </html>
+

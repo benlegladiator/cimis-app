@@ -306,10 +306,10 @@ if (isset($_POST['ajax_search'])) {
                            class="btn btn-sm" style="background: linear-gradient(135deg, #6f42c1, #5a32a3); color: white;" title="Imprimer la carte (PDF)">
                             <i class="fa-solid fa-file-pdf"></i>
                         </a>
-                        <a href="impression_pvc.php?matricule=' . urlencode($personnel['matricule']) . '&mode=recto-verso" 
-                           class="btn btn-sm" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;" title="Impression PVC Optimisée (85.60×53.98mm - 0 marge)">
+                        <button type="button" onclick="imprimerPVCEtQueue(\'' . $personnel['id'] . '\', \'impression_pvc.php?matricule=' . urlencode($personnel['matricule']) . '&mode=recto-verso\')" 
+                            class="btn btn-sm" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;" title="Impression PVC Optimisée (85.60×53.98mm - 0 marge)">
                             <i class="fa-solid fa-credit-card"></i> <span style="font-size: 10px;">PVC</span>
-                        </a>
+                        </button>
                         <a href="../visualisation_3d.php?matricule=' . urlencode($personnel['matricule']) . '" 
                            class="btn btn-sm btn-info" title="Visualiser la carte en 3D" target="_blank">
                             <i class="fa-solid fa-cube"></i>
@@ -1237,10 +1237,10 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                            class="btn btn-sm" style="background: linear-gradient(135deg, #6f42c1, #5a32a3); color: white;" title="Imprimer la carte (PDF)">
                                             <i class="fa-solid fa-file-pdf"></i>
                                         </a>
-                                        <a href="impression_pvc.php?matricule=<?php echo urlencode($personnel['matricule']); ?>&mode=recto-verso" 
+                                        <button type="button" onclick="imprimerPVCEtQueue('<?php echo $personnel['id']; ?>', 'impression_pvc.php?matricule=<?php echo urlencode($personnel['matricule']); ?>&mode=recto-verso')" 
                                            class="btn btn-sm" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;" title="Impression PVC Optimisée (85.60×53.98mm - 0 marge)">
                                             <i class="fa-solid fa-credit-card"></i> <span style="font-size: 10px;">PVC</span>
-                                        </a>
+                                        </button>
                                         <a href="visualisation_3d.php?matricule=<?php echo urlencode($personnel['matricule']); ?>" 
                                            class="btn btn-sm btn-info" title="Visualiser la carte en 3D" target="_blank">
                                             <i class="fa-solid fa-cube"></i>
@@ -1840,8 +1840,13 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
             // Utiliser data-matricule
             const matricules = Array.from(selected).map(cb => cb.getAttribute('data-matricule'));
+            const ids = Array.from(selected).map(cb => cb.value);
             if (confirm(`Imprimer les ${selected.length} carte(s) sélectionnée(s) au format PVC (85.60×53.98mm) ?\n\nFormat: Carte PVC sans marges\nPages: ${selected.length * 2} (recto + verso)`)) {
-                window.open(`impression_pvc_multiple.php?matricules=${encodeURIComponent(matricules.join(','))}`, '_blank');
+                // Enregistrer dans la file d'attente des reçus
+                fetch('../backend/queue_recu.php?action=add&ids=' + encodeURIComponent(ids.join(',')))
+                    .finally(() => {
+                        window.open(`impression_pvc_multiple.php?matricules=${encodeURIComponent(matricules.join(','))}`, '_blank');
+                    });
             }
         }
         
@@ -2290,6 +2295,18 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
         }
         
+        // Enregistrer dans la file d'attente des reçus et ouvrir l'impression PVC
+        function imprimerPVCEtQueue(id, url) {
+            if (id) {
+                fetch('../backend/queue_recu.php?action=add&id=' + encodeURIComponent(id))
+                    .finally(() => {
+                        window.location.href = url;
+                    });
+            } else {
+                window.location.href = url;
+            }
+        }
+        
         // Générer impression PVC multiple
         function generateBatchPVC() {
             const selected = document.querySelectorAll('.personnel-checkbox:checked');
@@ -2298,9 +2315,14 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 return;
             }
             if (confirm('Imprimer en PVC les ' + selected.length + ' cartes sélectionnées ?')) {
-                // Utiliser data-matricule
                 const matricules = Array.from(selected).map(cb => cb.getAttribute('data-matricule'));
-                window.location.href = 'impression_pvc.php?matricules=' + matricules.join(',') + '&mode=recto-verso';
+                const ids = Array.from(selected).map(cb => cb.value);
+                
+                // Enregistrer tous les IDs dans la file d'attente des reçus
+                fetch('../backend/queue_recu.php?action=add&ids=' + encodeURIComponent(ids.join(',')))
+                    .finally(() => {
+                        window.location.href = 'impression_pvc.php?matricules=' + matricules.join(',') + '&mode=recto-verso';
+                    });
             }
         }
     </script>
