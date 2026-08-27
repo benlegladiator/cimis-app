@@ -3,6 +3,7 @@
  * REÇU OFFICIEL DE DÉLIVRANCE DE CARTE MILITAIRE (MINDEF - CIMIS 2.0)
  * Format A4 Individuel (1 reçu) ou Planche A4 Compacte (4 reçus découpables par page)
  */
+@error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
