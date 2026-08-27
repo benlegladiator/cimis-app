@@ -3,7 +3,9 @@
  * REÇU OFFICIEL DE DÉLIVRANCE DE CARTE MILITAIRE (MINDEF - CIMIS 2.0)
  * Format A4 Individuel (1 reçu) ou Planche A4 Compacte (4 reçus découpables par page)
  */
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/qrcode_generator.php';
 
@@ -273,7 +275,8 @@ if (empty($candidats)) {
         $mat = $c['matricule_militaire'] ?? $c['matricule'];
         $recu_no = 'R-CIMIS-' . date('Ymd') . '-' . strtoupper(substr(md5($mat), 0, 6));
         $qr_path = generateQRCodeForMatricule($mat, $c);
-        $photo_src = !empty($c['photo']) ? '../' . ltrim($c['photo'], '../') : '../img/candidats/default.svg';
+        $photo_clean = !empty($c['photo']) ? preg_replace('/^(\.\.\/)+/', '', $c['photo']) : '';
+        $photo_src = !empty($photo_clean) ? '../' . $photo_clean : '../img/candidats/default.svg';
         ?>
         <div class="page-a4">
             <div class="header-mindef" style="padding-bottom: 20px; margin-bottom: 25px;">
