@@ -218,8 +218,15 @@ if (empty($candidats)) {
                 <?php foreach ($chunk as $c): ?>
                     <?php 
                     $mat = $c['matricule_militaire'] ?? $c['matricule'];
+                    $mat_cimis = $c['matricule'] ?? '';
                     $recu_no = 'R-CIMIS-' . date('Ymd') . '-' . strtoupper(substr(md5($mat), 0, 5));
                     $qr_path = generateQRCodeForMatricule($mat, $c);
+                    $date_nais_fmt = !empty($c['date_naissance']) ? date('d/m/Y', strtotime($c['date_naissance'])) : 'N/A';
+                    $lieu_nais = !empty($c['lieu_naissance']) ? strtoupper($c['lieu_naissance']) : '';
+                    $nais_compact = $date_nais_fmt . (!empty($lieu_nais) ? ' (' . $lieu_nais . ')' : '');
+                    $groupe_sang = !empty($c['groupe_sanguin']) ? strtoupper($c['groupe_sanguin']) : 'N/A';
+                    $sexe_court = !empty($c['sexe']) ? strtoupper(substr($c['sexe'], 0, 1)) : 'M';
+                    $nb_reimp = intval($c['nb_reimpressions'] ?? 0);
                     ?>
                     <div class="receipt-mini">
                         <div>
@@ -230,18 +237,27 @@ if (empty($candidats)) {
                                 <p style="font-weight: bold;">RÉCÉPISSÉ DE DÉLIVRANCE DE CARTE MILITAIRE</p>
                             </div>
 
-                            <div style="font-size: 0.75rem; text-align: right; color: #64748b; font-weight: bold; margin-bottom: 5px;">
-                                N°: <?php echo $recu_no; ?>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: #64748b; font-weight: bold; margin-bottom: 4px;">
+                                <span>N°: <?php echo $recu_no; ?></span>
+                                <span><?php echo ($nb_reimp >= 1) ? '<span style="color:#d97706;">DUPLICATA</span>' : '<span style="color:#16a34a;">ORIGINAL</span>'; ?></span>
                             </div>
 
-                            <table class="identity-table">
+                            <table class="identity-table" style="font-size: 0.8rem;">
                                 <tr>
-                                    <td><strong>Matricule:</strong></td>
-                                    <td><strong style="color: #1e3a8a;"><?php echo htmlspecialchars($mat); ?></strong></td>
+                                    <td style="width: 38%;"><strong>Matricule:</strong></td>
+                                    <td><strong style="color: #1e3a8a;"><?php echo htmlspecialchars($mat); ?></strong><?php if (!empty($mat_cimis) && $mat_cimis !== $mat): ?> <small style="color:#64748b;">(<?php echo htmlspecialchars($mat_cimis); ?>)</small><?php endif; ?></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Nom & Prénom:</strong></td>
-                                    <td><?php echo htmlspecialchars(($c['nom'] ?? '') . ' ' . ($c['prenom'] ?? '')); ?></td>
+                                    <td><strong style="text-transform: uppercase;"><?php echo htmlspecialchars(($c['nom'] ?? '') . ' ' . ($c['prenom'] ?? '')); ?></strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Né(e) le :</strong></td>
+                                    <td><?php echo htmlspecialchars($nais_compact); ?></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sexe • Grp Sanguin:</strong></td>
+                                    <td><?php echo htmlspecialchars($sexe_court); ?> • <strong style="color: #dc2626;"><?php echo htmlspecialchars($groupe_sang); ?></strong></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Grade / Corps:</strong></td>
@@ -258,7 +274,7 @@ if (empty($candidats)) {
                             </table>
                         </div>
 
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
                             <img src="../<?php echo ltrim($qr_path, '/'); ?>" style="width: 45px; height: 45px;" alt="QR">
                             <div class="signature-block" style="width: 75%;">
                                 <div class="signature-box">Le Titulaire</div>
@@ -274,72 +290,128 @@ if (empty($candidats)) {
         <?php $c = $candidats[0]; ?>
         <?php 
         $mat = $c['matricule_militaire'] ?? $c['matricule'];
+        $mat_cimis = $c['matricule'] ?? '';
         $recu_no = 'R-CIMIS-' . date('Ymd') . '-' . strtoupper(substr(md5($mat), 0, 6));
         $qr_path = generateQRCodeForMatricule($mat, $c);
         $photo_clean = !empty($c['photo']) ? preg_replace('/^(\.\.\/)+/', '', $c['photo']) : '';
         $photo_src = !empty($photo_clean) ? '../' . $photo_clean : '../img/candidats/default.svg';
+
+        $date_nais_fmt = !empty($c['date_naissance']) ? date('d/m/Y', strtotime($c['date_naissance'])) : 'Non renseignée';
+        $lieu_nais = !empty($c['lieu_naissance']) ? strtoupper($c['lieu_naissance']) : '';
+        $nais_complete = $date_nais_fmt . (!empty($lieu_nais) ? ' à ' . $lieu_nais : '');
+        $groupe_sang = !empty($c['groupe_sanguin']) ? strtoupper($c['groupe_sanguin']) : 'NON PRÉCISÉ';
+        $sexe_complet = !empty($c['sexe']) ? strtoupper($c['sexe']) : 'MASCULIN';
+        $taille_val = !empty($c['taille']) ? $c['taille'] . ' cm' : null;
+        $poids_val = !empty($c['poids']) ? $c['poids'] . ' kg' : null;
+        $morpho = ($taille_val || $poids_val) ? trim(($taille_val ?? '') . ($taille_val && $poids_val ? ' • ' : '') . ($poids_val ?? '')) : 'Non renseignée';
+        $date_enrol_fmt = !empty($c['date_enrolement']) ? date('d/m/Y', strtotime($c['date_enrolement'])) : 'N/A';
+        $statut_mil = !empty($c['statut_militaire']) ? strtoupper($c['statut_militaire']) : 'ACTIF';
+        $nb_reimp = intval($c['nb_reimpressions'] ?? 0);
         ?>
         <div class="page-a4">
-            <div class="header-mindef" style="padding-bottom: 20px; margin-bottom: 25px;">
-                <h1 style="margin: 0; font-size: 1.6rem; color: #1e3a8a;">RÉPUBLIQUE DU CAMEROUN</h1>
-                <p style="font-size: 0.9rem; margin: 3px 0;">Paix - Travail - Patrie</p>
-                <h2 style="font-size: 1.3rem; margin: 5px 0;">MINISTÈRE DE LA DÉFENSE</h2>
-                <p style="font-size: 0.85rem; color: #475569;">DIRECTION DES PERSONNELS ET DE LA SÉCURITÉ BIOMÉTRIQUE</p>
+            <div class="header-mindef" style="padding-bottom: 15px; margin-bottom: 20px;">
+                <h1 style="margin: 0; font-size: 1.5rem; color: #1e3a8a; letter-spacing: 1px;">RÉPUBLIQUE DU CAMEROUN</h1>
+                <p style="font-size: 0.85rem; margin: 2px 0;">Paix - Travail - Patrie</p>
+                <h2 style="font-size: 1.25rem; margin: 4px 0; color: #0f172a;">MINISTÈRE DE LA DÉFENSE</h2>
+                <p style="font-size: 0.85rem; color: #475569; font-weight: 600;">DIRECTION DES PERSONNELS ET DE LA SÉCURITÉ BIOMÉTRIQUE</p>
             </div>
 
-            <div class="receipt-title" style="font-size: 1.2rem; padding: 10px;">
-                REÇU OFFICIEL DE DÉLIVRANCE DE CARTE D'IDENTITÉ MILITAIRE
+            <div class="receipt-title" style="font-size: 1.1rem; padding: 8px; margin-bottom: 18px;">
+                RÉCÉPISSÉ OFFICIEL DE DÉLIVRANCE DE CARTE D'IDENTITÉ MILITAIRE
             </div>
 
-            <div style="display: flex; justify-content: space-between; margin-bottom: 25px; font-size: 0.9rem; color: #475569;">
-                <div><strong>N° Récépissé :</strong> <span style="font-family: monospace; font-size: 1rem; color: #1e3a8a;"><?php echo $recu_no; ?></span></div>
-                <div><strong>Date d'Émission :</strong> <?php echo date('d/m/Y à H:i:s'); ?></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 0.88rem; color: #475569; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+                <div><strong>N° Récépissé :</strong> <span style="font-family: monospace; font-size: 0.95rem; color: #1e3a8a; font-weight: bold;"><?php echo $recu_no; ?></span></div>
+                <div><strong>Date & Heure d'Émission :</strong> <?php echo date('d/m/Y à H:i:s'); ?></div>
             </div>
 
-            <div style="display: flex; gap: 25px; margin-bottom: 30px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 10px;">
-                <img src="<?php echo htmlspecialchars($photo_src); ?>" alt="Photo Titulaire" style="width: 110px; height: 130px; object-fit: cover; border-radius: 8px; border: 2px solid #1e3a8a;" onerror="this.src='../img/candidats/default.svg';">
-                <table class="identity-table" style="font-size: 1rem; margin-bottom: 0;">
+            <div style="display: flex; gap: 20px; margin-bottom: 20px; background: #f8fafc; border: 1.5px solid #cbd5e1; padding: 16px; border-radius: 10px;">
+                <div style="text-align: center; flex-shrink: 0;">
+                    <img src="<?php echo htmlspecialchars($photo_src); ?>" alt="Photo Titulaire" style="width: 115px; height: 140px; object-fit: cover; border-radius: 8px; border: 2px solid #1e3a8a; display: block;" onerror="this.src='../img/candidats/default.svg';">
+                    <div style="margin-top: 8px;">
+                        <span style="background: #1e3a8a; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: bold; display: inline-block;">
+                            <?php echo htmlspecialchars($c['unite'] ?? 'MINDEF'); ?>
+                        </span>
+                    </div>
+                </div>
+
+                <table class="identity-table" style="font-size: 0.9rem; margin-bottom: 0;">
                     <tr>
-                        <td style="width: 35%;"><strong>Matricule Militaire :</strong></td>
-                        <td><strong style="color: #1e3a8a; font-size: 1.1rem;"><?php echo htmlspecialchars($mat); ?></strong></td>
+                        <td style="width: 32%;"><strong>Matricule Militaire :</strong></td>
+                        <td><strong style="color: #1e3a8a; font-size: 1.05rem; font-family: monospace;"><?php echo htmlspecialchars($mat); ?></strong> <?php if (!empty($mat_cimis) && $mat_cimis !== $mat): ?><span style="color: #64748b; font-size: 0.85rem;">(CIMIS : <?php echo htmlspecialchars($mat_cimis); ?>)</span><?php endif; ?></td>
                     </tr>
                     <tr>
-                        <td><strong>Nom & Prénom :</strong></td>
-                        <td><strong style="text-transform: uppercase;"><?php echo htmlspecialchars(($c['nom'] ?? '') . ' ' . ($c['prenom'] ?? '')); ?></strong></td>
+                        <td><strong>Nom & Prénom(s) :</strong></td>
+                        <td><strong style="text-transform: uppercase; font-size: 0.95rem;"><?php echo htmlspecialchars(($c['nom'] ?? '') . ' ' . ($c['prenom'] ?? '')); ?></strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date & Lieu de Naissance :</strong></td>
+                        <td><strong><?php echo htmlspecialchars($nais_complete); ?></strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sexe • Groupe Sanguin :</strong></td>
+                        <td>
+                            <?php echo htmlspecialchars($sexe_complet); ?> &nbsp;•&nbsp; 
+                            <span style="background: #fee2e2; border: 1px solid #ef4444; color: #b91c1c; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem;">
+                                <i class="fa-solid fa-droplet"></i> <?php echo htmlspecialchars($groupe_sang); ?>
+                            </span>
+                            <?php if ($morpho !== 'Non renseignée'): ?>
+                                &nbsp;•&nbsp; <span style="color: #475569; font-size: 0.85rem;">Taille/Poids : <?php echo htmlspecialchars($morpho); ?></span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                     <tr>
                         <td><strong>Grade & Armée :</strong></td>
-                        <td><?php echo htmlspecialchars(($c['grade'] ?? '') . ' • ' . ($c['unite'] ?? '')); ?></td>
+                        <td><strong style="color: #0f172a;"><?php echo htmlspecialchars($c['grade'] ?? 'N/A'); ?></strong> • <?php echo htmlspecialchars($c['unite'] ?? 'N/A'); ?></td>
                     </tr>
                     <tr>
-                        <td><strong>Carte Nationale d'Identité :</strong></td>
-                        <td><?php echo htmlspecialchars($c['numero_cni'] ?? 'N/A'); ?></td>
+                        <td><strong>N° CNI :</strong></td>
+                        <td><span style="font-family: monospace; font-weight: 600;"><?php echo htmlspecialchars($c['numero_cni'] ?? 'N/A'); ?></span></td>
                     </tr>
                     <tr>
-                        <td><strong>Statut de la Carte :</strong></td>
-                        <td><span style="background: #10b981; color: white; padding: 3px 10px; border-radius: 4px; font-weight: bold; font-size: 0.85rem;">DELIVRÉE ET ACTIVE</span></td>
+                        <td><strong>Date d'Enrôlement :</strong></td>
+                        <td><?php echo htmlspecialchars($date_enrol_fmt); ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Statut & Délivrance :</strong></td>
+                        <td>
+                            <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.78rem;">
+                                <?php echo htmlspecialchars($statut_mil); ?>
+                            </span>
+                            &nbsp;
+                            <?php if ($nb_reimp >= 1): ?>
+                                <span style="background: #fef3c7; border: 1px solid #f59e0b; color: #b45309; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.78rem;">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> RÉÉDITION (Tirage N° <?php echo $nb_reimp + 1; ?>)
+                                </span>
+                            <?php else: ?>
+                                <span style="background: #e0f2fe; border: 1px solid #0284c7; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.78rem;">
+                                    <i class="fa-solid fa-check"></i> DÉLIVRANCE INITIALE (ORIGINAL)
+                                </span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 </table>
             </div>
 
-            <div style="background: #fffbebf8; border: 1px dashed #d4af37; padding: 15px; border-radius: 8px; margin-bottom: 40px; font-size: 0.85rem; color: #78350f;">
-                <strong>ATTESTATION DE DÉLIVRANCE :</strong> Le Ministère de la Défense atteste par le présent document que la carte d'identité militaire associée au matricule <strong><?php echo htmlspecialchars($mat); ?></strong> a été confectionnée, vérifiée biométriquement et remise à son titulaire. Ce reçu fait foi de preuve manuscrite et numérique.
+            <div style="background: #fffbebf8; border: 1px dashed #d4af37; padding: 12px 16px; border-radius: 8px; margin-bottom: 25px; font-size: 0.82rem; color: #78350f; line-height: 1.4;">
+                <strong>ATTESTATION DE DÉLIVRANCE :</strong> Le Ministère de la Défense atteste par le présent document que la carte d'identité militaire associée au matricule <strong><?php echo htmlspecialchars($mat); ?></strong> a été confectionnée, validée sur le serveur biométrique sécurisé et remise en mains propres à son titulaire. Ce récépissé certifie la conformité de l'identité militaire enregistrée dans le système national CIMIS.
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 50px;">
-                <div style="text-align: center;">
-                    <img src="../<?php echo ltrim($qr_path, '/'); ?>" style="width: 90px; height: 90px; display: block; margin: 0 auto 5px auto;" alt="QR Code">
-                    <span style="font-size: 0.75rem; color: #64748b;">Contrôle Biométrique QR</span>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px;">
+                <div style="text-align: center; width: 25%;">
+                    <img src="../<?php echo ltrim($qr_path, '/'); ?>" style="width: 85px; height: 85px; display: block; margin: 0 auto 5px auto;" alt="QR Code">
+                    <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">Contrôle Numérique Sécurisé</span>
                 </div>
-                <div class="signature-block" style="width: 70%; font-size: 0.9rem;">
-                    <div class="signature-box" style="padding-top: 10px;">
-                        <strong>Empreinte & Signature du Titulaire</strong>
-                        <div style="height: 60px;"></div>
+                <div class="signature-block" style="width: 70%; font-size: 0.85rem;">
+                    <div class="signature-box" style="padding-top: 8px;">
+                        <strong>Empreinte & Signature du Titulaire</strong><br>
+                        <small style="color: #64748b;">(Reconnaissance et acceptation de la carte)</small>
+                        <div style="height: 55px;"></div>
                     </div>
-                    <div class="signature-box" style="padding-top: 10px;">
+                    <div class="signature-box" style="padding-top: 8px;">
                         <strong>Pour le Ministre de la Défense</strong><br>
-                        <small>L'Officier Émetteur Habilité</small>
-                        <div style="height: 60px;"></div>
+                        <small style="color: #64748b;">L'Officier Émetteur Habilité</small>
+                        <div style="height: 55px;"></div>
                     </div>
                 </div>
             </div>
