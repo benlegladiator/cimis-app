@@ -23,8 +23,7 @@ if (empty($matricules)) {
 
 // Séparer les matricules
 $matricule_array = explode(',', $matricules);
-$matricule_array = array_map('trim', $matricule_array);
-$matricule_array = array_filter($matricule_array);
+$matricule_array = array_filter(array_map('trim', $matricule_array));
 
 if (empty($matricule_array)) {
     $_SESSION['error'] = "Aucun matricule valide";
@@ -32,16 +31,14 @@ if (empty($matricule_array)) {
     exit;
 }
 
-// Récupérer tous les candidats
-$candidats = [];
-foreach ($matricule_array as $matricule) {
-    $stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule = ?");
-    $stmt->execute([$matricule]);
-    $candidat = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($candidat) {
-        $candidats[] = $candidat;
-    }
-}
+// Récupérer tous les candidats par matricule ou matricule_militaire
+$placeholders_mult = str_repeat('?,', count($matricule_array));
+$placeholders_mult = rtrim($placeholders_mult, ',');
+$allParams_mult = array_merge($matricule_array, $matricule_array);
+
+$stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule IN ($placeholders_mult) OR matricule_militaire IN ($placeholders_mult)");
+$stmt->execute($allParams_mult);
+$candidats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if (empty($candidats)) {
     $_SESSION['error'] = "Aucun candidat trouvé";
@@ -49,12 +46,28 @@ if (empty($candidats)) {
     exit;
 }
 
-// Enregistrer l'impression et mettre à jour le compteur et la date
+// 1. Enregistrement direct et garanti dans la file d'attente des reçus en session PHP
+if (!isset($_SESSION['pending_receipts'])) {
+    $_SESSION['pending_receipts'] = [];
+}
+$candidat_ids = [];
+foreach ($candidats as $cand) {
+    if (!empty($cand['id'])) {
+        $c_id = (int)$cand['id'];
+        $candidat_ids[] = $c_id;
+        if (!in_array($c_id, $_SESSION['pending_receipts'])) {
+            $_SESSION['pending_receipts'][] = $c_id;
+        }
+    }
+}
+
+// 2. Mettre à jour le compteur d'impression et la date de dernière réimpression par ID primaire
 try {
-    $placeholders_mult = str_repeat('?,', count($matricule_array));
-    $placeholders_mult = rtrim($placeholders_mult, ',');
-    $update_stmt = $pdo->prepare("UPDATE candidat SET nb_reimpressions = COALESCE(nb_reimpressions, 0) + 1, date_derniere_reimpression = CURDATE() WHERE matricule IN ($placeholders_mult)");
-    $update_stmt->execute(array_values($matricule_array));
+    if (!empty($candidat_ids)) {
+        $id_in = str_repeat('?,', count($candidat_ids) - 1) . '?';
+        $update_stmt = $pdo->prepare("UPDATE candidat SET nb_reimpressions = COALESCE(nb_reimpressions, 0) + 1, date_derniere_reimpression = CURDATE() WHERE id IN ($id_in)");
+        $update_stmt->execute($candidat_ids);
+    }
 } catch (Exception $e) {}
 
 // Récupérer config unités
@@ -276,7 +289,15 @@ $config_unites = include '../Carte/config_unites.php';
             <button class="btn btn-primary" onclick="printCards()">
                 <i class="fas fa-print"></i> Imprimer tout (Ctrl+P)
             </button>
-            <button class="btn btn-secondary" onclick="window.close()">
+            <?php
+            $ids_cands_mult = array_column($candidats, 'id');
+            $ids_str_mult = implode(',', $ids_cands_mult);
+            ?>
+            <a href="../backend/generer_recu.php?mode=batch&ids=<?php echo $ids_str_mult; ?>" target="_blank" 
+               class="btn btn-success" style="background: linear-gradient(135deg, #10b981, #059669); color: white; text-decoration: none; font-weight: bold; margin-left: 5px;">
+                <i class="fas fa-file-invoice"></i> Imprimer les Reçus A4
+            </a>
+            <button class="btn btn-secondary" onclick="window.close()" style="margin-left: 5px;">
                 <i class="fas fa-times"></i> Fermer
             </button>
         </div>
@@ -395,10 +416,12 @@ $config_unites = include '../Carte/config_unites.php';
                 // Lancer l'impression
                 window.print();
                 
-                // Restaurer après impression
+                // Restaurer après impression et afficher la confirmation
                 setTimeout(() => {
                     document.querySelectorAll('.card-label').forEach(el => el.style.display = 'block');
-                }, 1000);
+                    const m = document.getElementById('modalConfirmImpression');
+                    if (m) m.style.display = 'flex';
+                }, 1200);
             }
         }
         

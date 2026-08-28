@@ -24,14 +24,15 @@ if (empty($matricules)) {
 
 // Gérer plusieurs matricules
 $matriculesArray = is_array($matricules) ? $matricules : explode(',', $matricules);
-$matriculesArray = array_filter($matriculesArray, 'trim');
+$matriculesArray = array_filter(array_map('trim', $matriculesArray));
 
-// Récupérer les candidats
+// Récupérer les candidats par matricule ou matricule_militaire
 $placeholders = str_repeat('?,', count($matriculesArray));
 $placeholders = rtrim($placeholders, ',');
+$allParams = array_merge($matriculesArray, $matriculesArray);
 
-$stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule IN ($placeholders)");
-$stmt->execute($matriculesArray);
+$stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule IN ($placeholders) OR matricule_militaire IN ($placeholders)");
+$stmt->execute($allParams);
 $candidats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if (empty($candidats)) {
@@ -40,10 +41,28 @@ if (empty($candidats)) {
     exit;
 }
 
-// Enregistrer l'impression et mettre à jour le compteur et la date
+// 1. Enregistrement direct et garanti dans la file d'attente des reçus en session PHP
+if (!isset($_SESSION['pending_receipts'])) {
+    $_SESSION['pending_receipts'] = [];
+}
+$candidat_ids = [];
+foreach ($candidats as $cand) {
+    if (!empty($cand['id'])) {
+        $c_id = (int)$cand['id'];
+        $candidat_ids[] = $c_id;
+        if (!in_array($c_id, $_SESSION['pending_receipts'])) {
+            $_SESSION['pending_receipts'][] = $c_id;
+        }
+    }
+}
+
+// 2. Mettre à jour le compteur d'impression et la date de dernière réimpression par ID primaire
 try {
-    $update_stmt = $pdo->prepare("UPDATE candidat SET nb_reimpressions = COALESCE(nb_reimpressions, 0) + 1, date_derniere_reimpression = CURDATE() WHERE matricule IN ($placeholders)");
-    $update_stmt->execute($matriculesArray);
+    if (!empty($candidat_ids)) {
+        $id_in = str_repeat('?,', count($candidat_ids) - 1) . '?';
+        $update_stmt = $pdo->prepare("UPDATE candidat SET nb_reimpressions = COALESCE(nb_reimpressions, 0) + 1, date_derniere_reimpression = CURDATE() WHERE id IN ($id_in)");
+        $update_stmt->execute($candidat_ids);
+    }
 } catch (Exception $e) {}
 
 // Configuration des dimensions
@@ -232,8 +251,17 @@ define('CARTE_HEIGHT_PX', 204);
     <div class="print-controls no-print">
         <h6><i class="fas fa-print"></i> Impression</h6>
         <button class="print-button" onclick="lancerImpression()">
-            <i class="fas fa-print"></i> Imprimer
+            <i class="fas fa-print"></i> Imprimer PVC
         </button>
+
+        <?php
+        $ids_candidats_tb = array_column($candidats, 'id');
+        $ids_str_tb = implode(',', $ids_candidats_tb);
+        ?>
+        <a href="../backend/generer_recu.php?mode=batch&ids=<?php echo $ids_str_tb; ?>" target="_blank" 
+           class="btn btn-sm w-100 mt-2" style="background: linear-gradient(135deg, #10b981, #059669); color: white; font-weight: bold; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 5px; padding: 6px;">
+            <i class="fas fa-file-invoice"></i> Imprimer Reçu A4
+        </a>
         
         <button class="btn btn-primary btn-sm w-100 mt-2" onclick="window.location.href='impression.php'">
             <i class="fas fa-arrow-left"></i> Retour à la liste
@@ -270,7 +298,6 @@ define('CARTE_HEIGHT_PX', 204);
                 <?php
                 $ids_candidats = array_column($candidats, 'id');
                 $ids_str = implode(',', $ids_candidats);
-                $matricules_str = implode(',', array_column($candidats, 'matricule'));
                 ?>
                 <a href="../backend/generer_recu.php?mode=batch&ids=<?php echo $ids_str; ?>" target="_blank" 
                    style="background:linear-gradient(135deg,#28a745,#20c997); color:white; padding:0.6rem 1rem; border-radius:8px; text-decoration:none; font-weight:bold;">
@@ -291,10 +318,15 @@ define('CARTE_HEIGHT_PX', 204);
     <script>
         function lancerImpression() {
             window.print();
+            setTimeout(function() {
+                var m = document.getElementById('modalConfirmImpression');
+                if (m) m.style.display = 'flex';
+            }, 1200);
         }
 
         window.addEventListener('afterprint', function() {
-            document.getElementById('modalConfirmImpression').style.display = 'flex';
+            var m = document.getElementById('modalConfirmImpression');
+            if (m) m.style.display = 'flex';
         });
     </script>
 </body>
