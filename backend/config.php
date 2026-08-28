@@ -71,6 +71,51 @@ try {
     }
 }
 
+// Auto-migration non-bloquante et auto-réparation de schéma pour la production (Render, Railway, MySQL distant)
+if (isset($pdo) && !isset($_SESSION['db_auto_migrated_v4'])) {
+    try {
+        $cols_check = [];
+        $stmt_c = $pdo->query("SHOW COLUMNS FROM candidat");
+        if ($stmt_c) {
+            while ($r = $stmt_c->fetch(PDO::FETCH_ASSOC)) {
+                $cols_check[] = strtolower($r['Field']);
+            }
+            $stmt_c->closeCursor();
+
+            $needed_cols = [
+                'nb_reimpressions'           => "INT DEFAULT 0 COMMENT 'Nombre de réimpressions'",
+                'date_derniere_reimpression' => "DATE DEFAULT NULL COMMENT 'Date dernière réimpression'",
+                'lieu_naissance'             => "VARCHAR(255) DEFAULT NULL COMMENT 'Lieu de naissance'",
+                'statut_militaire'           => "VARCHAR(50) DEFAULT 'ACTIF'",
+                'suspendus'                  => "TINYINT(1) DEFAULT 0",
+                'supprimer'                  => "TINYINT(1) DEFAULT 1",
+                'annee_dernier_galon'        => "VARCHAR(10) DEFAULT NULL",
+                'groupe_sanguin'             => "VARCHAR(10) DEFAULT NULL",
+                'taille'                     => "VARCHAR(10) DEFAULT NULL",
+                'poids'                      => "VARCHAR(10) DEFAULT NULL",
+                'source_system'              => "VARCHAR(50) DEFAULT 'CIMIS'",
+                'siadoc_sync_status'         => "VARCHAR(50) DEFAULT 'SYNCED'"
+            ];
+
+            foreach ($needed_cols as $col_name => $col_def) {
+                if (!in_array(strtolower($col_name), $cols_check)) {
+                    try {
+                        $pdo->exec("ALTER TABLE candidat ADD COLUMN `{$col_name}` {$col_def}");
+                    } catch (Exception $ex_add) {}
+                }
+            }
+
+            // Réparer les enregistrements dont supprimer est NULL ou mal initialisé
+            try {
+                $pdo->exec("UPDATE candidat SET supprimer = 1 WHERE supprimer IS NULL");
+            } catch (Exception $ex_sup) {}
+        }
+        $_SESSION['db_auto_migrated_v4'] = true;
+    } catch (Exception $e_mig) {
+        $_SESSION['db_auto_migrated_v4'] = true;
+    }
+}
+
 // Configuration sécurisée des cookies de session et démarrage
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     @ini_set('session.cookie_httponly', 1);
