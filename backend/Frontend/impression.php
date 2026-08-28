@@ -210,7 +210,7 @@ if (isset($_POST['ajax_search'])) {
     } else {
         foreach ($personnels as $personnel) {
             // Gestion robuste du chemin de photo (sans file_exists)
-            $default_ajax_photos = ['img/1ONANA.PNG','img/1YANNICK.PNG','img/GRACE.PNG','img/KRISS.PNG','img/ONANA.PNG','img/YANNICK.PNG'];
+            $default_ajax_photos = ['img/1KRISS.PNG', 'img/1ONANA.PNG', 'img/1YANNICK.PNG', 'img/ben.PNG', 'img/GRACE.PNG'];
             $random_ajax_photo = $default_ajax_photos[array_rand($default_ajax_photos)];
             if (!empty($personnel['photo'])) {
                 $ajax_photo_src = (strpos($personnel['photo'], '../') === 0) ? $personnel['photo'] : '../' . $personnel['photo'];
@@ -727,12 +727,11 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 <?php 
                                                 // Utiliser une photo par défaut aléatoire depuis la liste spécifiée
                                                 $default_photos = [
+                                                    'img/1KRISS.PNG',
                                                     'img/1ONANA.PNG',
-                                                    'img/1YANNICK.PNG', 
-                                                    'img/GRACE.PNG',
-                                                    'img/KRISS.PNG',
-                                                    'img/ONANA.PNG',
-                                                    'img/YANNICK.PNG'
+                                                    'img/1YANNICK.PNG',
+                                                    'img/ben.PNG',
+                                                    'img/GRACE.PNG'
                                                 ];
                                                 $random_photo = $default_photos[array_rand($default_photos)];
                                                 ?>
@@ -742,12 +741,11 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             <?php 
                                             // Utiliser une photo par défaut aléatoire depuis la liste spécifiée
                                             $default_photos = [
+                                                'img/1KRISS.PNG',
                                                 'img/1ONANA.PNG',
-                                                'img/1YANNICK.PNG', 
-                                                'img/GRACE.PNG',
-                                                'img/KRISS.PNG',
-                                                'img/ONANA.PNG',
-                                                'img/YANNICK.PNG'
+                                                'img/1YANNICK.PNG',
+                                                'img/ben.PNG',
+                                                'img/GRACE.PNG'
                                             ];
                                             $random_photo = $default_photos[array_rand($default_photos)];
                                             ?>

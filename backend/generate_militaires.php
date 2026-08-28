@@ -5,12 +5,10 @@ require_once 'qrcode_generator.php';
 // Photos disponibles
 $photos = [
     'img/1KRISS.PNG',
-    'img/1YANNICK.PNG', 
-    'img/ONANA.PNG',
-    'img/YANNICK.PNG',
-    'img/KRISS.PNG',
-    'img/GRACE.PNG',
-    'img/ben.PNG'
+    'img/1ONANA.PNG',
+    'img/1YANNICK.PNG',
+    'img/ben.PNG',
+    'img/GRACE.PNG'
 ];
 
 // Grades complets par unité (basés sur le système existant)

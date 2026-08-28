@@ -4,12 +4,11 @@
 // Fonction pour obtenir une photo par défaut aléatoire
 function getDefaultPhoto() {
     $default_photos = [
+        'img/1KRISS.PNG',
         'img/1ONANA.PNG',
-        'img/1YANNICK.PNG', 
-        'img/GRACE.PNG',
-        'img/KRISS.PNG',
-        'img/ONANA.PNG',
-        'img/YANNICK.PNG'
+        'img/1YANNICK.PNG',
+        'img/ben.PNG',
+        'img/GRACE.PNG'
     ];
     
     // Sélectionner une photo aléatoirement

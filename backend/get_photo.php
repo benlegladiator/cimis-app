@@ -43,11 +43,11 @@ if ($id || $matricule) {
 // Fallback sur une photo par défaut engagée dans le dépôt Git
 if (!$photo_content) {
     $default_paths = [
+        __DIR__ . '/../img/1KRISS.PNG',
         __DIR__ . '/../img/1ONANA.PNG',
-        __DIR__ . '/../img/ONANA.PNG',
         __DIR__ . '/../img/1YANNICK.PNG',
-        __DIR__ . '/../img/GRACE.PNG',
-        __DIR__ . '/../img/KRISS.PNG'
+        __DIR__ . '/../img/ben.PNG',
+        __DIR__ . '/../img/GRACE.PNG'
     ];
     foreach ($default_paths as $dp) {
         if (file_exists($dp)) {
