@@ -1,61 +1,87 @@
 <?php
-// Headers CORS pour InfinityFree
+// Démarrer la session AVANT tout
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Activer l'affichage des erreurs AVANT tout (critique pour InfinityFree)
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Headers CORS pour InfinityFree (APRÈS les tests)
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('X-Frame-Options: SAMEORIGIN');
 
-// Configuration pour InfinityFree - éviter les erreurs HTTP 500
-error_reporting(E_ALL);
-ini_set('display_errors', 0); // Important pour InfinityFree
-ini_set('log_errors', 1);
-
-// Démarrer la session
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Gestion d'erreurs simple pour InfinityFree
-function customErrorHandler($errno, $errstr, $errfile, $errline) {
-    $error_msg = "Erreur: $errstr dans $errfile ligne $errline";
-    error_log($error_msg);
-    
-    // Afficher l'erreur pour debug (temporaire)
-    echo "<div style='background: #ffe6e6; padding: 10px; margin: 10px; border: 1px solid #ff0000;'>";
-    echo "<h3>Erreur détectée:</h3>";
-    echo "<p><strong>Message:</strong> $errstr</p>";
-    echo "<p><strong>Fichier:</strong> $errfile</p>";
-    echo "<p><strong>Ligne:</strong> $errline</p>";
+// Fonction simple pour afficher les erreurs avec lignes (compatible InfinityFree)
+function showError($message, $file = '', $line = 0) {
+    echo "<div style='background: #ff6b6b; color: white; padding: 15px; margin: 10px; border-radius: 5px; font-family: monospace;'>";
+    echo "<strong>ERREUR DÉTECTÉE:</strong><br>";
+    echo "Message: $message<br>";
+    if ($file) echo "Fichier: $file<br>";
+    if ($line) echo "Ligne: $line<br>";
+    echo "<small>URL: " . $_SERVER['REQUEST_URI'] . "</small>";
+    echo "<br><strong>CONSEIL:</strong> Vérifiez cette ligne dans le fichier";
     echo "</div>";
-    
-    // Stocker l'erreur en session pour l'afficher
-    $_SESSION['error'] = "Cette page n'est pas disponible pour le moment. Erreur technique signalée.";
-    header('Location: impression.php');
-    exit();
 }
 
-// Activer le gestionnaire d'erreurs
-set_error_handler('customErrorHandler');
+// Test simple pour vérifier si le fichier fonctionne
+if (!defined('DEBUG_MODE')) {
+    define('DEBUG_MODE', true); // Mettre à false en production
+}
+
+// Activer l'affichage des erreurs AVANT tout (critique pour InfinityFree)
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Test des require avec chemins absolus
+try {
+    require_once __DIR__ . '/../backend/config.php';
+} catch (Exception $e) {
+    echo "<div style='background: #ff6b6b; color: white; padding: 15px; font-family: monospace;'>";
+    echo "ERREUR CONFIG.PHP: " . $e->getMessage() . "<br>";
+    echo "Ligne: " . __LINE__ . " dans " . __FILE__;
+    echo "</div>";
+    exit;
+}
 
 try {
-    require_once '../backend/config.php';
-    require_once '../pdf/CarteMilitaire.php';
-    
-    // Vérifications spécifiques pour InfinityFree
-    if (!isset($pdo)) {
-        throw new Exception("Base de données non disponible");
-    }
-    
-    // Test simple de connexion
-    $test_query = "SELECT 1";
-    $test_result = $pdo->query($test_query);
-    if (!$test_result) {
-        throw new Exception("Connexion base de données échouée");
-    }
-    
+    require_once __DIR__ . '/../pdf/CarteMilitaire.php';
 } catch (Exception $e) {
-    $_SESSION['error'] = "Erreur système: " . $e->getMessage();
-    header('Location: impression.php');
+    echo "<div style='background: #ff6b6b; color: white; padding: 15px; font-family: monospace;'>";
+    echo "ERREUR CARTEMILITAIRE.PHP: " . $e->getMessage() . "<br>";
+    echo "Ligne: " . __LINE__ . " dans " . __FILE__;
+    echo "</div>";
+    exit;
+}
+
+// Test de connexion à la base de données
+if (!isset($pdo) || !$pdo) {
+    echo "<div style='background: #ff6b6b; color: white; padding: 15px; font-family: monospace;'>";
+    echo "ERREUR PDO: PDO non défini après config.php<br>";
+    echo "Ligne: " . __LINE__ . " dans " . __FILE__;
+    echo "</div>";
+    exit;
+}
+
+// Test simple de connexion BDD
+try {
+    $test = $pdo->query("SELECT 1");
+    if (!$test) {
+        echo "<div style='background: #ff6b6b; color: white; padding: 15px; font-family: monospace;'>";
+        echo "ERREUR CONNEXION BDD: query('SELECT 1') a échoué<br>";
+        echo "Ligne: " . __LINE__ . " dans " . __FILE__;
+        echo "</div>";
+        exit;
+    }
+} catch (PDOException $e) {
+    echo "<div style='background: #ff6b6b; color: white; padding: 15px; font-family: monospace;'>";
+    echo "ERREUR PDO: " . $e->getMessage() . "<br>";
+    echo "Ligne: " . __LINE__ . " dans " . __FILE__;
+    echo "</div>";
     exit;
 }
 
@@ -66,16 +92,12 @@ if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true)
 
 // Traitement de la visualisation
 if (isset($_GET['action']) && $_GET['action'] == 'visualize') {
-    try {
-        $matricule = $_GET['matricule'] ?? '';
-        
-        if (!empty($matricule)) {
-            // Rediriger vers la page de visualisation avec le matricule
-            header('Location: visualiser_carte.php?matricule=' . urlencode($matricule));
-            exit;
-        }
-    } catch(Exception $e) {
-        $_SESSION['error'] = "Erreur lors de la visualisation: " . $e->getMessage();
+    $matricule = $_GET['matricule'] ?? '';
+    
+    if (!empty($matricule)) {
+        // Rediriger vers la page de visualisation avec le matricule
+        header('Location: visualiser_carte.php?matricule=' . urlencode($matricule));
+        exit;
     }
     
     header('Location: impression.php');
@@ -84,17 +106,13 @@ if (isset($_GET['action']) && $_GET['action'] == 'visualize') {
 
 // Traitement de la génération PDF
 if (isset($_GET['action']) && $_GET['action'] == 'generate') {
-    try {
-        $matricule = $_GET['matricule'] ?? '';
-        
-        if (!empty($matricule)) {
-            // Utiliser la nouvelle classe CarteMilitaire
-            $carte = new CarteMilitaire($matricule);
-            $carte->genererPDF();
-            exit;
-        }
-    } catch(Exception $e) {
-        $_SESSION['error'] = "Erreur lors de la génération: " . $e->getMessage();
+    $matricule = $_GET['matricule'] ?? '';
+    
+    if (!empty($matricule)) {
+        // Utiliser la nouvelle classe CarteMilitaire
+        $carte = new CarteMilitaire($matricule);
+        $carte->genererPDF();
+        exit;
     }
     
     header('Location: impression.php');
@@ -103,17 +121,13 @@ if (isset($_GET['action']) && $_GET['action'] == 'generate') {
 
 // Traitement de la génération PDF multiple
 if (isset($_GET['action']) && $_GET['action'] == 'generate_batch') {
-    try {
-        $matricules = $_GET['matricules'] ?? '';
-        if (!empty($matricules)) {
-            $matriculesArray = is_array($matricules) ? $matricules : explode(',', $matricules);
-            
-            // Utiliser la méthode statique pour générer le PDF multiple
-            CarteMilitaire::genererPDFMultiple($matriculesArray);
-            exit;
-        }
-    } catch(Exception $e) {
-        $_SESSION['error'] = "Erreur lors de la génération multiple: " . $e->getMessage();
+    $matricules = $_GET['matricules'] ?? '';
+    if (!empty($matricules)) {
+        $matriculesArray = is_array($matricules) ? $matricules : explode(',', $matricules);
+        
+        // Utiliser la méthode statique pour générer le PDF multiple
+        CarteMilitaire::genererPDFMultiple($matriculesArray);
+        exit;
     }
     
     header('Location: impression.php');
@@ -122,24 +136,27 @@ if (isset($_GET['action']) && $_GET['action'] == 'generate_batch') {
 
 // Traitement de la suppression multiple
 if (isset($_POST['action']) && $_POST['action'] == 'delete_multiple') {
-    try {
-        $ids = $_POST['ids'] ?? [];
-        if (!empty($ids) && is_array($ids)) {
-            $placeholders = str_repeat('?,', count($ids));
-            $placeholders = rtrim($placeholders, ',');
-            
-            // Suppression soft : mettre à jour les attributs au lieu de supprimer
-            $sql = "UPDATE candidat SET supprimer = 1, supprimer_par = ?, date_suppression = NOW() WHERE id IN ($placeholders)";
-            $stmt = $pdo->prepare($sql);
-            $params = array_merge([$_SESSION['username']], $ids);
-            $stmt->execute($params);
-            
-            $_SESSION['success'] = count($ids) . " carte(s) déplacée(s) dans la corbeille / " . count($ids) . " card(s) moved to trash";
-        } else {
-            $_SESSION['error'] = "Aucune carte sélectionnée pour la suppression / No card selected for deletion";
-        }
-    } catch(Exception $e) {
-        $_SESSION['error'] = "Erreur lors de la suppression multiple / Error during multiple deletion: " . $e->getMessage();
+    // Validation CSRF
+    if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        $_SESSION['error'] = "Erreur de sécurité CSRF : tentative de suppression massive non autorisée.";
+        header('Location: impression.php');
+        exit;
+    }
+
+    $ids = $_POST['ids'] ?? [];
+    if (!empty($ids) && is_array($ids)) {
+        $placeholders = str_repeat('?,', count($ids));
+        $placeholders = rtrim($placeholders, ',');
+        
+        // Suppression soft : mettre à jour les attributs au lieu de supprimer (corrigé de supprimer = 1 à 0)
+        $sql = "UPDATE candidat SET supprimer = 0, supprimer_par = ?, date_suppression = NOW() WHERE id IN ($placeholders)";
+        $stmt = $pdo->prepare($sql);
+        $params = array_merge([$_SESSION['username']], $ids);
+        $stmt->execute($params);
+        
+        $_SESSION['success'] = count($ids) . " carte(s) déplacée(s) dans la corbeille / " . count($ids) . " card(s) moved to trash";
+    } else {
+        $_SESSION['error'] = "Aucune carte sélectionnée pour la suppression / No card selected for deletion";
     }
     
     header('Location: impression.php');
@@ -170,10 +187,14 @@ if (isset($_POST['ajax_search'])) {
         $params['search_grade'] = $_POST['search_grade'];
     }
 
-    // Filtre par unité
+    // Filtre par unité / SIADOC
     if (!empty($_POST['search_unite'])) {
-        $where[] = "unite = :search_unite";
-        $params['search_unite'] = $_POST['search_unite'];
+        if ($_POST['search_unite'] === 'SIADOC') {
+            $where[] = "(source_system = 'SIADOC' OR siadoc_sync_status = 'SYNCED' OR matricule_militaire LIKE 'SIA%' OR matricule_militaire LIKE '%-AT-%' OR matricule_militaire LIKE '%-GN-%' OR matricule_militaire LIKE '%-AA-%' OR matricule_militaire LIKE '%-AM-%')";
+        } else {
+            $where[] = "unite = :search_unite";
+            $params['search_unite'] = $_POST['search_unite'];
+        }
     }
 
     // Filtre par année de dernier grade
@@ -189,11 +210,11 @@ if (isset($_POST['ajax_search'])) {
     }
 
     // Construire la requête
-    $sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus FROM candidat WHERE supprimer = 0";
+    $sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus, statut_militaire, date_changement_statut, motif_changement_statut, autorite_changement_statut, nb_reimpressions, date_derniere_reimpression FROM candidat WHERE supprimer = 1";
     if (!empty($where)) {
         $sql .= " AND " . implode(' AND ', $where);
     }
-    $sql .= " ORDER BY date_enrolement DESC LIMIT 100";
+    $sql .= " ORDER BY id DESC LIMIT 200";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
@@ -209,40 +230,73 @@ if (isset($_POST['ajax_search'])) {
               </div>';
     } else {
         foreach ($personnels as $personnel) {
-            // Gestion robuste du chemin de photo (sans file_exists)
-            $default_ajax_photos = ['img/1KRISS.PNG', 'img/1ONANA.PNG', 'img/1YANNICK.PNG', 'img/ben.PNG', 'img/GRACE.PNG'];
-            $random_ajax_photo = $default_ajax_photos[array_rand($default_ajax_photos)];
-            if (!empty($personnel['photo'])) {
-                $ajax_photo_src = (strpos($personnel['photo'], '../') === 0) ? $personnel['photo'] : '../' . $personnel['photo'];
-            } else {
-                $ajax_photo_src = '../' . $random_ajax_photo;
-            }
-            
-            echo '<div class="personnel-item' . ($personnel['suspendus'] == 1 ? ' suspended' : '') . '">
+            $st_mil = strtoupper($personnel['statut_militaire'] ?? '');
+            $is_suspended = ($personnel['suspendus'] == 1) || str_contains($st_mil, 'SUSPENDU') || in_array            $nb_reimp = intval($personnel['nb_reimpressions'] ?? 0);
+            $d_reimp_fmt = !empty($personnel['date_derniere_reimpression']) ? date('d/m/Y', strtotime($personnel['date_derniere_reimpression'])) : '';
+
+            echo '<div class="personnel-item' . ($is_suspended ? ' suspended' : '') . '">
                     <div class="personnel-checkbox-wrapper">
-                        <input type="checkbox" name="selected_personnels[]"
-                               value="' . htmlspecialchars($personnel['id']) . '"
-                               data-matricule="' . htmlspecialchars($personnel['matricule']) . '"
+                        <input type="checkbox" name="ids[]" value="' . htmlspecialchars($personnel['id']) . '" 
+                               data-matricule="' . htmlspecialchars($personnel['matricule']) . '" 
+                               data-nb-reimpressions="' . $nb_reimp . '"
+                               data-date-reimpression="' . $d_reimp_fmt . '"
                                class="personnel-checkbox" id="personnel_' . $personnel['id'] . '">
                         <label for="personnel_' . $personnel['id'] . '" class="checkbox-label"></label>
                     </div>';
                     
                     // Indicateur de suspension
-                    if ($personnel['suspendus'] == 1) {
-                        echo '<div class="suspension-indicator" title="Membre suspendu">
-                                <i class="fa-solid fa-pause"></i>
+                    if ($is_suspended) {
+                        echo '<div class="suspension-indicator" title="Carte militaire suspendue / désactivée">
+                                <i class="fa-solid fa-ban"></i>
                               </div>';
                     }
                     
-            // Photo (gestion robuste sans file_exists)
-            echo '<div class="personnel-photo">';
-            echo '<img src="' . $ajax_photo_src . '" alt="Photo" onerror="this.src=\'../' . $random_ajax_photo . '\'">';
-            echo '</div>';
-
+                    echo '<div class="personnel-photo">';
+            
+            // Déterminer une photo par défaut aléatoire dans la liste sélectionnée
+            $default_photos = [
+                'img/1ONANA.PNG',
+                'img/1YANNICK.PNG', 
+                'img/1KRISS.PNG',
+                'img/ben.PNG',
+                'img/GRACE.PNG'
+            ];
+            $random_photo = $default_photos[array_rand($default_photos)];
+            
+            if (!empty($personnel['photo'])) {
+                // Gestion du chemin de la photo - robuste aux doublons ../
+                if (strpos($personnel['photo'], '../') === 0) {
+                    $photo_path = $personnel['photo'];
+                } else {
+                    $photo_path = '../' . $personnel['photo'];
+                }
+                echo '<img src="' . $photo_path . '" alt="Photo" onerror="this.src=\'../' . $random_photo . '\'">';
+            } else {
+                echo '<img src="../' . $random_photo . '" alt="Photo par défaut">';
+            }
             echo '</div>
                     <div class="personnel-info">
-                        <div class="personnel-name">' . htmlspecialchars($personnel['nom'] . ' ' . $personnel['prenom']) . '</div>
-                        <div class="personnel-details">
+                        <div class="personnel-name">' . htmlspecialchars($personnel['nom'] . ' ' . $personnel['prenom']) . '</div>';
+            if ($is_suspended) {
+                $date_susp = !empty($personnel['date_changement_statut']) ? date('d/m/Y à H:i', strtotime($personnel['date_changement_statut'])) : date('d/m/Y');
+                $op_susp   = !empty($personnel['autorite_changement_statut']) ? htmlspecialchars($personnel['autorite_changement_statut']) : 'SUPER_ADMIN';
+                $mo_susp   = !empty($personnel['motif_changement_statut']) ? htmlspecialchars($personnel['motif_changement_statut']) : 'Suspension administrative (' . $st_mil . ')';
+                echo '<div style="margin: 3px 0;">
+                        <span class="suspension-badge-tag"><i class="fa-solid fa-ban"></i> CARTE SUSPENDUE (' . $st_mil . ')</span>
+                        <div style="font-size: 0.7rem; color: #f87171; margin-top: 2px; line-height: 1.2;">
+                            <i class="fa-solid fa-user-shield"></i> Par: <strong>' . $op_susp . '</strong> (' . $date_susp . ')<br>
+                            <i class="fa-solid fa-circle-info"></i> Motif: ' . $mo_susp . '
+                        </div>
+                      </div>';
+            }
+            if ($nb_reimp >= 1) {
+                echo '<div style="margin: 2px 0;">
+                        <span style="background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; color: #fbbf24; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;" title="Carte déjà imprimée ' . $nb_reimp . ' fois">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Déjà imprimée le ' . (!empty($d_reimp_fmt) ? $d_reimp_fmt : 'antérieurement') . ' (' . $nb_reimp . 'x)
+                        </span>
+                      </div>';
+            }
+            echo '<div class="personnel-details">
                             <span class="badge badge-' . strtolower(str_replace(' ', '-', $personnel['unite'])) . '">
                                 ' . htmlspecialchars($personnel['unite']) . '
                             </span>
@@ -263,10 +317,10 @@ if (isset($_POST['ajax_search'])) {
                            class="btn btn-sm" style="background: linear-gradient(135deg, #6f42c1, #5a32a3); color: white;" title="Imprimer la carte (PDF)">
                             <i class="fa-solid fa-file-pdf"></i>
                         </a>
-                        <a href="impression_pvc.php?matricule=' . urlencode($personnel['matricule']) . '&mode=recto-verso" 
-                           class="btn btn-sm" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;" title="Impression PVC Optimisée (85.60×53.98mm - 0 marge)">
+                        <button type="button" onclick="imprimerPVCEtQueue(\'' . $personnel['id'] . '\', \'impression_pvc.php?matricule=' . urlencode($personnel['matricule']) . '&mode=recto-verso\', ' . $nb_reimp . ', \'' . $d_reimp_fmt . '\')" 
+                            class="btn btn-sm" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;" title="Impression PVC Optimisée (85.60×53.98mm - 0 marge)">
                             <i class="fa-solid fa-credit-card"></i> <span style="font-size: 10px;">PVC</span>
-                        </a>
+                        </button>
                         <a href="../visualisation_3d.php?matricule=' . urlencode($personnel['matricule']) . '" 
                            class="btn btn-sm btn-info" title="Visualiser la carte en 3D" target="_blank">
                             <i class="fa-solid fa-cube"></i>
@@ -276,6 +330,7 @@ if (isset($_POST['ajax_search'])) {
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
+                </div>';                 </div>
                 </div>';
         }
     }
@@ -337,7 +392,7 @@ if (isset($_POST['export'])) {
         $params['search_cni'] = '%' . $_POST['search_cni'] . '%';
     }
 
-    $sql = "SELECT matricule, nom, prenom, grade, unite, numero_cni, date_dernier_grade FROM candidat WHERE supprimer = 0";
+    $sql = "SELECT matricule, nom, prenom, grade, unite, numero_cni, date_dernier_grade FROM candidat WHERE supprimer = 1";
     if (!empty($where)) {
         $sql .= " AND " . implode(' AND ', $where);
     }
@@ -375,7 +430,7 @@ if (isset($_POST['export'])) {
 // Fonction pour obtenir le nombre total de personnels
 function getTotalPersonnels() {
     global $pdo;
-    $stmt = $pdo->query("SELECT COUNT(*) as total FROM candidat WHERE supprimer = 0");
+    $stmt = $pdo->query("SELECT COUNT(*) as total FROM candidat WHERE supprimer = 1");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     return $result['total'] ?? 0;
 }
@@ -401,10 +456,14 @@ if (!empty($_GET['search_grade'])) {
     $params['search_grade'] = $_GET['search_grade'];
 }
 
-// Filtre par unité
+// Filtre par unité / SIADOC
 if (!empty($_GET['search_unite'])) {
-    $where[] = "unite = :search_unite";
-    $params['search_unite'] = $_GET['search_unite'];
+    if ($_GET['search_unite'] === 'SIADOC') {
+        $where[] = "(source_system = 'SIADOC' OR siadoc_sync_status = 'SYNCED' OR matricule_militaire LIKE 'SIA%' OR matricule_militaire LIKE '%-AT-%' OR matricule_militaire LIKE '%-GN-%' OR matricule_militaire LIKE '%-AA-%' OR matricule_militaire LIKE '%-AM-%')";
+    } else {
+        $where[] = "unite = :search_unite";
+        $params['search_unite'] = $_GET['search_unite'];
+    }
 }
 
 // Filtre par année de dernier grade
@@ -420,11 +479,11 @@ if (!empty($_GET['search_cni'])) {
 }
 
 // Construire la requête
-$sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus FROM candidat WHERE supprimer = 0";
+$sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus, statut_militaire, date_changement_statut, motif_changement_statut, autorite_changement_statut, nb_reimpressions, date_derniere_reimpression FROM candidat WHERE supprimer = 1";
 if (!empty($where)) {
     $sql .= " AND " . implode(' AND ', $where);
 }
-$sql .= " ORDER BY date_enrolement DESC LIMIT 100";
+$sql .= " ORDER BY id DESC LIMIT 200";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
@@ -478,15 +537,401 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             z-index: 10;
         }
         
-        .candidat-item.suspended .candidat-photo {
-            opacity: 0.7;
-            filter: grayscale(50%);
+        .personnel-item.suspended {
+            border: 2px solid #ef4444 !important;
+            background: rgba(239, 68, 68, 0.08) !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3) !important;
+        }
+
+        .personnel-item.suspended .personnel-photo img {
+            filter: grayscale(85%);
+            opacity: 0.75;
         }
         
-        .candidat-item.suspended .candidat-name {
-            color: #dc3545;
-            font-weight: bold;
+        .personnel-item.suspended .personnel-name {
+            color: #ef4444 !important;
+            font-weight: 800;
         }
+
+        .suspension-badge-tag {
+            background: #dc2626;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ──── STYLES RESPONSIFS AVANCÉS (MOBILE / TABLETTE / DESKTOP) ──── */
+        body {
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem 2rem 1rem;
+        }
+
+        .top-status-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(15, 23, 42, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-left, .status-right {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input-wrapper input,
+        .search-input-wrapper select {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .main-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1.25rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        .main-actions .btn {
+            flex: 1 1 auto;
+            min-width: 180px;
+            max-width: 100%;
+            margin: 0 !important;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .personnel-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .personnel-item:hover {
+            border-color: rgba(52, 211, 153, 0.4);
+            background: rgba(30, 41, 59, 0.85);
+        }
+
+        .personnel-photo {
+            width: 48px;
+            height: 58px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .personnel-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .personnel-info {
+            flex: 1 1 200px;
+            min-width: 0;
+        }
+
+        .personnel-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #f8fafc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .personnel-details {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .personnel-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .personnel-actions .btn {
+            padding: 0.45rem 0.75rem !important;
+            font-size: 0.85rem !important;
+            border-radius: 6px !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        @media (max-width: 768px) {
+            .top-status-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .search-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-actions .btn {
+                width: 100%;
+                min-width: 100%;
+            }
+
+            .personnel-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .personnel-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .personnel-name {
+                white-space: normal;
+            }
+
+            .candidats-header {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: flex-start;
+            }
+        }
+
+        /* ──── VUE PLATEAU D'IMPRESSION ──────────────────────────────────────── */
+        .personnels-plateau {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 12px;
+        background: #1a1a2e;
+        border-radius: 10px;
+        min-height: 200px;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    .personnels-plateau .personnel-item {
+        width: 86px;
+        min-height: 54px;
+        border-radius: 5px;
+        padding: 3px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 2px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(74,222,128,0.25);
+        position: relative;
+        transition: border-color .15s;
+        cursor: pointer;
+        overflow: hidden;
+    }
+
+    .personnels-plateau .personnel-item:hover {
+        border-color: rgba(74,222,128,0.7);
+        background: rgba(74,222,128,0.08);
+        z-index: 2;
+    }
+
+    .personnels-plateau .personnel-item.suspended {
+        border-color: rgba(220,53,69,0.5) !important;
+        background: rgba(220,53,69,0.07) !important;
+    }
+
+    /* Checkbox superposée */
+    .personnels-plateau .personnel-checkbox-wrapper {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        z-index: 5;
+    }
+
+    .personnels-plateau .personnel-checkbox-wrapper .checkbox-label {
+        width: 12px;
+        height: 12px;
+    }
+
+    /* Photo miniature */
+    .personnels-plateau .personnel-photo {
+        width: 32px;
+        height: 38px;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    .personnels-plateau .personnel-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Infos texte */
+    .personnels-plateau .personnel-info {
+        width: 100%;
+        text-align: center;
+    }
+
+    .personnels-plateau .personnel-name {
+        font-size: 6.5px !important;
+        font-weight: 700;
+        line-height: 1.1;
+        color: #e2e8f0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80px;
+    }
+
+    .personnels-plateau .personnel-details {
+        display: none;
+    }
+
+    .personnels-plateau .personnel-grade {
+        font-size: 5.5px !important;
+        color: rgba(74,222,128,0.9);
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80px;
+    }
+
+    /* Masquer les actions en vue plateau */
+    .personnels-plateau .personnel-actions {
+        display: none !important;
+    }
+
+    /* Suspension indicator mini */
+    .personnels-plateau .suspension-indicator {
+        width: 12px;
+        height: 12px;
+        font-size: 6px;
+        top: 2px;
+        right: 2px;
+        left: auto;
+    }
+
+    /* Barre d'info plateau */
+    #plateau-info-bar {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 14px;
+        background: linear-gradient(135deg, rgba(111,66,193,.2), rgba(90,50,163,.1));
+        border: 1px solid rgba(111,66,193,.35);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        font-size: .8rem;
+        color: #c4b5fd;
+    }
+
+    #plateau-info-bar.show { display: flex; }
+
+    /* Pagination plateau */
+    #plateau-pagination {
+        display: none;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    #plateau-pagination.show { display: flex; }
+
+    .plateau-page-btn {
+        background: rgba(111,66,193,.2);
+        border: 1px solid rgba(111,66,193,.4);
+        color: #c4b5fd;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: .78rem;
+        cursor: pointer;
+        transition: all .15s;
+    }
+
+    .plateau-page-btn:hover, .plateau-page-btn.active {
+        background: rgba(111,66,193,.5);
+        color: white;
+    }
+
+    /* Impression plateau */
+    @media print {
+        .personnels-plateau {
+            background: white !important;
+            gap: 4px !important;
+        }
+        .personnels-plateau .personnel-item {
+            border-color: #ccc !important;
+            background: white !important;
+            page-break-inside: avoid;
+        }
+        .personnels-plateau .personnel-name {
+            color: #000 !important;
+        }
+        .personnels-plateau .personnel-grade {
+            color: #444 !important;
+        }
+        .personnels-plateau .personnel-checkbox-wrapper,
+        #plateau-info-bar,
+        #plateau-pagination,
+        .top-status-bar, .back-button-container,
+        .search-section, .main-actions, .batch-actions,
+        .candidats-header, .results-section, .security-footer {
+            display: none !important;
+        }
+    }
     </style>
 </head>
 <body>
@@ -534,6 +979,44 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php echo htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
                     </div>
                 <?php endif; ?>
+
+                <!-- BANDEAU NOTIFICATION PRIORITAIRE IMPRESSION REÇUS A4 -->
+                <?php 
+                $pending_count = count($_SESSION['pending_receipts'] ?? []);
+                $pending_ids_str = implode(',', $_SESSION['pending_receipts'] ?? []);
+                ?>
+                <div id="recu-notification-banner" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #10b981; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: <?php echo $pending_count > 0 ? 'flex' : 'none'; ?>; align-items: center; justify-content: space-between; gap: 1rem; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);">
+                    <div style="display: flex; align-items: center; gap: 1rem; color: #fff;">
+                        <div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                            <i class="fa-solid fa-print"></i>
+                        </div>
+                        <div>
+                            <h4 style="margin: 0; color: #34d399; font-size: 1.05rem;"><i class="fa-solid fa-bell warning-flash"></i> REÇUS PAPIER A4 EN ATTENTE D'IMPRESSION</h4>
+                            <p style="margin: 3px 0 0 0; color: #94a3b8; font-size: 0.85rem;"><span id="recu-count-badge" style="font-weight: bold; color: #fff;"><?php echo $pending_count; ?></span> carte(s) PVC imprimée(s) nécessitant la délivrance du reçu A4 signé.</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <a id="btn-print-recu-batch" href="../backend/generer_recu.php?mode=batch&ids=<?php echo $pending_ids_str; ?>" target="_blank" class="btn" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; font-weight: 700; text-decoration: none; padding: 0.65rem 1.2rem; border-radius: 8px; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-file-invoice"></i> IMPRIMER PLANCHE A4 (4 REÇUS/PAGE)
+                        </a>
+                        <button onclick="viderQueueRecus()" class="btn" style="background: #334155; color: #cbd5e1; border: 1px solid #475569; font-weight: 600; padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.85rem; cursor: pointer;">
+                            Vider la file
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MODULE DE RECHERCHE ET RE-DÉLIVRANCE RAPIDE DE REÇU -->
+                <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid #334155; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                    <div style="color: #cbd5e1; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-file-signature" style="color: #60a5fa;"></i> RE-DÉLIVRANCE RAPIDE DE REÇU INDIVIDUEL :
+                    </div>
+                    <form method="GET" action="../backend/generer_recu.php" target="_blank" style="display: flex; gap: 0.5rem; flex: 1; min-width: 300px; max-width: 500px;">
+                        <input type="text" name="matricule" placeholder="Saisir matricule militaire (ex: T14/5748)..." required style="flex: 1; padding: 0.5rem 0.85rem; border-radius: 6px; background: #0f172a; border: 1px solid #475569; color: white; font-family: monospace;">
+                        <button type="submit" style="background: #2563eb; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                            <i class="fa-solid fa-search"></i> GÉNÉRER REÇU
+                        </button>
+                    </form>
+                </div>
 
                 <!-- SEARCH AND FILTER SECTION -->
                 <div class="search-section">
@@ -606,6 +1089,7 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <div class="search-input-wrapper">
                                 <select id="search_unite" name="search_unite">
                                     <option value="">Toutes les unités / All units</option>
+                                    <option value="SIADOC" <?php echo (isset($_GET['search_unite']) && $_GET['search_unite'] === 'SIADOC') ? 'selected' : ''; ?>>SIADOC (IMPORTÉS SIADOC)</option>
                                     <option value="GENDARMERIE NATIONALE" <?php echo (isset($_GET['search_unite']) && $_GET['search_unite'] === 'GENDARMERIE NATIONALE') ? 'selected' : ''; ?>>GENDARMERIE NATIONALE / National Gendarmerie</option>
                                     <option value="ARMÉE DE TERRE" <?php echo (isset($_GET['search_unite']) && $_GET['search_unite'] === 'ARMÉE DE TERRE') ? 'selected' : ''; ?>>ARMÉE DE TERRE / Army</option>
                                     <option value="ARMÉE DE L'AIR" <?php echo (isset($_GET['search_unite']) && $_GET['search_unite'] === 'ARMÉE DE L\'AIR') ? 'selected' : ''; ?>>ARMÉE DE L'AIR / Air Force</option>
@@ -670,15 +1154,18 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="candidats-header">
                         <h3><i class="fa-solid fa-id-card"></i> CARTES DISPONIBLES / AVAILABLE CARDS</h3>
                         <div class="view-options">
-                            <button class="btn btn-sm" onclick="toggleView('grid')" id="gridViewBtn">
-                                <i class="fa-solid fa-th"></i>
+                            <button class="btn btn-sm" onclick="toggleView('list')" id="listViewBtn" title="Vue liste horizontale">
+                                <i class="fa-solid fa-list"></i> <span style="font-size:10px;font-weight:700;">LISTE</span>
                             </button>
-                            <button class="btn btn-sm" onclick="toggleView('list')" id="listViewBtn">
-                                <i class="fa-solid fa-list"></i>
+                            <button class="btn btn-sm" onclick="toggleView('table')" id="tableViewBtn" title="Vue Tableau Compact Ministériel" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:white;">
+                                <i class="fa-solid fa-table"></i> <span style="font-size:10px;font-weight:700;">TABLEAU</span>
                             </button>
                         </div>
                     </div>
                     
+                    <!-- BARRE INFO PLATEAU (vue type 3) -->
+                    <div id="plateau-info-bar"></div>
+
                     <div class="personnels-grid" id="personnelsContainer">
                         <?php if (empty($personnels)): ?>
                             <div class="empty-state">
@@ -692,68 +1179,66 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                         <?php else: ?>
                             <?php foreach ($personnels as $personnel): ?>
-                                <div class="personnel-item<?php echo $personnel['suspendus'] == 1 ? ' suspended' : ''; ?>">
-                                    <div class="personnel-checkbox-wrapper">
-                                        <input type="checkbox" name="selected_personnels[]" value="<?php echo $personnel['matricule']; ?>" 
-                                               class="personnel-checkbox" id="personnel_<?php echo $personnel['id']; ?>">
-                                        <label for="personnel_<?php echo $personnel['id']; ?>" class="checkbox-label"></label>
-                                    </div>
-                                    
-                                    <?php 
-                                    // Indicateur de suspension
-                                    if ($personnel['suspendus'] == 1) {
-                                        echo '<div class="suspension-indicator" title="Membre suspendu">
-                                                <i class="fa-solid fa-pause"></i>
-                                              </div>';
-                                    }
-                                    ?>
-                                    
-                                    <div class="personnel-photo">
-                                        <?php if (!empty($personnel['photo'])): ?>
-                                            <?php
-                                            // Gestion du chemin de la photo comme dans confection_carte.php
-                                            if (file_exists('../' . $personnel['photo'])): ?>
-                                                <img src="<?php echo '../' . $personnel['photo']; ?>" alt="Photo">
-                                            <?php 
-                                            // Si le chemin est relatif, le compléter
-                                            elseif (file_exists('../img/candidats/' . basename($personnel['photo']))): ?>
-                                                <img src="<?php echo '../img/candidats/' . basename($personnel['photo']); ?>" alt="Photo">
-                                            <?php
-                                            // Sinon, essayer avec le nom de fichier seul
-                                            elseif (file_exists('../img/candidats/' . basename($personnel['photo']))):
-                                                $filename = basename($personnel['photo']); ?>
-                                                <img src="<?php echo '../img/candidats/' . $filename; ?>" alt="Photo">
-                                            <?php else: ?>
-                                                <?php 
-                                                // Utiliser une photo par défaut aléatoire depuis la liste spécifiée
-                                                $default_photos = [
-                                                    'img/1KRISS.PNG',
-                                                    'img/1ONANA.PNG',
-                                                    'img/1YANNICK.PNG',
-                                                    'img/ben.PNG',
-                                                    'img/GRACE.PNG'
-                                                ];
-                                                $random_photo = $default_photos[array_rand($default_photos)];
-                                                ?>
-                                                <img src="<?php echo '../' . $random_photo; ?>" alt="Photo par défaut">
-                                            <?php endif; ?>
-                                        <?php else: ?>
-                                            <?php 
-                                            // Utiliser une photo par défaut aléatoire depuis la liste spécifiée
-                                            $default_photos = [
-                                                'img/1KRISS.PNG',
-                                                'img/1ONANA.PNG',
-                                                'img/1YANNICK.PNG',
-                                                'img/ben.PNG',
-                                                'img/GRACE.PNG'
-                                            ];
-                                            $random_photo = $default_photos[array_rand($default_photos)];
-                                            ?>
-                                            <img src="<?php echo '../' . $random_photo; ?>" alt="Photo par défaut">
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="personnel-info">
-                                        <div class="personnel-name"><?php echo htmlspecialchars($personnel['nom'] . ' ' . $personnel['prenom']); ?></div>
+                                <?php
+                                // Déterminer une photo par défaut aléatoire dans la liste sélectionnée
+                                $default_photos_list = ['img/1ONANA.PNG','img/1YANNICK.PNG','img/1KRISS.PNG','img/ben.PNG','img/GRACE.PNG'];
+                                $random_photo_default = $default_photos_list[array_rand($default_photos_list)];
+                                // Gestion robuste du chemin de photo
+                                if (!empty($personnel['photo'])) {
+                                    $photo_src = (strpos($personnel['photo'], '../') === 0) ? $personnel['photo'] : '../' . $personnel['photo'];
+                                } else {
+                                    $photo_src = '../' . $random_photo_default;
+                                }
+                                ?>
+                                <?php
+                                $st_mil_st = strtoupper($personnel['statut_militaire'] ?? '');
+                                $is_suspended_st = ($personnel['suspendus'] == 1) || str_contains($st_mil_st, 'SUSPENDU') || in_array($st_mil_st, ['DESERTEUR', 'REVOQUE']);
+                                $nb_reimp_st = intval($personnel['nb_reimpressions'] ?? 0);
+                                $d_reimp_st_fmt = !empty($personnel['date_derniere_reimpression']) ? date('d/m/Y', strtotime($personnel['date_derniere_reimpression'])) : '';
+                                ?>
+                                 <div class="personnel-item<?php echo $is_suspended_st ? ' suspended' : ''; ?>">
+                                     <div class="personnel-checkbox-wrapper">
+                                         <input type="checkbox" name="selected_personnels[]"
+                                                value="<?php echo $personnel['id']; ?>"
+                                                data-matricule="<?php echo htmlspecialchars($personnel['matricule']); ?>"
+                                                data-nb-reimpressions="<?php echo $nb_reimp_st; ?>"
+                                                data-date-reimpression="<?php echo $d_reimp_st_fmt; ?>"
+                                                class="personnel-checkbox" id="personnel_<?php echo $personnel['id']; ?>">
+                                         <label for="personnel_<?php echo $personnel['id']; ?>" class="checkbox-label"></label>
+                                     </div>
+
+                                     <?php if ($is_suspended_st): ?>
+                                         <div class="suspension-indicator" title="Carte militaire suspendue / désactivée">
+                                             <i class="fa-solid fa-ban"></i>
+                                         </div>
+                                     <?php endif; ?>
+
+                                     <div class="personnel-photo">
+                                         <img src="<?php echo $photo_src; ?>" alt="Photo" onerror="this.src='../<?php echo $random_photo_default; ?>'">
+                                     </div>
+                                     <div class="personnel-info">
+                                         <div class="personnel-name"><?php echo htmlspecialchars($personnel['nom'] . ' ' . $personnel['prenom']); ?></div>
+                                         <?php if ($is_suspended_st): ?>
+                                             <?php 
+                                             $date_susp_st = !empty($personnel['date_changement_statut']) ? date('d/m/Y à H:i', strtotime($personnel['date_changement_statut'])) : date('d/m/Y');
+                                             $op_susp_st   = !empty($personnel['autorite_changement_statut']) ? htmlspecialchars($personnel['autorite_changement_statut']) : 'SUPER_ADMIN';
+                                             $mo_susp_st   = !empty($personnel['motif_changement_statut']) ? htmlspecialchars($personnel['motif_changement_statut']) : 'Suspension administrative (' . $st_mil_st . ')';
+                                             ?>
+                                             <div style="margin: 3px 0;">
+                                                 <span class="suspension-badge-tag"><i class="fa-solid fa-ban"></i> CARTE SUSPENDUE (<?php echo $st_mil_st; ?>)</span>
+                                                 <div style="font-size: 0.7rem; color: #f87171; margin-top: 2px; line-height: 1.2;">
+                                                     <i class="fa-solid fa-user-shield"></i> Par: <strong><?php echo $op_susp_st; ?></strong> (<?php echo $date_susp_st; ?>)<br>
+                                                     <i class="fa-solid fa-circle-info"></i> Motif: <?php echo $mo_susp_st; ?>
+                                                 </div>
+                                             </div>
+                                         <?php endif; ?>
+                                         <?php if ($nb_reimp_st >= 1): ?>
+                                             <div style="margin: 2px 0;">
+                                                 <span style="background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; color: #fbbf24; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;" title="Carte déjà imprimée <?php echo $nb_reimp_st; ?> fois">
+                                                     <i class="fa-solid fa-triangle-exclamation"></i> Déjà imprimée le <?php echo !empty($d_reimp_st_fmt) ? $d_reimp_st_fmt : 'antérieurement'; ?> (<?php echo $nb_reimp_st; ?>x)
+                                                 </span>
+                                             </div>
+                                         <?php endif; ?>
                                         <div class="personnel-details">
                                             <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $personnel['unite'])); ?>">
                                                 <?php echo htmlspecialchars($personnel['unite']); ?>
@@ -775,16 +1260,16 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                            class="btn btn-sm" style="background: linear-gradient(135deg, #6f42c1, #5a32a3); color: white;" title="Imprimer la carte (PDF)">
                                             <i class="fa-solid fa-file-pdf"></i>
                                         </a>
-                                        <a href="impression_pvc.php?matricule=<?php echo urlencode($personnel['matricule']); ?>&mode=recto-verso" 
+                                        <button type="button" onclick="imprimerPVCEtQueue('<?php echo $personnel['id']; ?>', 'impression_pvc.php?matricule=<?php echo urlencode($personnel['matricule']); ?>&mode=recto-verso', <?php echo $nb_reimp_st; ?>, '<?php echo $d_reimp_st_fmt; ?>')" 
                                            class="btn btn-sm" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;" title="Impression PVC Optimisée (85.60×53.98mm - 0 marge)">
                                             <i class="fa-solid fa-credit-card"></i> <span style="font-size: 10px;">PVC</span>
-                                        </a>
+                                        </button>
                                         <a href="visualisation_3d.php?matricule=<?php echo urlencode($personnel['matricule']); ?>" 
                                            class="btn btn-sm btn-info" title="Visualiser la carte en 3D" target="_blank">
                                             <i class="fa-solid fa-cube"></i>
                                         </a>
                                         <button class="btn btn-sm btn-logout" title="Supprimer" style="padding: 2px;"
-                                                onclick="confirmDelete('<?php echo $personnel['id']; ?>')"
+                                                onclick="confirmDelete('<?php echo $personnel['id']; ?>')">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
@@ -792,7 +1277,10 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
-                    
+
+                    <!-- PAGINATION PLATEAU (vue type 3) -->
+                    <div id="plateau-pagination"></div>
+
                     <?php if (!empty($personnels)): ?>
                         <div class="batch-actions" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid rgba(74, 222, 128, 0.3);">
                             <button class="btn" onclick="selectAll()">
@@ -904,30 +1392,6 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Charger le compteur au chargement de la page
         document.addEventListener('DOMContentLoaded', loadTrashCount);
-
-        // Mettre à jour le compteur après chaque suppression avec rechargement automatique
-        const originalDeleteSelected = window.deleteSelected;
-        window.deleteSelected = function() {
-            originalDeleteSelected.apply(this, arguments);
-            // Mettre à jour le compteur immédiatement
-            loadTrashCount();
-            // Recharger la page après 1.5 secondes pour voir les changements
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        };
-
-        // Mettre à jour le compteur après chaque suppression individuelle
-        const originalExecuteDelete = window.executeDelete;
-        window.executeDelete = function() {
-            originalExecuteDelete.apply(this, arguments);
-            // Mettre à jour le compteur immédiatement
-            loadTrashCount();
-            // Recharger la page après 1.5 secondes pour voir les changements
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        };
         </script>
 
     </div>
@@ -1008,10 +1472,11 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 alert('Veuillez sélectionner au moins une carte');
                 return;
             }
-            
-            // Rediriger vers la génération multiple
-            const matricules = Array.from(selected).map(cb => cb.value);
-            window.location.href = 'generate_pdf.php?matricules=' + matricules.join(',');
+            if (confirm('Générer un PDF pour les ' + selected.length + ' candidats sélectionnés ?')) {
+                // Utiliser data-matricule pour récupérer les matricules
+                const matricules = Array.from(selected).map(cb => cb.getAttribute('data-matricule'));
+                window.location.href = 'impression.php?action=generate_batch&matricules=' + matricules.join(',');
+            }
         }
 
         function visualizeMultiple() {
@@ -1020,15 +1485,12 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 alert('Veuillez sélectionner au moins une carte');
                 return;
             }
-            
+            // Utiliser data-matricule pour récupérer les matricules
+            const matricules = Array.from(selected).map(cb => cb.getAttribute('data-matricule'));
             if (selected.length === 1) {
-                // Si un seul candidat, rediriger vers la visualisation simple
-                const matricule = selected[0].value;
-                window.location.href = 'impression.php?action=visualize&matricule=' + matricule;
+                window.location.href = 'impression.php?action=visualize&matricule=' + matricules[0];
             } else {
-                // Si plusieurs candidats, rediriger vers la visualisation multiple
-                const matricules = Array.from(selected).map(cb => cb.value);
-                window.location.href = 'visualiser_multiple.php?matricules=' + matricules.join(',');
+                window.location.href = 'visualiser_carte.php?matricules=' + matricules.join(',');
             }
         }
 
@@ -1038,9 +1500,8 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 alert('Veuillez sélectionner au moins une carte');
                 return;
             }
-            
-            // Rediriger vers la visualisation uniforme avec les matricules sélectionnés
-            const matricules = Array.from(selected).map(cb => cb.value);
+            // Utiliser data-matricule pour récupérer les matricules
+            const matricules = Array.from(selected).map(cb => cb.getAttribute('data-matricule'));
             window.location.href = 'visualiser_cartes_uniformes.php?matricules=' + matricules.join(',');
         }
 
@@ -1062,6 +1523,13 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = 'impression.php';
+                
+                // Ajouter le token CSRF
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrf_token';
+                csrfInput.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                form.appendChild(csrfInput);
                 
                 // Ajouter l'action
                 const actionInput = document.createElement('input');
@@ -1088,6 +1556,7 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
         function confirmDelete(id) {
             // Créer une modal de confirmation moderne
             const modal = document.createElement('div');
+            modal.className = 'confirm-delete-modal';
             modal.style.cssText = `
                 position: fixed;
                 top: 0;
@@ -1112,7 +1581,7 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <strong>Vous pourrez la restaurer depuis la corbeille / You can restore it from trash.</strong>
                     </p>
                     <div style="display: flex; gap: 1rem; justify-content: center;">
-                        <button onclick="this.closest('div').remove()" style="background: #666; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">
+                        <button onclick="this.closest('.confirm-delete-modal').remove()" style="background: #666; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">
                             <i class="fa-solid fa-times"></i> ANNULER
                         </button>
                         <button onclick="executeDelete(${id})" style="background: var(--neon-red); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">
@@ -1160,11 +1629,15 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             // Fermer la modal de confirmation
             document.querySelector('[style*="z-index: 10000"]').remove();
             
-            // Effectuer la suppression via AJAX
-            fetch('delete_candidat.php?id=' + id, {
-                method: 'GET',
+            // Effectuer la suppression via AJAX en POST avec jeton CSRF
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+            
+            fetch('delete_candidat.php', {
+                method: 'POST',
+                body: formData,
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             })
@@ -1176,8 +1649,8 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     // Afficher une notification de succès
                     showNotification(data.message, 'success');
                     
-                    // Supprimer la carte du DOM
-                    const candidatCard = document.querySelector(`[onclick*="${id}"]`).closest('.candidat-item');
+                    // Supprimer la carte du DOM (modifié pour correspondre à .personnel-item)
+                    const candidatCard = document.querySelector(`[onclick*="${id}"]`).closest('.personnel-item');
                     if (candidatCard) {
                         candidatCard.style.transition = 'all 0.3s ease';
                         candidatCard.style.opacity = '0';
@@ -1265,22 +1738,120 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             document.getElementById('result-count').textContent = count;
         }
         
-        // Basculer entre vue grille et liste
         function toggleView(view) {
             currentView = view;
             const container = document.getElementById('personnelsContainer');
-            const gridBtn = document.getElementById('gridViewBtn');
-            const listBtn = document.getElementById('listViewBtn');
-            
-            if (view === 'grid') {
-                container.className = 'personnels-grid';
-                gridBtn.classList.add('active');
-                listBtn.classList.remove('active');
-            } else {
-                container.className = 'personnels-list';
-                listBtn.classList.add('active');
-                gridBtn.classList.remove('active');
+            const gridBtn   = document.getElementById('gridViewBtn');
+            const listBtn   = document.getElementById('listViewBtn');
+            const tableBtn  = document.getElementById('tableViewBtn');
+            const platBtn   = document.getElementById('plateauViewBtn');
+            const infoBar   = document.getElementById('plateau-info-bar');
+            const pagBar    = document.getElementById('plateau-pagination');
+
+            // Réinitialiser l'affichage de tous les items si on quitte le plateau
+            if (view !== 'plateau') {
+                const allItems = container.querySelectorAll('.personnel-item');
+                allItems.forEach(item => item.style.display = '');
             }
+
+            // Réinitialiser boutons
+            [gridBtn, listBtn, tableBtn, platBtn].forEach(b => { if(b) { b.style.opacity='0.65'; b.style.transform=''; b.classList.remove('active'); } });
+
+            if (view === 'grid') {
+                container.className = 'personnels-grid-cards';
+                if (gridBtn) { gridBtn.classList.add('active'); gridBtn.style.opacity = '1'; }
+                if (infoBar) infoBar.classList.remove('show');
+                if (pagBar)  pagBar.classList.remove('show');
+
+            } else if (view === 'list') {
+                container.className = 'personnels-grid';
+                if (listBtn) { listBtn.classList.add('active'); listBtn.style.opacity = '1'; }
+                if (infoBar) infoBar.classList.remove('show');
+                if (pagBar)  pagBar.classList.remove('show');
+
+            } else if (view === 'table') {
+                container.className = 'personnels-table-view';
+                if (tableBtn) { tableBtn.classList.add('active'); tableBtn.style.opacity = '1'; }
+                if (infoBar) infoBar.classList.remove('show');
+                if (pagBar)  pagBar.classList.remove('show');
+
+            } else if (view === 'plateau') {
+                container.className = 'personnels-plateau';
+                if (platBtn) { platBtn.classList.add('active'); platBtn.style.opacity = '1'; }
+                applyPlateauPagination();
+            }
+        }
+
+        /* ── PAGINATION PLATEAU (50 cartes max/page) ── */
+        let _plateauPage = 1;
+        const PLATEAU_PER_PAGE = 50;
+
+        function applyPlateauPagination() {
+            const container  = document.getElementById('personnelsContainer');
+            const infoBar    = document.getElementById('plateau-info-bar');
+            const pagBar     = document.getElementById('plateau-pagination');
+            const allItems   = Array.from(container.querySelectorAll('.personnel-item'));
+            const total      = allItems.length;
+            const totalPages = Math.ceil(total / PLATEAU_PER_PAGE);
+
+            if (total === 0) return;
+
+            // Clamp la page courante
+            _plateauPage = Math.max(1, Math.min(_plateauPage, totalPages));
+
+            const start = (_plateauPage - 1) * PLATEAU_PER_PAGE;
+            const end   = Math.min(start + PLATEAU_PER_PAGE, total);
+
+            // Afficher/masquer les items
+            allItems.forEach((item, i) => {
+                item.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+
+            // Barre d'info
+            if (infoBar) {
+                infoBar.classList.add('show');
+                infoBar.innerHTML = `
+                    <span><i class="fa-solid fa-border-all" style="color:#a78bfa"></i>
+                    <strong>Plateau d'impression</strong> —
+                    ${end - start} carte(s) affichée(s)
+                    sur ${total} au total
+                    (page ${_plateauPage}/${totalPages})
+                    </span>
+                    <span style="display:flex;gap:8px;align-items:center">
+                        <button class="plateau-page-btn" onclick="window.print()" title="Imprimer ce plateau">
+                            <i class="fa-solid fa-print"></i> Imprimer
+                        </button>
+                        <button class="plateau-page-btn" onclick="plateauSelectAll()" title="Tout sélectionner">
+                            <i class="fa-solid fa-check-square"></i> Tout sélectionner
+                        </button>
+                    </span>`;
+            }
+
+            // Barre de pagination
+            if (pagBar) {
+                if (totalPages > 1) {
+                    pagBar.classList.add('show');
+                    let html = `<span style="color:#94a3b8;font-size:.75rem">Page :</span>`;
+                    for (let p = 1; p <= totalPages; p++) {
+                        html += `<button class="plateau-page-btn ${p === _plateauPage ? 'active' : ''}"
+                            onclick="_plateauPage=${p};applyPlateauPagination()">${p}</button>`;
+                    }
+                    pagBar.innerHTML = html;
+                } else {
+                    pagBar.classList.remove('show');
+                }
+            }
+        }
+
+        function plateauSelectAll() {
+            const container = document.getElementById('personnelsContainer');
+            const visible   = Array.from(container.querySelectorAll('.personnel-item'))
+                              .filter(el => el.style.display !== 'none');
+            const allChecked = visible.every(el => el.querySelector('.personnel-checkbox')?.checked);
+            visible.forEach(el => {
+                const cb = el.querySelector('.personnel-checkbox');
+                if (cb) cb.checked = !allChecked;
+            });
         }
         
         // Imprimer la sélection au format PVC optimisé
@@ -1290,38 +1861,119 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 alert('Veuillez sélectionner au moins une carte');
                 return;
             }
-            
-            // Récupérer tous les matricules
-            const matricules = Array.from(selected).map(cb => cb.value);
-            
-            if (confirm(`Imprimer les ${selected.length} carte(s) sélectionnée(s) au format PVC (85.60×53.98mm) ?\n\nFormat: Carte PVC sans marges\nPages: ${selected.length * 2} (recto + verso)\nToutes les cartes sur une seule page d'impression`)) {
-                window.open(`impression_pvc_multiple.php?matricules=${encodeURIComponent(matricules)}`, '_blank');
+            // Utiliser data-matricule
+            const matricules = Array.from(selected).map(cb => cb.getAttribute('data-matricule'));
+            const ids = Array.from(selected).map(cb => cb.value);
+            if (confirm(`Imprimer les ${selected.length} carte(s) sélectionnée(s) au format PVC (85.60×53.98mm) ?\n\nFormat: Carte PVC sans marges\nPages: ${selected.length * 2} (recto + verso)`)) {
+                // Enregistrer dans la file d'attente des reçus
+                fetch('../backend/queue_recu.php?action=add&ids=' + encodeURIComponent(ids.join(',')))
+                    .finally(() => {
+                        window.open(`impression_pvc_multiple.php?matricules=${encodeURIComponent(matricules.join(','))}`, '_blank');
+                    });
             }
         }
         
-        // Visualiser 3D la sélection
+        // Visualiser 3D la sélection (Studio 3D)
         function visualize3DSelected() {
             const selected = document.querySelectorAll('.personnel-checkbox:checked');
             if (selected.length === 0) {
-                alert('Veuillez sélectionner au moins une carte');
+                showNotification('Veuillez sélectionner au moins une carte pour la vue 3D', 'error');
                 return;
             }
-            
-            if (confirm(`Visualiser en 3D les ${selected.length} candidat(s) sélectionné(s) ?`)) {
-                selected.forEach(checkbox => {
-                    const matricule = checkbox.value;
-                    window.open(`visualisation_3d.php?matricule=${encodeURIComponent(matricule)}`, '_blank');
-                });
+
+            const matricules = Array.from(selected)
+                .map(cb => cb.getAttribute('data-matricule'))
+                .filter(m => m && m.trim() !== '');
+
+            if (matricules.length === 0) {
+                showNotification('Aucun matricule valide trouvé dans la sélection', 'error');
+                return;
             }
+
+            window.open(`visualisation_3d.php?matricules=${encodeURIComponent(matricules.join(','))}`, '_blank');
         }
         
+        // Suppression multiple des éléments sélectionnés
+        function deleteSelected() {
+            const selected = document.querySelectorAll('.personnel-checkbox:checked');
+            if (selected.length === 0) {
+                showNotification('Veuillez sélectionner au moins une carte à supprimer', 'error');
+                return;
+            }
+
+            const count = selected.length;
+            if (!confirm(`Êtes-vous sûr de vouloir déplacer les ${count} carte(s) sélectionnée(s) dans la corbeille ?`)) {
+                return;
+            }
+
+            const ids = Array.from(selected).map(cb => cb.value);
+
+            const formData = new FormData();
+            formData.append('ids', JSON.stringify(ids));
+
+            fetch('delete_candidat.php', {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message || `${count} carte(s) déplacée(s) dans la corbeille`, 'success');
+                    ids.forEach(id => {
+                        const item = document.querySelector(`#personnel_${id}`)?.closest('.personnel-item');
+                        if (item) {
+                            item.style.transition = 'all 0.3s ease';
+                            item.style.opacity = '0';
+                            item.style.transform = 'scale(0.8)';
+                            setTimeout(() => item.remove(), 300);
+                        }
+                    });
+                    setTimeout(updateResultCount, 350);
+                } else {
+                    showNotification(data.message || 'Erreur lors de la suppression multiple', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showNotification('Erreur lors de la suppression des éléments sélectionnés', 'error');
+            });
+        }
+
+        // Sélectionner / Désélectionner toutes les cartes
+        function selectAll() {
+            const checkboxes = document.querySelectorAll('.personnel-checkbox');
+            if (checkboxes.length === 0) return;
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+            updateSelection();
+        }
+
+        // Visualiser toutes les cartes sélectionnées (Galerie 2D)
+        function visualizeMultiple() {
+            const selected = document.querySelectorAll('.personnel-checkbox:checked');
+            if (selected.length === 0) {
+                showNotification('Veuillez sélectionner au moins une carte à visualiser', 'error');
+                return;
+            }
+
+            const matricules = Array.from(selected)
+                .map(cb => cb.getAttribute('data-matricule'))
+                .filter(m => m && m.trim() !== '');
+
+            if (matricules.length === 0) {
+                showNotification('Aucun matricule valide trouvé dans la sélection', 'error');
+                return;
+            }
+
+            window.open(`visualiser_carte.php?matricules=${encodeURIComponent(matricules.join(','))}`, '_blank');
+        }
+
         // Gestion de la sélection multiple
         function updateSelection() {
             selectedCandidates.clear();
-            const checkboxes = document.querySelectorAll('.candidat-checkbox:checked');
-            checkboxes.forEach(checkbox => selectedCandidates.add(checkbox.value));
-            
-            // Mettre à jour l'état des boutons batch
+            const checkboxes = document.querySelectorAll('.personnel-checkbox:checked');
+            checkboxes.forEach(checkbox => selectedCandidates.add(checkbox.getAttribute('data-matricule')));
             const batchActions = document.querySelector('.batch-actions');
             if (batchActions) {
                 batchActions.style.display = selectedCandidates.size > 0 ? 'flex' : 'none';
@@ -1450,10 +2102,10 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             const currentValue = gradeSelect.value;
             
             const gradesByUnit = {
-                'ARMÉE DE TERRE': ['Soldat de 2E Classe', 'Soldat de 1E Classe', 'Caporal (CPL)', 'Caporal-Chef (CPL/C)', 'Sergent (SGT)', 'Sergent-Chef (SGT/C)', 'Adjudant (ADJT)', 'Adjudant-Chef (A/C)', 'Adjudant-Chef Major (ACM)', 'Sous-Lieutenant (S/Lt)', 'Lieutenant (Lt)', 'Capitaine (Cne)', 'Chef de Bataillon (Cdt)', 'Lieutenant-Colonel (LCL)', 'Colonel (COL)', 'Général de Brigade (GB)', 'Général de Division (GD)', 'Général de Corps d\'Armée (GCA)', 'Général d\'Armée (GA)'],
-                'MARINE NATIONALE': ['Matelot', 'Quartier-Maître de 2E Classe (QM2)', 'Quartier-Maître de 1E Classe (QM1)', 'Second Maître (SM)', 'Maître (MTR)', 'Premier Maître (PM)', 'Maître Principal (MP)', 'Major', 'Élève Officier 1E année', 'Élève Officier 2E année', 'Aspirant', 'Enseigne de Vaisseau de 2E Classe (EV2)', 'Enseigne de Vaisseau de 1E Classe (EV1)', 'Lieutenant de Vaisseau (LV)', 'Capitaine de Corvette (CC)', 'Capitaine de Frégate (CF)', 'Capitaine de Vaisseau (CV)', 'Contre-Amiral (CA)', 'Vice-Amiral (VA)', 'Vice-Amiral d\'Escadre (VAE)', 'Amiral (AM)'],
-                'ARMÉE DE L\'AIR': ['Aviateur de 2E classe', 'Aviateur de 1E classe', 'Caporal', 'Caporal-Chef', 'Sergent', 'Sergent-Chef', 'Adjudant', 'Adjudant-Chef', 'Aspirant', 'Sous-Lieutenant (S/Lt)', 'Lieutenant (Lt)', 'Capitaine (Cne)', 'Commandant (Cdt)', 'Lieutenant-Colonel (LCL)', 'Colonel (COL)', 'Général de Brigade Aérienne', 'Général de Division Aérienne', 'Général de Corps Aérien', 'Général d\'Armée Aérienne'],
-                'GENDARMERIE NATIONALE': ['GENDARME', 'MARÉCHAL DES LOGIS', 'ADJOINT', 'SOUS-OFFICIER', 'LIEUTENANT', 'CAPITAINE', 'COMMANDANT', 'COLONEL'],
+                'ARMÉE DE TERRE': ['Soldat de 2E Classe', 'Soldat de 1E Classe', 'Caporal', 'Caporal-Chef', 'Sergent', 'Sergent-Chef', 'Adjudant', 'Adjudant-Chef', 'Adjudant-Chef Major', 'Aspirant', 'Sous-Lieutenant', 'Lieutenant', 'Capitaine', 'Chef de Bataillon', 'Lieutenant-Colonel', 'Colonel', 'Général de Brigade', 'Général de Division', 'Général de Corps d\'Armée', 'Général d\'Armée'],
+                'MARINE NATIONALE': ['Matelot de 2E Classe', 'Matelot de 1E Classe', 'Quartier-Maître de 2E Classe', 'Quartier-Maître de 1E Classe', 'Second Maître', 'Maître', 'Premier Maître', 'Maître Principal', 'Maître Principal Major', 'Aspirant', 'Enseigne de Vaisseau de 2E Classe', 'Enseigne de Vaisseau de 1E Classe', 'Lieutenant de Vaisseau', 'Capitaine de Corvette', 'Capitaine de Frégate', 'Capitaine de Vaisseau', 'Contre-Amiral', 'Vice-Amiral', 'Vice-Amiral d\'Escadre', 'Amiral d\'Escadre'],
+                'ARMÉE DE L\'AIR': ['Soldat de 2E Classe', 'Soldat de 1E Classe', 'Caporal', 'Caporal-Chef', 'Sergent', 'Sergent-Chef', 'Adjudant', 'Adjudant-Chef', 'Adjudant-Chef Major', 'Aspirant', 'Sous-Lieutenant', 'Lieutenant', 'Capitaine', 'Commandant', 'Lieutenant-Colonel', 'Colonel', 'Général de Brigade Aérienne', 'Général de Division Aérienne', 'Général de Corps d\'Armée', 'Général d\'Armée'],
+                'GENDARMERIE NATIONALE': ['Élève-Gendarme', 'Gendarme', 'Gendarme Major', 'Maréchal des Logis', 'Maréchal des Logis-Chef', 'Adjudant', 'Adjudant-Chef', 'Adjudant-Chef Major', 'Aspirant', 'Sous-Lieutenant', 'Lieutenant', 'Capitaine', 'Chef d\'Escadron', 'Lieutenant-Colonel', 'Colonel', 'Général de Brigade', 'Général de Division', 'Général de Corps d\'Armée', 'Général d\'Armée'],
                 'CIVIL': ['AGENT', 'TECHNICIEN', 'INGÉNIEUR', 'CHEF DE SERVICE', 'DIRECTEUR']
             };
             
@@ -1476,10 +2128,10 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
         // Valider la cohérence grade/unité
         function validateGradeUnit(grade, unite) {
             const validCombinations = {
-                'ARMÉE DE TERRE': ['Soldat de 2E Classe', 'Soldat de 1E Classe', 'Caporal (CPL)', 'Caporal-Chef (CPL/C)', 'Sergent (SGT)', 'Sergent-Chef (SGT/C)', 'Adjudant (ADJT)', 'Adjudant-Chef (A/C)', 'Adjudant-Chef Major (ACM)', 'Sous-Lieutenant (S/Lt)', 'Lieutenant (Lt)', 'Capitaine (Cne)', 'Chef de Bataillon (Cdt)', 'Lieutenant-Colonel (LCL)', 'Colonel (COL)', 'Général de Brigade (GB)', 'Général de Division (GD)', 'Général de Corps d\'Armée (GCA)', 'Général d\'Armée (GA)'],
-                'MARINE NATIONALE': ['Matelot', 'Quartier-Maître de 2E Classe (QM2)', 'Quartier-Maître de 1E Classe (QM1)', 'Second Maître (SM)', 'Maître (MTR)', 'Premier Maître (PM)', 'Maître Principal (MP)', 'Major', 'Élève Officier 1E année', 'Élève Officier 2E année', 'Aspirant', 'Enseigne de Vaisseau de 2E Classe (EV2)', 'Enseigne de Vaisseau de 1E Classe (EV1)', 'Lieutenant de Vaisseau (LV)', 'Capitaine de Corvette (CC)', 'Capitaine de Frégate (CF)', 'Capitaine de Vaisseau (CV)', 'Contre-Amiral (CA)', 'Vice-Amiral (VA)', 'Vice-Amiral d\'Escadre (VAE)', 'Amiral (AM)'],
-                'ARMÉE DE L\'AIR': ['Aviateur de 2E classe', 'Aviateur de 1E classe', 'Caporal', 'Caporal-Chef', 'Sergent', 'Sergent-Chef', 'Adjudant', 'Adjudant-Chef', 'Aspirant', 'Sous-Lieutenant (S/Lt)', 'Lieutenant (Lt)', 'Capitaine (Cne)', 'Commandant (Cdt)', 'Lieutenant-Colonel (LCL)', 'Colonel (COL)', 'Général de Brigade Aérienne', 'Général de Division Aérienne', 'Général de Corps Aérien', 'Général d\'Armée Aérienne'],
-                'GENDARMERIE NATIONALE': ['GENDARME', 'MARÉCHAL DES LOGIS', 'ADJOINT', 'SOUS-OFFICIER', 'LIEUTENANT', 'CAPITAINE', 'COMMANDANT', 'COLONEL'],
+                'ARMÉE DE TERRE': ['Soldat de 2E Classe', 'Soldat de 1E Classe', 'Caporal', 'Caporal-Chef', 'Sergent', 'Sergent-Chef', 'Adjudant', 'Adjudant-Chef', 'Adjudant-Chef Major', 'Aspirant', 'Sous-Lieutenant', 'Lieutenant', 'Capitaine', 'Chef de Bataillon', 'Lieutenant-Colonel', 'Colonel', 'Général de Brigade', 'Général de Division', 'Général de Corps d\'Armée', 'Général d\'Armée'],
+                'MARINE NATIONALE': ['Matelot de 2E Classe', 'Matelot de 1E Classe', 'Quartier-Maître de 2E Classe', 'Quartier-Maître de 1E Classe', 'Second Maître', 'Maître', 'Premier Maître', 'Maître Principal', 'Maître Principal Major', 'Aspirant', 'Enseigne de Vaisseau de 2E Classe', 'Enseigne de Vaisseau de 1E Classe', 'Lieutenant de Vaisseau', 'Capitaine de Corvette', 'Capitaine de Frégate', 'Capitaine de Vaisseau', 'Contre-Amiral', 'Vice-Amiral', 'Vice-Amiral d\'Escadre', 'Amiral d\'Escadre'],
+                'ARMÉE DE L\'AIR': ['Soldat de 2E Classe', 'Soldat de 1E Classe', 'Caporal', 'Caporal-Chef', 'Sergent', 'Sergent-Chef', 'Adjudant', 'Adjudant-Chef', 'Adjudant-Chef Major', 'Aspirant', 'Sous-Lieutenant', 'Lieutenant', 'Capitaine', 'Commandant', 'Lieutenant-Colonel', 'Colonel', 'Général de Brigade Aérienne', 'Général de Division Aérienne', 'Général de Corps d\'Armée', 'Général d\'Armée'],
+                'GENDARMERIE NATIONALE': ['Élève-Gendarme', 'Gendarme', 'Gendarme Major', 'Maréchal des Logis', 'Maréchal des Logis-Chef', 'Adjudant', 'Adjudant-Chef', 'Adjudant-Chef Major', 'Aspirant', 'Sous-Lieutenant', 'Lieutenant', 'Capitaine', 'Chef d\'Escadron', 'Lieutenant-Colonel', 'Colonel', 'Général de Brigade', 'Général de Division', 'Général de Corps d\'Armée', 'Général d\'Armée'],
                 'CIVIL': ['AGENT', 'TECHNICIEN', 'INGÉNIEUR', 'CHEF DE SERVICE', 'DIRECTEUR']
             };
             
@@ -1611,11 +2263,11 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
         }
 
-        // Initialisation au chargement de la page
+        // Initialisation au chargement de la page (Disposition N°1 Horizontale par défaut)
         document.addEventListener('DOMContentLoaded', function() {
             updateResultCount();
             attachCheckboxListeners();
-            toggleView('grid'); // Vue par défaut
+            toggleView('list'); // Disposition Horizontale N°1 par défaut
         });
 
         // Effacer la recherche
@@ -1666,35 +2318,30 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
         }
         
-        // Visualiser plusieurs candidats
-        function visualizeMultiple() {
-            const selected = document.querySelectorAll('.personnel-checkbox:checked');
-            if (selected.length === 0) {
-                alert('Veuillez sélectionner au moins une carte');
-                return;
+        // Enregistrer dans la file d'attente des reçus et ouvrir l'impression PVC avec avertissement si déjà imprimée
+        function imprimerPVCEtQueue(id, url, nbReimpressions, dateDerniere) {
+            if (nbReimpressions && parseInt(nbReimpressions) >= 1) {
+                let dateStr = dateDerniere ? dateDerniere : 'date antérieure';
+                if (dateStr.includes('-')) {
+                    const parts = dateStr.split('-');
+                    if (parts.length === 3) dateStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+                const confirmMsg = `⚠️ Attention : Cette carte a déjà été imprimée le ${dateStr}.\n\nConfirmer la réimpression / réédition ?`;
+                if (!confirm(confirmMsg)) {
+                    return;
+                }
             }
-            
-            const matricules = Array.from(selected).map(cb => cb.value);
-            window.location.href = 'visualiser_carte.php?matricules=' + matricules.join(',');
-        }
-        
-        // Générer PDF multiple
-        function generateBatch() {
-            const selected = document.querySelectorAll('.personnel-checkbox:checked');
-            if (selected.length === 0) {
-                alert('Veuillez sélectionner au moins une carte');
-                return;
-            }
-            
-            if (confirm('Générer un PDF pour les ' + selected.length + ' candidats sélectionnés ?')) {
-                const matricules = Array.from(selected).map(cb => cb.value);
-                
-                // Rediriger vers une page de génération PDF
-                window.location.href = 'impression.php?action=generate_batch&matricules=' + matricules.join(',');
+            if (id) {
+                fetch('../backend/queue_recu.php?action=add&id=' + encodeURIComponent(id))
+                    .finally(() => {
+                        window.location.href = url;
+                    });
+            } else {
+                window.location.href = url;
             }
         }
         
-        // Générer impression PVC multiple
+        // Générer impression PVC multiple avec vérification des réimpressions
         function generateBatchPVC() {
             const selected = document.querySelectorAll('.personnel-checkbox:checked');
             if (selected.length === 0) {
@@ -1702,11 +2349,30 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 return;
             }
             
-            if (confirm('Imprimer en PVC les ' + selected.length + ' cartes sélectionnées ?')) {
-                const matricules = Array.from(selected).map(cb => cb.value);
+            const reimpressionItems = [];
+            selected.forEach(cb => {
+                const nb = parseInt(cb.getAttribute('data-nb-reimpressions') || '0');
+                if (nb >= 1) {
+                    const mat = cb.getAttribute('data-matricule');
+                    const dt = cb.getAttribute('data-date-reimpression') || 'date antérieure';
+                    reimpressionItems.push(`• ${mat} (déjà imprimée le ${dt})`);
+                }
+            });
+            
+            let confirmMsg = `Imprimer en PVC les ${selected.length} cartes sélectionnées ?`;
+            if (reimpressionItems.length > 0) {
+                confirmMsg = `⚠️ Attention : ${reimpressionItems.length} carte(s) ont DÉJÀ été imprimées :\n\n${reimpressionItems.slice(0, 5).join('\n')}${reimpressionItems.length > 5 ? '\n• ... et autres' : ''}\n\nConfirmer la réimpression / réédition de ces ${selected.length} cartes ?`;
+            }
+            
+            if (confirm(confirmMsg)) {
+                const matricules = Array.from(selected).map(cb => cb.getAttribute('data-matricule'));
+                const ids = Array.from(selected).map(cb => cb.value);
                 
-                // Rediriger vers la page d'impression PVC multiple
-                window.location.href = 'impression_pvc.php?matricules=' + matricules.join(',') + '&mode=recto-verso';
+                // Enregistrer tous les IDs dans la file d'attente des reçus
+                fetch('../backend/queue_recu.php?action=add&ids=' + encodeURIComponent(ids.join(',')))
+                    .finally(() => {
+                        window.location.href = 'impression_pvc.php?matricules=' + matricules.join(',') + '&mode=recto-verso';
+                    });
             }
         }
     </script>
@@ -1718,11 +2384,118 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             margin-bottom: 1rem;
         }
         
+        /* === VUE LISTE (défaut) === */
         .candidats-grid, .personnels-grid {
-            display: grid;
-            gap: 1rem;
-            max-height: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 600px;
             overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        /* === VUE TABLEAU COMPACT MINISTÉRIEL === */
+        .personnels-table-view {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-height: 680px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .personnels-table-view .personnel-item {
+            display: grid;
+            grid-template-columns: 32px 42px minmax(160px, 1.2fr) minmax(140px, 1fr) minmax(160px, 1.2fr) auto;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .personnels-table-view .personnel-item:hover {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(13, 148, 136, 0.5);
+            transform: translateX(2px);
+        }
+
+        .personnels-table-view .personnel-photo {
+            width: 36px;
+            height: 42px;
+            border-radius: 4px;
+        }
+
+        .personnels-table-view .personnel-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #f8fafc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .personnels-table-view .personnel-details {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0;
+        }
+
+        .personnels-table-view .personnel-grade {
+            font-size: 0.78rem;
+            color: #a78bfa;
+            font-weight: 600;
+        }
+
+        .personnels-table-view .personnel-actions {
+            justify-content: flex-end;
+            gap: 0.25rem;
+        }
+
+        .personnels-table-view .personnel-actions .btn {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.75rem !important;
+            min-width: auto;
+            border-radius: 4px !important;
+        }
+
+        /* === VUE GRILLE BLOCS CARRÉS (4 À 6 PAR LIGNE) === */
+        .personnels-grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.9rem;
+            max-height: 700px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .personnels-grid-cards .personnel-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1.2rem 1rem;
+            gap: 0.6rem;
+            grid-template-columns: unset;
+        }
+
+        .personnels-grid-cards .personnel-photo {
+            width: 80px;
+            height: 96px;
+            border-radius: 8px;
+        }
+
+        .personnels-grid-cards .personnel-actions {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        .personnels-grid-cards .personnel-info {
+            width: 100%;
         }
 
         .search-grid {
@@ -2093,6 +2866,35 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             100% { transform: rotate(360deg); }
         }
     </style>
+    <script>
+        function ajouterQueueRecus(ids) {
+            fetch('../backend/queue_recu.php?action=add&ids=' + encodeURIComponent(ids))
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const banner = document.getElementById('recu-notification-banner');
+                        const badge = document.getElementById('recu-count-badge');
+                        const btnBatch = document.getElementById('btn-print-recu-batch');
+                        if (banner) banner.style.display = 'flex';
+                        if (badge) badge.innerText = data.count;
+                        if (btnBatch && data.ids) btnBatch.href = '../backend/generer_recu.php?mode=batch&ids=' + data.ids.join(',');
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+
+        function viderQueueRecus() {
+            fetch('../backend/queue_recu.php?action=clear')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const banner = document.getElementById('recu-notification-banner');
+                        if (banner) banner.style.display = 'none';
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+    </script>
 </body>
 </html>
 

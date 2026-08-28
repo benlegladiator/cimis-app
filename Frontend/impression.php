@@ -210,7 +210,7 @@ if (isset($_POST['ajax_search'])) {
     }
 
     // Construire la requête
-    $sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus, statut_militaire, date_changement_statut, motif_changement_statut, autorite_changement_statut FROM candidat WHERE supprimer = 1";
+    $sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus, statut_militaire, date_changement_statut, motif_changement_statut, autorite_changement_statut, nb_reimpressions, date_derniere_reimpression FROM candidat WHERE supprimer = 1";
     if (!empty($where)) {
         $sql .= " AND " . implode(' AND ', $where);
     }
@@ -231,11 +231,15 @@ if (isset($_POST['ajax_search'])) {
     } else {
         foreach ($personnels as $personnel) {
             $st_mil = strtoupper($personnel['statut_militaire'] ?? '');
-            $is_suspended = ($personnel['suspendus'] == 1) || str_contains($st_mil, 'SUSPENDU') || in_array($st_mil, ['DESERTEUR', 'REVOQUE']);
+            $is_suspended = ($personnel['suspendus'] == 1) || str_contains($st_mil, 'SUSPENDU') || in_array            $nb_reimp = intval($personnel['nb_reimpressions'] ?? 0);
+            $d_reimp_fmt = !empty($personnel['date_derniere_reimpression']) ? date('d/m/Y', strtotime($personnel['date_derniere_reimpression'])) : '';
+
             echo '<div class="personnel-item' . ($is_suspended ? ' suspended' : '') . '">
                     <div class="personnel-checkbox-wrapper">
                         <input type="checkbox" name="ids[]" value="' . htmlspecialchars($personnel['id']) . '" 
                                data-matricule="' . htmlspecialchars($personnel['matricule']) . '" 
+                               data-nb-reimpressions="' . $nb_reimp . '"
+                               data-date-reimpression="' . $d_reimp_fmt . '"
                                class="personnel-checkbox" id="personnel_' . $personnel['id'] . '">
                         <label for="personnel_' . $personnel['id'] . '" class="checkbox-label"></label>
                     </div>';
@@ -285,6 +289,13 @@ if (isset($_POST['ajax_search'])) {
                         </div>
                       </div>';
             }
+            if ($nb_reimp >= 1) {
+                echo '<div style="margin: 2px 0;">
+                        <span style="background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; color: #fbbf24; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;" title="Carte déjà imprimée ' . $nb_reimp . ' fois">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Déjà imprimée le ' . (!empty($d_reimp_fmt) ? $d_reimp_fmt : 'antérieurement') . ' (' . $nb_reimp . 'x)
+                        </span>
+                      </div>';
+            }
             echo '<div class="personnel-details">
                             <span class="badge badge-' . strtolower(str_replace(' ', '-', $personnel['unite'])) . '">
                                 ' . htmlspecialchars($personnel['unite']) . '
@@ -306,7 +317,7 @@ if (isset($_POST['ajax_search'])) {
                            class="btn btn-sm" style="background: linear-gradient(135deg, #6f42c1, #5a32a3); color: white;" title="Imprimer la carte (PDF)">
                             <i class="fa-solid fa-file-pdf"></i>
                         </a>
-                        <button type="button" onclick="imprimerPVCEtQueue(\'' . $personnel['id'] . '\', \'impression_pvc.php?matricule=' . urlencode($personnel['matricule']) . '&mode=recto-verso\')" 
+                        <button type="button" onclick="imprimerPVCEtQueue(\'' . $personnel['id'] . '\', \'impression_pvc.php?matricule=' . urlencode($personnel['matricule']) . '&mode=recto-verso\', ' . $nb_reimp . ', \'' . $d_reimp_fmt . '\')" 
                             class="btn btn-sm" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;" title="Impression PVC Optimisée (85.60×53.98mm - 0 marge)">
                             <i class="fa-solid fa-credit-card"></i> <span style="font-size: 10px;">PVC</span>
                         </button>
@@ -319,6 +330,7 @@ if (isset($_POST['ajax_search'])) {
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
+                </div>';                 </div>
                 </div>';
         }
     }
@@ -467,7 +479,7 @@ if (!empty($_GET['search_cni'])) {
 }
 
 // Construire la requête
-$sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus, statut_militaire, date_changement_statut, motif_changement_statut, autorite_changement_statut FROM candidat WHERE supprimer = 1";
+$sql = "SELECT id, matricule, nom, prenom, unite, grade, photo, numero_cni, date_dernier_grade, suspendus, statut_militaire, date_changement_statut, motif_changement_statut, autorite_changement_statut, nb_reimpressions, date_derniere_reimpression FROM candidat WHERE supprimer = 1";
 if (!empty($where)) {
     $sql .= " AND " . implode(' AND ', $where);
 }
@@ -1178,15 +1190,19 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     $photo_src = '../' . $random_photo_default;
                                 }
                                 ?>
-                                 <?php
-                                 $st_mil_st = strtoupper($personnel['statut_militaire'] ?? '');
-                                 $is_suspended_st = ($personnel['suspendus'] == 1) || str_contains($st_mil_st, 'SUSPENDU') || in_array($st_mil_st, ['DESERTEUR', 'REVOQUE']);
-                                 ?>
+                                <?php
+                                $st_mil_st = strtoupper($personnel['statut_militaire'] ?? '');
+                                $is_suspended_st = ($personnel['suspendus'] == 1) || str_contains($st_mil_st, 'SUSPENDU') || in_array($st_mil_st, ['DESERTEUR', 'REVOQUE']);
+                                $nb_reimp_st = intval($personnel['nb_reimpressions'] ?? 0);
+                                $d_reimp_st_fmt = !empty($personnel['date_derniere_reimpression']) ? date('d/m/Y', strtotime($personnel['date_derniere_reimpression'])) : '';
+                                ?>
                                  <div class="personnel-item<?php echo $is_suspended_st ? ' suspended' : ''; ?>">
                                      <div class="personnel-checkbox-wrapper">
                                          <input type="checkbox" name="selected_personnels[]"
                                                 value="<?php echo $personnel['id']; ?>"
                                                 data-matricule="<?php echo htmlspecialchars($personnel['matricule']); ?>"
+                                                data-nb-reimpressions="<?php echo $nb_reimp_st; ?>"
+                                                data-date-reimpression="<?php echo $d_reimp_st_fmt; ?>"
                                                 class="personnel-checkbox" id="personnel_<?php echo $personnel['id']; ?>">
                                          <label for="personnel_<?php echo $personnel['id']; ?>" class="checkbox-label"></label>
                                      </div>
@@ -1216,6 +1232,13 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                  </div>
                                              </div>
                                          <?php endif; ?>
+                                         <?php if ($nb_reimp_st >= 1): ?>
+                                             <div style="margin: 2px 0;">
+                                                 <span style="background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; color: #fbbf24; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;" title="Carte déjà imprimée <?php echo $nb_reimp_st; ?> fois">
+                                                     <i class="fa-solid fa-triangle-exclamation"></i> Déjà imprimée le <?php echo !empty($d_reimp_st_fmt) ? $d_reimp_st_fmt : 'antérieurement'; ?> (<?php echo $nb_reimp_st; ?>x)
+                                                 </span>
+                                             </div>
+                                         <?php endif; ?>
                                         <div class="personnel-details">
                                             <span class="badge badge-<?php echo strtolower(str_replace(' ', '-', $personnel['unite'])); ?>">
                                                 <?php echo htmlspecialchars($personnel['unite']); ?>
@@ -1237,7 +1260,7 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                            class="btn btn-sm" style="background: linear-gradient(135deg, #6f42c1, #5a32a3); color: white;" title="Imprimer la carte (PDF)">
                                             <i class="fa-solid fa-file-pdf"></i>
                                         </a>
-                                        <button type="button" onclick="imprimerPVCEtQueue('<?php echo $personnel['id']; ?>', 'impression_pvc.php?matricule=<?php echo urlencode($personnel['matricule']); ?>&mode=recto-verso')" 
+                                        <button type="button" onclick="imprimerPVCEtQueue('<?php echo $personnel['id']; ?>', 'impression_pvc.php?matricule=<?php echo urlencode($personnel['matricule']); ?>&mode=recto-verso', <?php echo $nb_reimp_st; ?>, '<?php echo $d_reimp_st_fmt; ?>')" 
                                            class="btn btn-sm" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white;" title="Impression PVC Optimisée (85.60×53.98mm - 0 marge)">
                                             <i class="fa-solid fa-credit-card"></i> <span style="font-size: 10px;">PVC</span>
                                         </button>
@@ -2295,8 +2318,19 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
         }
         
-        // Enregistrer dans la file d'attente des reçus et ouvrir l'impression PVC
-        function imprimerPVCEtQueue(id, url) {
+        // Enregistrer dans la file d'attente des reçus et ouvrir l'impression PVC avec avertissement si déjà imprimée
+        function imprimerPVCEtQueue(id, url, nbReimpressions, dateDerniere) {
+            if (nbReimpressions && parseInt(nbReimpressions) >= 1) {
+                let dateStr = dateDerniere ? dateDerniere : 'date antérieure';
+                if (dateStr.includes('-')) {
+                    const parts = dateStr.split('-');
+                    if (parts.length === 3) dateStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+                const confirmMsg = `⚠️ Attention : Cette carte a déjà été imprimée le ${dateStr}.\n\nConfirmer la réimpression / réédition ?`;
+                if (!confirm(confirmMsg)) {
+                    return;
+                }
+            }
             if (id) {
                 fetch('../backend/queue_recu.php?action=add&id=' + encodeURIComponent(id))
                     .finally(() => {
@@ -2307,14 +2341,30 @@ $personnels = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
         }
         
-        // Générer impression PVC multiple
+        // Générer impression PVC multiple avec vérification des réimpressions
         function generateBatchPVC() {
             const selected = document.querySelectorAll('.personnel-checkbox:checked');
             if (selected.length === 0) {
                 alert('Veuillez sélectionner au moins une carte');
                 return;
             }
-            if (confirm('Imprimer en PVC les ' + selected.length + ' cartes sélectionnées ?')) {
+            
+            const reimpressionItems = [];
+            selected.forEach(cb => {
+                const nb = parseInt(cb.getAttribute('data-nb-reimpressions') || '0');
+                if (nb >= 1) {
+                    const mat = cb.getAttribute('data-matricule');
+                    const dt = cb.getAttribute('data-date-reimpression') || 'date antérieure';
+                    reimpressionItems.push(`• ${mat} (déjà imprimée le ${dt})`);
+                }
+            });
+            
+            let confirmMsg = `Imprimer en PVC les ${selected.length} cartes sélectionnées ?`;
+            if (reimpressionItems.length > 0) {
+                confirmMsg = `⚠️ Attention : ${reimpressionItems.length} carte(s) ont DÉJÀ été imprimées :\n\n${reimpressionItems.slice(0, 5).join('\n')}${reimpressionItems.length > 5 ? '\n• ... et autres' : ''}\n\nConfirmer la réimpression / réédition de ces ${selected.length} cartes ?`;
+            }
+            
+            if (confirm(confirmMsg)) {
                 const matricules = Array.from(selected).map(cb => cb.getAttribute('data-matricule'));
                 const ids = Array.from(selected).map(cb => cb.value);
                 

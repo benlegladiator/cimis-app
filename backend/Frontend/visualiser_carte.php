@@ -42,15 +42,19 @@ $cartes_confectionnees = $_SESSION['cartes_confectionnees'] ?? [];
 
 // Si pas de cartes en session, essayer de récupérer depuis l'URL
 if (empty($cartes_confectionnees)) {
-    $matricules = $_GET['matricules'] ?? (isset($_GET['matricule']) ? [$_GET['matricule']] : []);
-    if (!is_array($matricules)) {
-        $matricules = explode(',', $matricules);
+    $raw_mats = $_GET['matricules'] ?? $_GET['matricule'] ?? [];
+    if (!is_array($raw_mats)) {
+        $matricules = array_filter(array_map('trim', explode(',', $raw_mats)));
+    } else {
+        $matricules = $raw_mats;
     }
     
     if (!empty($matricules)) {
         $placeholders = implode(',', array_fill(0, count($matricules), '?'));
-        $stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule IN ($placeholders)");
-        $stmt->execute($matricules);
+        // Exécuter la requête sur matricule et matricule_militaire
+        $params = array_merge($matricules, $matricules);
+        $stmt = $pdo->prepare("SELECT * FROM candidat WHERE matricule IN ($placeholders) OR matricule_militaire IN ($placeholders)");
+        $stmt->execute($params);
         $candidats = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         // Générer les cartes à la volée
@@ -115,9 +119,85 @@ if (empty($cartes_confectionnees)) {
             font-weight: bold;
         }
         
+        /* Dynamic Action Bar */
+        .actions-container-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            padding: 1.5rem 2rem;
+            margin: 2.5rem auto 1.5rem auto;
+            max-width: 1050px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .btn-action-custom {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            padding: 0.9rem 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease-in-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+        }
+        
+        .btn-action-custom:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+        }
+        
+        .btn-action-security {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: #ffffff !important;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+        }
+        .btn-action-security:hover {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .btn-action-edit {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff !important;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+        .btn-action-edit:hover {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        
+        .btn-action-print {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: #ffffff !important;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+        .btn-action-print:hover {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .btn-action-back {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e2e8f0 !important;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-action-back:hover {
+            background: rgba(255, 255, 255, 0.18);
+            color: #ffffff !important;
+        }
+
         @media print {
-            .header, .actions {
-                display: none;
+            .header, .actions, .actions-container-bar {
+                display: none !important;
             }
             
             .visualization-container {
@@ -349,7 +429,7 @@ if (empty($cartes_confectionnees)) {
             </div>
             <div class="status-right">
                 <span id="clock" class="text-mono">12:00:00</span>
-                <a href="../logout.php" class="btn-logout-styled">
+                <a href="logout.php" class="btn-logout-styled">
                     <i class="fa-solid fa-power-off"></i> DÉCONNEXION / LOGOUT
                 </a>
             </div>
@@ -401,40 +481,86 @@ if (empty($cartes_confectionnees)) {
                         </div>
                     <?php else: ?>
                         <?php foreach ($cartes_confectionnees as $index => $carte_data): ?>
-                            <div class="candidat-header">
-                                <?php echo htmlspecialchars($carte_data['candidat']['nom'] . ' ' . $carte_data['candidat']['prenom']); ?> - 
-                                Matricule: <?php echo htmlspecialchars($carte_data['candidat']['matricule']); ?> - 
-                                <?php echo htmlspecialchars($carte_data['candidat']['unite']); ?>
+                            <div class="candidat-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>
+                                    <?php echo htmlspecialchars($carte_data['candidat']['nom'] . ' ' . $carte_data['candidat']['prenom']); ?> - 
+                                    Matricule: <?php echo htmlspecialchars($carte_data['candidat']['matricule_militaire'] ?? $carte_data['candidat']['matricule']); ?> - 
+                                    <?php echo htmlspecialchars($carte_data['candidat']['unite']); ?>
+                                </span>
+                                <a href="../backend/generer_recu.php?matricule=<?php echo urlencode($carte_data['candidat']['matricule_militaire'] ?? $carte_data['candidat']['matricule']); ?>" target="_blank" style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; text-decoration: none; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;">
+                                    <i class="fa-solid fa-file-invoice"></i> Reçu A4
+                                </a>
                             </div>
                             <?php echo $carte_data['carte_html']; ?>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
 
-                <!-- Actions -->
-                <div class="actions">
-                    <button class="btn" onclick="window.print()">
-                        <i class="fa-solid fa-print"></i> IMPRIMER TOUTES LES CARTES / PRINT ALL CARDS
-                    </button>
-                    <div class="action-buttons">
-                        <a href="../Carte/confection_carte.php" class="btn">
-                            <i class="fa-solid fa-magic"></i> CONFECTIONNER D'AUTRES CARTES / CREATE OTHER CARDS
+                <!-- Barres d'actions principales réorganisées -->
+                <div class="actions-container-bar">
+                    <!-- 1. Bouton Vérifier la Sécurité -->
+                    <a href="securite.php" class="btn-action-custom btn-action-security" title="Vérifier la sécurité et l'authenticité de la carte">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>VÉRIFIER LA SÉCURITÉ / CHECK SECURITY</span>
+                    </a>
+
+                    <!-- 2. Bouton Modifier le Candidat -->
+                    <?php 
+                    $first_candidat_id = !empty($cartes_confectionnees[0]['candidat']['id']) ? $cartes_confectionnees[0]['candidat']['id'] : '';
+                    if (!empty($first_candidat_id)): 
+                    ?>
+                        <a href="modifier_candidat.php?id=<?php echo urlencode($first_candidat_id); ?>" class="btn-action-custom btn-action-edit" title="Modifier les informations de ce candidat">
+                            <i class="fa-solid fa-user-pen"></i>
+                            <span>MODIFIER / EDIT</span>
                         </a>
-                        <div class="back-button-container" style="position: static; display: inline-block;">
-                            <a href="impression.php" class="btn-back btn-back-list">
-                                <i class="fa-solid fa-arrow-left"></i>
-                                <span>RETOUR À LA LISTE / BACK TO LIST</span>
-                            </a>
-                        </div>
-                        <a href="../securite.php" class="btn" style="background: linear-gradient(45deg, #d4af37, #b8941f); color: #000;">
-                            <i class="fa-solid fa-shield-alt"></i> VÉRIFIER LA SÉCURITÉ / CHECK SECURITY
+                    <?php else: ?>
+                        <a href="impression.php" class="btn-action-custom btn-action-edit" title="Sélectionner un candidat à modifier">
+                            <i class="fa-solid fa-user-pen"></i>
+                            <span>MODIFIER / EDIT</span>
                         </a>
-                    </div>
-                    <?php if (!empty($cartes_confectionnees)): ?>
-                        <button onclick="clearSession()" class="btn btn-logout">
-                            <i class="fa-solid fa-trash"></i> VIDER LA SESSION / CLEAR SESSION
-                        </button>
                     <?php endif; ?>
+
+                    <!-- 3. Bouton Imprimer PVC -->
+                    <?php 
+                    $all_ids  = [];
+                    $all_mats = [];
+                    foreach ($cartes_confectionnees as $item) {
+                        if (!empty($item['candidat']['id'])) $all_ids[] = $item['candidat']['id'];
+                        $m = !empty($item['candidat']['matricule']) ? $item['candidat']['matricule'] : (!empty($item['candidat']['matricule_militaire']) ? $item['candidat']['matricule_militaire'] : '');
+                        if (!empty($m)) $all_mats[] = $m;
+                    }
+                    $ids_str_visu  = implode(',', $all_ids);
+                    $mats_str_visu = implode(',', array_unique($all_mats));
+                    $pvc_link_visu = "impression_pvc.php?matricules=" . urlencode($mats_str_visu) . "&mode=recto-verso";
+                    $first_mat_visu = !empty($all_mats[0]) ? $all_mats[0] : '';
+                    $recu_link_visu = count($all_ids) > 1 ? "../backend/generer_recu.php?mode=batch&ids=" . $ids_str_visu : "../backend/generer_recu.php?matricule=" . urlencode($first_mat_visu);
+
+                    $max_reimp_visu = 0;
+                    $date_reimp_visu = '';
+                    foreach ($cartes_confectionnees as $item) {
+                        $nr = intval($item['candidat']['nb_reimpressions'] ?? 0);
+                        if ($nr >= 1) {
+                            $max_reimp_visu = $nr;
+                            $date_reimp_visu = !empty($item['candidat']['date_derniere_reimpression']) ? date('d/m/Y', strtotime($item['candidat']['date_derniere_reimpression'])) : '';
+                        }
+                    }
+                    ?>
+                    <button class="btn-action-custom btn-action-print" onclick="imprimerPVCEtQueueRecu('<?php echo $ids_str_visu; ?>', '<?php echo $pvc_link_visu; ?>', <?php echo $max_reimp_visu; ?>, '<?php echo $date_reimp_visu; ?>')" title="Imprimer la carte au format PVC optimisé (85.60×53.98mm - 0 marge)">
+                        <i class="fa-solid fa-credit-card"></i>
+                        <span>IMPRIMER CARTE PVC (ISO CR-80) / PRINT PVC</span>
+                    </button>
+
+                    <!-- 4. Bouton Imprimer le Reçu A4 -->
+                    <a href="<?php echo $recu_link_visu; ?>" target="_blank" class="btn-action-custom" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; text-decoration: none;" title="Générer et imprimer le reçu A4 de délivrance signé">
+                        <i class="fa-solid fa-file-invoice"></i>
+                        <span>IMPRIMER LE REÇU / PRINT RECEIPT</span>
+                    </a>
+
+                    <!-- 5. Bouton Retour à la Liste -->
+                    <a href="impression.php" class="btn-action-custom btn-action-back" title="Retourner à la liste de sélection des cartes">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>RETOUR À LA LISTE / BACK TO LIST</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -453,6 +579,28 @@ if (empty($cartes_confectionnees)) {
     </div>
 
     <script>
+        function imprimerPVCEtQueueRecu(ids, pvcUrl, nbReimp, dateReimp) {
+            if (nbReimp && parseInt(nbReimp) >= 1) {
+                let dateStr = dateReimp ? dateReimp : 'date antérieure';
+                if (dateStr.includes('-')) {
+                    const parts = dateStr.split('-');
+                    if (parts.length === 3) dateStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+                const confirmMsg = `⚠️ Attention : Cette carte a déjà été imprimée le ${dateStr}.\n\nConfirmer la réimpression / réédition ?`;
+                if (!confirm(confirmMsg)) {
+                    return;
+                }
+            }
+            if (ids) {
+                fetch('../backend/queue_recu.php?action=add&ids=' + encodeURIComponent(ids)).catch(err => console.error(err));
+            }
+            if (pvcUrl) {
+                window.location.href = pvcUrl;
+            } else {
+                window.print();
+            }
+        }
+
         function clearSession() {
             if (confirm('Êtes-vous sûr de vouloir vider la session des cartes confectionnées ? / Are you sure you want to clear the created cards session?')) {
                 fetch('../visualiser_carte.php', {

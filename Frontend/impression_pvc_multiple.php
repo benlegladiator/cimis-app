@@ -49,6 +49,14 @@ if (empty($candidats)) {
     exit;
 }
 
+// Enregistrer l'impression et mettre à jour le compteur et la date
+try {
+    $placeholders_mult = str_repeat('?,', count($matricule_array));
+    $placeholders_mult = rtrim($placeholders_mult, ',');
+    $update_stmt = $pdo->prepare("UPDATE candidat SET nb_reimpressions = COALESCE(nb_reimpressions, 0) + 1, date_derniere_reimpression = CURDATE() WHERE matricule IN ($placeholders_mult)");
+    $update_stmt->execute(array_values($matricule_array));
+} catch (Exception $e) {}
+
 // Récupérer config unités
 $config_unites = include '../Carte/config_unites.php';
 ?>

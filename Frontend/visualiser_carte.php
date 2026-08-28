@@ -534,8 +534,18 @@ if (empty($cartes_confectionnees)) {
                     $pvc_link_visu = "impression_pvc.php?matricules=" . urlencode($mats_str_visu) . "&mode=recto-verso";
                     $first_mat_visu = !empty($all_mats[0]) ? $all_mats[0] : '';
                     $recu_link_visu = count($all_ids) > 1 ? "../backend/generer_recu.php?mode=batch&ids=" . $ids_str_visu : "../backend/generer_recu.php?matricule=" . urlencode($first_mat_visu);
+
+                    $max_reimp_visu = 0;
+                    $date_reimp_visu = '';
+                    foreach ($cartes_confectionnees as $item) {
+                        $nr = intval($item['candidat']['nb_reimpressions'] ?? 0);
+                        if ($nr >= 1) {
+                            $max_reimp_visu = $nr;
+                            $date_reimp_visu = !empty($item['candidat']['date_derniere_reimpression']) ? date('d/m/Y', strtotime($item['candidat']['date_derniere_reimpression'])) : '';
+                        }
+                    }
                     ?>
-                    <button class="btn-action-custom btn-action-print" onclick="imprimerPVCEtQueueRecu('<?php echo $ids_str_visu; ?>', '<?php echo $pvc_link_visu; ?>')" title="Imprimer la carte au format PVC optimisé (85.60×53.98mm - 0 marge)">
+                    <button class="btn-action-custom btn-action-print" onclick="imprimerPVCEtQueueRecu('<?php echo $ids_str_visu; ?>', '<?php echo $pvc_link_visu; ?>', <?php echo $max_reimp_visu; ?>, '<?php echo $date_reimp_visu; ?>')" title="Imprimer la carte au format PVC optimisé (85.60×53.98mm - 0 marge)">
                         <i class="fa-solid fa-credit-card"></i>
                         <span>IMPRIMER CARTE PVC (ISO CR-80) / PRINT PVC</span>
                     </button>
@@ -569,12 +579,23 @@ if (empty($cartes_confectionnees)) {
     </div>
 
     <script>
-        function imprimerPVCEtQueueRecu(ids, pvcUrl) {
+        function imprimerPVCEtQueueRecu(ids, pvcUrl, nbReimp, dateReimp) {
+            if (nbReimp && parseInt(nbReimp) >= 1) {
+                let dateStr = dateReimp ? dateReimp : 'date antérieure';
+                if (dateStr.includes('-')) {
+                    const parts = dateStr.split('-');
+                    if (parts.length === 3) dateStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+                const confirmMsg = `⚠️ Attention : Cette carte a déjà été imprimée le ${dateStr}.\n\nConfirmer la réimpression / réédition ?`;
+                if (!confirm(confirmMsg)) {
+                    return;
+                }
+            }
             if (ids) {
                 fetch('../backend/queue_recu.php?action=add&ids=' + encodeURIComponent(ids)).catch(err => console.error(err));
             }
             if (pvcUrl) {
-                window.open(pvcUrl, '_blank');
+                window.location.href = pvcUrl;
             } else {
                 window.print();
             }

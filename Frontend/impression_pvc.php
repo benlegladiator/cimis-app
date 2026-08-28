@@ -40,6 +40,12 @@ if (empty($candidats)) {
     exit;
 }
 
+// Enregistrer l'impression et mettre à jour le compteur et la date
+try {
+    $update_stmt = $pdo->prepare("UPDATE candidat SET nb_reimpressions = COALESCE(nb_reimpressions, 0) + 1, date_derniere_reimpression = CURDATE() WHERE matricule IN ($placeholders)");
+    $update_stmt->execute($matriculesArray);
+} catch (Exception $e) {}
+
 // Configuration des dimensions
 define('CARTE_WIDTH_MM', 85.6);
 define('CARTE_HEIGHT_MM', 53.98);
