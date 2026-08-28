@@ -231,7 +231,8 @@ if (isset($_POST['ajax_search'])) {
     } else {
         foreach ($personnels as $personnel) {
             $st_mil = strtoupper($personnel['statut_militaire'] ?? '');
-            $is_suspended = ($personnel['suspendus'] == 1) || str_contains($st_mil, 'SUSPENDU') || in_array            $nb_reimp = intval($personnel['nb_reimpressions'] ?? 0);
+            $is_suspended = ($personnel['suspendus'] == 1) || str_contains($st_mil, 'SUSPENDU') || in_array($st_mil, ['DESERTEUR', 'REVOQUE']);
+            $nb_reimp = intval($personnel['nb_reimpressions'] ?? 0);
             $d_reimp_fmt = !empty($personnel['date_derniere_reimpression']) ? date('d/m/Y', strtotime($personnel['date_derniere_reimpression'])) : '';
 
             echo '<div class="personnel-item' . ($is_suspended ? ' suspended' : '') . '">
@@ -330,7 +331,6 @@ if (isset($_POST['ajax_search'])) {
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
-                </div>';                 </div>
                 </div>';
         }
     }
