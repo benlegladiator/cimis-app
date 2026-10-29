@@ -1,0 +1,37 @@
+================================================================================
+MINISTERE DE LA DEFENSE - REPUBLIQUE DU CAMEROUN
+GUIDE SIMPLE : INSTALLATION DU LECTEUR REALSCAN-G10 (SIADOC & CIMIS)
+================================================================================
+
+Ce dossier permet d'installer le lecteur biometrique RealScan-G10 en un seul clic,
+sans aucune connaissance informatique requise.
+
+--------------------------------------------------------------------------------
+COMMENT INSTALLER LE LECTEUR (A FAIRE UNE SEULE FOIS) :
+--------------------------------------------------------------------------------
+
+1. Branchez le cable USB du lecteur RealScan-G10 sur votre ordinateur.
+2. Double-cliquez sur le fichier :
+       "INSTALLER_LE_LECTEUR.bat"
+   (Si Windows demande l'autorisation avec une fenetre "Voulez-vous autoriser...",
+    cliquez simplement sur "OUI").
+
+3. Une fenetre s'ouvre avec une BARRE DE CHARGEMENT PROGRESSIVE (0% a 100%) :
+   - 10% : Verification de securite
+   - 25% : Verification des bibliotheques
+   - 50% : Enregistrement officiel du pilote USB
+   - 75% : Configuration securisee du Pare-Feu
+   - 90% : Creation automatique de votre raccourci sur le Bureau
+   - 100% : Installation terminee avec succes !
+
+--------------------------------------------------------------------------------
+COMMENT UTILISER LE LECTEUR AU QUOTIDIEN :
+--------------------------------------------------------------------------------
+
+A la fin de l'installation, une nouvelle icone a ete ajoutee sur votre Bureau :
+   📁 "Lancer Lecteur d'Empreintes (SIADOC)"
+
+Chaque matin ou avant de commencer a enroler les candidats :
+-> Double-cliquez simplement sur ce raccourci present sur votre Bureau.
+-> Le lecteur est aussitot pret pour capturer les empreintes dans SIADOC / CIMIS.
+================================================================================
