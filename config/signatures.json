@@ -1,0 +1,18 @@
+{
+    "mindef": {
+        "name": "JOSEPH BETI ASSOMO",
+        "title": "Ministre Délégué à la Présidence chargé de la Défense",
+        "role_appele": "Officiers",
+        "base_file": "SignatureMindef.png",
+        "updated_at": "2026-11-18 18:45:33",
+        "updated_by": "super_admin_cimis"
+    },
+    "drh": {
+        "name": "DIRECTEUR DES RESSOURCES HUMAINES",
+        "title": "Directeur des Ressources Humaines du Ministère de la Défense",
+        "role_appele": "Sous-officiers et Militaires du Rang",
+        "base_file": "SignatureDrh.png",
+        "updated_at": "2026-11-18 18:45:33",
+        "updated_by": "super_admin_cimis"
+    }
+}

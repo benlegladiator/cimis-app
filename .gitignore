@@ -30,3 +30,7 @@ Thumbs.db
 !/img/empreintes/.gitkeep
 /img/qrcodes/*
 !/img/qrcodes/.gitkeep
+
+# Archives de livraison lourdes (> 100 Mo rejetés par GitHub)
+LIVRAISON_FINALE_SIADOC_CIMIS/*.zip
+!LIVRAISON_FINALE_SIADOC_CIMIS/CIMIS_UPDATE_ESSENTIEL.zip
