@@ -5,3 +5,28 @@ SIADOC/
 *.tmp
 .DS_Store
 Thumbs.db
+
+# Laravel Storage & User Uploaded Media (Photos, Empreintes, QR Codes)
+/storage/app/public/candidats/*
+!/storage/app/public/candidats/.gitkeep
+/storage/app/public/empreintes/*
+!/storage/app/public/empreintes/.gitkeep
+/storage/app/public/qrcodes/*
+!/storage/app/public/qrcodes/.gitkeep
+/storage/app/public/photos/*
+/public/storage
+
+# Legacy media directories (protection absolue contre les écrasements git)
+/public/img/candidats/*
+!/public/img/candidats/.gitkeep
+/public/img/candidats/.htaccess
+/public/img/empreintes/*
+!/public/img/empreintes/.gitkeep
+/public/img/qrcodes/*
+!/public/img/qrcodes/.gitkeep
+/img/candidats/*
+!/img/candidats/.gitkeep
+/img/empreintes/*
+!/img/empreintes/.gitkeep
+/img/qrcodes/*
+!/img/qrcodes/.gitkeep

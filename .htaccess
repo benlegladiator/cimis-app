@@ -1,5 +1,5 @@
-# Configuration CIMIS - Redirection 403
-ErrorDocument 403 /cim/403.php
-
-# Empêcher le listing des répertoires
-Options -Indexes
+﻿<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ public/ [L]
+    RewriteRule (.*) public/$1 [L]
+</IfModule>
